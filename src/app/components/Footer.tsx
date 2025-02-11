@@ -5,7 +5,7 @@ import Image from 'next/image';
 export default function Footer() {
     const logo_size = 50;
     return (
-        <div className='absolute inset-x-0 bottom-0  w-screen bg-[#1B1D36]' >
+        <div className='inset-x-0 bottom-0  w-screen bg-[#1B1D36]' >
             <section className='w-full flex flex-col sm:flex-row sm:justify-around my-6 gap-5 min-w-sm'>
                 <div className='w-full sm:w-1/2 px-5 xl:w-1/3 leading-[70px] '>
                     <a href="#" className='flex items-center gap-4'>
