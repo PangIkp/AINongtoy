@@ -17,12 +17,12 @@ export default function Home() {
             fill
             className="object-cover"
             priority
-          />  
+          />
         </div>
 
         {/* ข้อความอยู่บนภาพ */}
         <div className="absolute top-[220px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-[45px] font-semibold text-center max-w-[90%]">
-        <h1>Create Unique Art Toys</h1>
+          <h1>Create Unique Art Toys</h1>
           <p className="text-[16px] mb-4 text-[#9F9F9F] font-medium">
             Design, customize, and create Art Toys easily with AI.
           </p>
@@ -44,7 +44,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 }
