@@ -10,19 +10,13 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-8 lg:px-20 py-6 bg-[#010312] text-white drop-shadow-lg z-50">
       {/* Logo */}
-      <div className="text-2xl font-bold">
-        <Link href="/">
-          <span className="flex items-center space-x-2">
-            <Image
-              src="/Images/AINongtoy/Logo.png"
-              alt="Logo"
-              width={200}
-              height={100}
-              priority
-            />
-          </span>
-        </Link>
-      </div>
+      <Image
+        src="/Images/AINongtoy/Logo.png"
+        alt="Logo"
+        width={200} // หรือเปลี่ยนเป็น fill ถ้าต้องการปรับอัตโนมัติ
+        height={100}
+        className="object-contain"
+      />
 
       {/* Menu ปกติ */}
       <ul className={`hidden lg:flex space-x-[80px] text-[16px] font-semibold`}>
@@ -38,26 +32,30 @@ export default function Navbar() {
       </ul>
 
       {/* Hamburger Menu Button */}
- 
-        <button className="lg:hidden text-white" onClick={() => setMenuOpen(!menuOpen)}>
-          {menuOpen ? <X size={32} /> : <Menu size={32} />}
-        </button>
- 
+
+      <button
+        className="lg:hidden text-white"
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        {menuOpen ? <X size={32} /> : <Menu size={32} />}
+      </button>
 
       {/* เมนูสำหรับมือถือ */}
       {menuOpen && (
         <ul className="absolute top-[80px] left-0 w-full bg-[#010312] flex flex-col items-center space-y-6 py-6 lg:hidden">
-          {["Create Art Toys", "About Us", "Partners", "Contact", "Login"].map((item) => (
-            <li key={item}>
-              <Link
-                href={`/${item.toLowerCase().replace(/\s/g, "-")}`}
-                className="text-white text-[18px] hover:text-[#0AACF0]"
-                onClick={() => setMenuOpen(false)}
-              >
-                {item}
-              </Link>
-            </li>
-          ))}
+          {["Create Art Toys", "About Us", "Partners", "Contact", "Login"].map(
+            (item) => (
+              <li key={item}>
+                <Link
+                  href={`/${item.toLowerCase().replace(/\s/g, "-")}`}
+                  className="text-white text-[18px] hover:text-[#0AACF0]"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {item}
+                </Link>
+              </li>
+            )
+          )}
         </ul>
       )}
 

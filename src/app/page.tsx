@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 export default function Home() {
   return (
@@ -7,17 +8,13 @@ export default function Home() {
       <Navbar />
       <div className="relative w-full h-[600px]">
         {/* ภาพพื้นหลัง */}
-        <div className="relative w-full h-[600px]">
-          {" "}
-          {/* กำหนดขนาดสูง */}
-          <Image
-            src="/Images/AINongtoy/mainbg.png"
-            alt="mainbg"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
+        <Image
+          src="/Images/AINongtoy/mainbg.png"
+          alt="mainbg"
+          fill
+          className="object-cover"
+          priority
+        />
 
         {/* ข้อความอยู่บนภาพ */}
         <div className="absolute top-[220px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-[45px] font-semibold text-center max-w-[90%]">
@@ -43,6 +40,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 }
