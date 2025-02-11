@@ -17,7 +17,7 @@ export default function Home() {
             fill
             className="object-cover"
             priority
-          />
+          />  
         </div>
 
         {/* ข้อความอยู่บนภาพ */}
