@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Contact from "./components/Contact";
 
 export default function Home() {
   return (
@@ -44,6 +45,8 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      <Contact />
       <Footer />
     </div>
   );

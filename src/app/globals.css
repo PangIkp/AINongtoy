@@ -20,3 +20,11 @@ body {
   font-family: var(--font-poppins), sans-serif;
   min-height: 1000px;
 }
+
+input {
+  color: #000;
+  border: 1px solid var(--foreground);
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  width: 100%;
+}
