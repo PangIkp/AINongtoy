@@ -13,10 +13,9 @@ export default function Navbar() {
       <Image
         src="/Images/AINongtoy/Logo.png"
         alt="Logo"
-        width={200}
+        width={200} // หรือเปลี่ยนเป็น fill ถ้าต้องการปรับอัตโนมัติ
         height={100}
-        style={{ width: "auto", height: "auto" }}
-        priority
+        className="object-contain"
       />
 
       {/* Menu ปกติ */}
