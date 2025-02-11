@@ -1,3 +1,4 @@
+"use client";
 import React from 'react'
 
 export default function Footer() {
@@ -5,6 +6,9 @@ export default function Footer() {
         <div className='absolute inset-x-0 bottom-0 border border-gray-200 w-screen' >
             <section className='flex justify-around my-16'>
                 <div className='w-1/3 leading-[60px] '>
+                    <a href="">
+                        <img src="/public/Images" alt="logo" />
+                    </a>
                     <p>21 Ladprao Street Bangkok, Thailand</p>
                     <p>090-846-6758</p>
                     <p>NongToy@gmail.com</p>
