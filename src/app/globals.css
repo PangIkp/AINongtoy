@@ -18,4 +18,5 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-poppins), sans-serif;
+  min-height: 1000px;
 }
