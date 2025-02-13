@@ -63,7 +63,7 @@ export default function Home() {
 
       <Contact />
       <Footer />
-      <Footer />
+    </div>
     </div>
   );
 }
