@@ -39,7 +39,7 @@ export default function Home() {
             />
 
             {/* ปุ่ม */}
-            <button className="text-[16px] h-[50px] w-[150px]">
+            <button className="text-[16px] h-[50px] w-[150px] ">
               Create Art Toys
             </button>
           </div>

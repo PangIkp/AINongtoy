@@ -26,5 +26,5 @@ input {
 }
 
 button {
-  @apply bg-[#0CACF3] text-white hover:bg-[#0578AB] font-bold px-2 rounded-md transition-all;
+  @apply w-full bg-[#0CACF3] text-white hover:bg-[#0578AB] font-bold px-2 rounded-md transition-all;
 }
