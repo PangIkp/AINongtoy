@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ImageSlider from "./components/ImageSlider";
 import Contact from "./components/Contact";
+import Partner from "./components/Partner";
 
 export default function Home() {
   return (
@@ -47,7 +48,8 @@ export default function Home() {
           <ImageSlider/>
         </div>
       </div>
-
+      
+      <Partner/>
       <Contact/>
       <Footer />
     </div>
