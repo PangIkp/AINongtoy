@@ -29,7 +29,7 @@ export default function Contact() {
                                 <input className='block' type="tel" />
                             </label>
 
-                            <button className='bg-[#0CACF3] text-white h-[50px] hover:bg-[#0578AB] font-bold px-2 rounded-md transition-all'>Submit</button>
+                            <button className='h-[50px]'>Submit</button>
                         </form>
                     </div>
                 </div>

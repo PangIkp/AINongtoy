@@ -22,9 +22,9 @@ body {
 }
 
 input {
-  color: #000;
-  border: 1px solid var(--foreground);
-  border-radius: 0.25rem;
-  padding: 0.5rem;
-  width: 100%;
+  @apply w-full px-4 py-2 border border-gray-300 text-[14px] text-black font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-[#0AACF0];
+}
+
+button {
+  @apply bg-[#0CACF3] text-white hover:bg-[#0578AB] font-bold px-2 rounded-md transition-all;
 }

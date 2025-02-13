@@ -61,7 +61,7 @@ export default function Navbar() {
 
       {/* Login Button */}
       <Link href="/login" className="hidden lg:block">
-        <button className="bg-[#0AACF0] hover:bg-[#0578AB] text-white font-extrabold px-6 py-1 rounded-[5px] text-[15px] transition-all">
+        <button className="font-extrabold px-6 py-1 text-[15px]">
           Login
         </button>
       </Link>

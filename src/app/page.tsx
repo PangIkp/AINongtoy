@@ -35,11 +35,11 @@ export default function Home() {
               id="keyword-input"
               name="keywordInput"
               placeholder="animal, blue and unique"
-              className="px-4 py-2 border border-gray-300 text-[14px] text-black font-medium  rounded-md focus:outline-none focus:ring-2 focus:ring-[#0AACF0] w-[420px] h-[50px]"
+              className="w-[420px] h-[50px]"
             />
 
             {/* ปุ่ม */}
-            <button className="bg-[#0AACF0] text-[16px] h-[50px] w-[150px] hover:bg-[#0578AB] text-white font-bold px-2 rounded-md transition-all">
+            <button className="text-[16px] h-[50px] w-[150px]">
               Create Art Toys
             </button>
           </div>
