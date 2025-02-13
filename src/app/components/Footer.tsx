@@ -11,7 +11,7 @@ export default function Footer() {
                 <div className='w-full sm:w-1/2 px-5 xl:w-1/3 leading-[70px] '>
                     <a href="#" className='flex items-center gap-4'>
                         <Image src="/Images/AINongtoy/Map.png" alt="logo" width={logo_size} height={logo_size} />
-                        <p>21 Ladprao Street Bangkok, Thailand</p>
+                        <p className='underline'>21 Ladprao Street Bangkok, Thailand</p>
                     </a>
                     <a href="tel:090-846-6758" className='flex items-center gap-4'>
                         <Image src="/Images/AINongtoy/Phone.png" alt="logo" width={logo_size} height={logo_size} />

@@ -10,13 +10,14 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-8 lg:px-20 py-6 bg-[#010312] text-white drop-shadow-lg z-50">
       {/* Logo */}
-      <Image
-        src="/Images/AINongtoy/Logo.png"
-        alt="Logo"
-        width={200} // หรือเปลี่ยนเป็น fill ถ้าต้องการปรับอัตโนมัติ
-        height={100}
-        className="object-contain"
-      />
+      <a href="/"><p className="hidden">a</p>
+        <Image
+          src="/Images/AINongtoy/Logo.png"
+          alt="Logo"
+          width={200} // หรือเปลี่ยนเป็น fill ถ้าต้องการปรับอัตโนมัติ
+          height={100}
+          className="object-contain"
+        /></a>
 
       {/* Menu ปกติ */}
       <ul className={`hidden lg:flex space-x-[80px] text-[16px] font-semibold`}>
