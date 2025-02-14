@@ -18,34 +18,36 @@ export default function Contact() {
                         <form action="" className="flex flex-col w-full h-[60%] mt-[45px]">
                             <div className="grid grid-cols-2 gap-x-4">
                                 <div className="flex flex-col gap-y-1">
-                                    <label htmlFor="" className="text-[16px]">
+                                    <label htmlFor="fName" className="text-[16px]">
                                         First Name
+                                        <input
+                                            className="block px-2 py-2 mb-6 border border-gray-300 rounded-md"
+                                            type="text"
+                                        />
                                     </label>
-                                    <input
-                                        className="block px-2 py-2 mb-6 border border-gray-300 rounded-md"
-                                        type="text"
-                                    />
+
                                 </div>
 
                                 <div className="flex flex-col gap-y-1">
-                                    <label htmlFor="" className="text-[16px]">
+                                    <label htmlFor="lName" className="text-[16px]">
                                         Last Name
+                                        <input
+                                            className="block px-2 py-2 border border-gray-300 rounded-md"
+                                            type="text"
+                                        />
                                     </label>
-                                    <input
-                                        className="block px-2 py-2 border border-gray-300 rounded-md"
-                                        type="text"
-                                    />
+
                                 </div>
                             </div>
 
-                            <label htmlFor="" className="text-[16px]">
+                            <label htmlFor="email" className="text-[16px]">
                                 Email
                                 <input
                                     className="block px-2 py-2 mb-6 border border-gray-300 rounded-md"
                                     type="email"
                                 />
                             </label>
-                            <label htmlFor="" className="text-[16px]">
+                            <label htmlFor="phone" className="text-[16px]">
                                 Phone Number
                                 <input
                                     className="block px-2 py-2 mb-10 border border-gray-300 rounded-md"

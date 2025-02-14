@@ -7,7 +7,7 @@ const Login = () => {
     return (
         <div>
             <Navbar />
-            <div className="w-full h-[1000px]">
+            <div className="w-full h-[90vh]">
                 {/* ภาพพื้นหลัง */}
                 <div className="relative w-full h-full flex items-center justify-center">
                     {" "}
@@ -19,9 +19,9 @@ const Login = () => {
                         className="object-cover"
                         priority
                     />
-                    <div className="absolute border-2 border-red-500 w-[500px] ">
+                    <div className="absolute max-w-[500px] w-full p-5 ">
                         <div>
-                            <h1 className='text-4xl font-semibold mb-4'>Welcome back</h1>
+                            <h1 className='text-4xl font-semibold mb-3'>Welcome back</h1>
                             <p className='font-extralight'>Please enter your details</p>
                         </div>
                         <div>
@@ -33,16 +33,15 @@ const Login = () => {
                                 <input className='block' type="password" id='password' placeholder='Password' />
 
                                 <div className='flex justify-between'>
-                                    <label htmlFor="remember" className='flex items-center gap-2'>
-                                        <input type="checkbox" id='remember' />
+                                    <label htmlFor="remember" className='flex items-center gap-2 cursor-pointer'>
+                                        <input className='scale-125 accent-black ' type="checkbox" id='remember' />
                                         Remember&nbsp;me
                                     </label>
                                     <a href="#" className='text-[#0AACF0]'>Forgot password ?</a>
                                 </div>
                                 <button className='h-[50px]'>Login</button>
-
                                 <div className='flex justify-center'>
-                                    <p>Not registered yet ? <a href="#" className='text-[#0AACF0]'>Sign up</a></p>
+                                    <p>Not registered yet ? <a href="/signup" className='text-[#0AACF0]'>Sign up</a></p>
                                 </div>
                             </form>
                         </div>
