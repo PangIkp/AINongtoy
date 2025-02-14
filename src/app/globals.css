@@ -28,3 +28,8 @@ input {
 button {
   @apply bg-[#0CACF3] text-white hover:bg-[#0578AB] font-bold px-2 rounded-md transition-all;
 }
+
+.favorite_img {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
