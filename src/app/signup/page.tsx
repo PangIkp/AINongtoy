@@ -7,7 +7,7 @@ const Signup = () => {
     return (
         <div>
             <Navbar />
-            <div className="w-full h-[1000px] sm:h-[90vh] mt-[75px]">
+            <div className="w-full h-[900px] sm:h-[100vh] mt-[75px] sm:mt-[0px]">
                 {/* ภาพพื้นหลัง */}
                 <div className="relative w-full h-full flex items-center justify-center">
                     {" "}
@@ -19,13 +19,13 @@ const Signup = () => {
                         className="object-cover"
                         priority
                     />
-                    <div className="absolute max-w-[600px] w-full p-10 ">
+                    <div className="absolute max-w-[600px] w-full p-5 sm:p-20 ">
                         <div>
                             <h1 className='text-4xl font-semibold mb-3'>Create an account</h1>
                             <p className='font-extralight'>Already have an account ? <a href="/login" className='hover:text-[#0AACF0] underline'>Log in</a></p>
                         </div>
                         <div>
-                            <form action="" className='flex flex-col justify-between gap-9 w-full h-[70%] pt-5'>
+                            <form action="" className='flex flex-col justify-between gap-5 w-full h-[70%] pt-5'>
                                 <div className='grid grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 gap-5'>
                                     <label htmlFor="fname">First name
                                         <input type="text" id='fname' />
