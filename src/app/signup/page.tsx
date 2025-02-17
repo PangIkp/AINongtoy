@@ -1,13 +1,15 @@
-import React from 'react'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import Image from 'next/image'
+"use client";
+import React from 'react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import Image from 'next/image';
+import PasswordInput from '../components/PasswordInput';
 
 const Signup = () => {
     return (
         <div>
             <Navbar />
-            <div className="w-full h-[900px] sm:h-[100vh] mt-[75px] sm:mt-[0px]">
+            <div className="w-full h-[90vh] mt-[75px]">
                 {/* ภาพพื้นหลัง */}
                 <div className="relative w-full h-full flex items-center justify-center">
                     {" "}
@@ -49,12 +51,8 @@ const Signup = () => {
                                 </label>
 
                                 <div className='grid grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 gap-5'>
-                                    <label htmlFor="password">Password
-                                        <input type="password" id='password' />
-                                    </label>
-                                    <label htmlFor="cpassword">Confirm password
-                                        <input type="password" id='cpassword' />
-                                    </label>
+                                    <PasswordInput id="password" label="Password" />
+                                    <PasswordInput id="cpassword" label="Confirm password" />
                                 </div>
                                 <button className='h-[40px]'>Login</button>
                             </form>
@@ -64,7 +62,7 @@ const Signup = () => {
             </div>
             <Footer />
         </div>
-    )
-}
+    );
+};
 
-export default Signup
+export default Signup;
