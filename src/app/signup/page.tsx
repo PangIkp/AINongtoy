@@ -29,24 +29,24 @@ const Signup = () => {
                         <div>
                             <form action="" className='flex flex-col justify-between gap-5 w-full h-[70%] pt-5'>
                                 <div className='grid grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 gap-5'>
-                                    <label htmlFor="fname">First name
+                                    <label htmlFor="fname"><p>First name</p>
                                         <input type="text" id='fname' />
                                     </label>
-                                    <label htmlFor="lname">Last name
+                                    <label htmlFor="lname"><p>Last name</p>
                                         <input type="text" id='lname' />
                                     </label>
                                 </div>
 
                                 <div className='grid grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 gap-5'>
-                                    <label htmlFor="username">Username
+                                    <label htmlFor="username"><p>Username</p>
                                         <input type="text" id='username' />
                                     </label>
-                                    <label htmlFor="phone">Phone number
+                                    <label htmlFor="phone"><p>Phone number</p>
                                         <input type="text" id='phone' />
                                     </label>
                                 </div>
 
-                                <label htmlFor="email">Email address
+                                <label htmlFor="email"><p>Email address</p>
                                     <input type="email" id='email' />
                                 </label>
 

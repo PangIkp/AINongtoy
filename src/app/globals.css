@@ -21,8 +21,10 @@ body {
   min-height: 1000px;
 }
 
-input {
-  @apply w-full px-4 py-2 border border-gray-300 text-[14px] text-black font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-[#0AACF0];
+input,
+select,
+textarea {
+  @apply w-full px-4 py-2 border border-gray-300 text-[14px] text-black font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-[#0AACF0] mt-1;
 }
 
 button {

@@ -26,10 +26,10 @@ const Login = () => {
                         </div>
                         <div>
                             <form action="" className='flex flex-col justify-between gap-4 w-full h-[70%]  pt-5'>
-                                <label className='hidden' htmlFor="username">Username</label>
+                                <label className='hidden' htmlFor="username"><p>Username</p></label>
                                 <input className='block' type="text" id='username' placeholder='Username' />
 
-                                <label className='hidden' htmlFor="password">Password</label>
+                                <label className='hidden' htmlFor="password"><p>Password</p></label>
                                 <input className='block' type="password" id='password' placeholder='Password' />
 
                                 <div className='flex justify-between text-[13px]'>
