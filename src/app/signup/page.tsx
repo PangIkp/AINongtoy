@@ -56,7 +56,7 @@ const Signup = () => {
                                         <input type="password" id='cpassword' />
                                     </label>
                                 </div>
-                                <button className='h-[50px]'>Login</button>
+                                <button className='h-[40px]'>Login</button>
                             </form>
                         </div>
                     </div>
