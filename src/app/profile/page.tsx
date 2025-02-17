@@ -15,7 +15,7 @@ export default function Profile() {
     const [totalImages, setTotalImages] = useState(0); // จำนวนรูปภาพทั้งหมด 
     const itemsPerPage = 20; // จำนวนรูปภาพต่อหน้า
     const totalPages = Math.ceil(totalImages / itemsPerPage); // คำนวณจำนวนหน้าทั้งหมด
-    const minHeight = '4*15rem+3*1rem'; // ความสูงขั้นต่ำของ ImageGrid
+    const minHeight = "4*15rem+3*1rem"; // ความสูงขั้นต่ำของ ImageGrid
 
     // ฟังก์ชันสำหรับเปลี่ยนหน้า
     const handlePageChange = (page: number) => {
