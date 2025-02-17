@@ -34,7 +34,7 @@ export default function Profile() {
                         <a className='hover:text-[#0AACF0] transition-all' href="#">Order</a>
                     </section>
 
-                    <ImageGrid />
+                    <ImageGrid maxRows="grid-cols-[repeat(auto-fill,minmax(180px,1fr))] max-h-[calc(4*15rem+3*1rem)] " />
                     <Pagination />
                 </div>
             </div>
