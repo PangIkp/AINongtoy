@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useRef } from "react";
 import Image from "next/image";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -8,57 +9,38 @@ import Contact from "./components/Contact";
 import Partner from "./components/Partner";
 import About from "./components/About";
 import Service from "./components/Service";
+import Filter from "./components/Filter";
 
 export default function Home() {
+const aboutRef = useRef<HTMLDivElement>(null!);
+const partnerRef = useRef<HTMLDivElement>(null!);
+const contactRef = useRef<HTMLDivElement>(null!);
+
+const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
+  if (ref.current) {
+    ref.current.scrollIntoView({ behavior: "smooth" });
+  }
+};
+
   return (
-    <div className="">
-      <Navbar />
+    <div>
+     <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
+
       <div className="relative w-full h-[600px] flex justify-center items-center">
-        {/* ภาพพื้นหลัง */}
-        <Image
-          src="/Images/AINongtoy/mainbg.png"
-          alt="mainbg"
-          fill
-          className="object-cover"
-          priority
-        />
-
-        {/* ข้อความอยู่บนภาพ */}
+        <Image src="/Images/AINongtoy/mainbg.png" alt="mainbg" fill className="object-cover" priority />
         <div className="absolute top-[350px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white font-semibold text-center w-[1050px] max-w-[90%]">
-          <h1 className="text-[clamp(30px,5vw,45px)]">
-            Create Unique Art Toys
-          </h1>
-          <p className="text-[16px] mb-4 text-[#9F9F9F] font-medium">
-            Design, customize, and create Art Toys easily with AI.
-          </p>
-
-          <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 w-[550px] mx-auto max-w-[90%]">
-            {/* Input */}
-            <input
-              type="text"
-              id="keyword-input"
-              name="keywordInput"
-              placeholder="animal, blue and unique"
-              className="px-4 py-2 border border-gray-300 text-[14px] text-black font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-[#0AACF0] w-full h-[50px]"
-            />
-
-            {/* ปุ่ม */}
-            <button className="bg-[#0AACF0] text-[15px] h-[50px] hover:bg-[#0578AB] text-white font-bold px-2 rounded-md transition-all w-full md:w-[220px]">
-              Create Art Toys
-            </button>
-          </div>
-
+          <h1 className="text-[clamp(30px,5vw,45px)]">Create Unique Art Toys</h1>
+          <p className="text-[16px] mb-4 text-[#9F9F9F] font-medium">Design, customize, and create Art Toys easily with AI.</p>
           <ImageSlider />
         </div>
       </div>
 
       <div className="container mx-auto space-y-10">
-        <Service />
-        <About />
-        <Partner />
+        <div ref={aboutRef}><About /></div>
+        <div ref={partnerRef}><Partner /></div>
       </div>
 
-      <Contact />
+      <div ref={contactRef}><Contact /></div>
       <Footer />
     </div>
   );
