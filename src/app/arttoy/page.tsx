@@ -13,10 +13,10 @@ export default function Arttoy() {
   const partnerRef = useRef<HTMLDivElement>(null!);
   const contactRef = useRef<HTMLDivElement>(null!);
 
-  const [prompt, setPrompt] = useState("cat anime");
+  const [prompt, setPrompt] = useState("disney princess 3d");
 
   // Generate 20 images dynamically
-  const imageUrls = Array.from({ length: 20 }, (_, i) =>
+  const imageUrls = Array.from({ length: 10 }, (_, i) =>
     usePollinationsImage(prompt, {
       width: 300,
       height: 300,

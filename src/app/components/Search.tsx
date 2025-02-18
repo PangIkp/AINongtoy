@@ -10,7 +10,7 @@ export default function Search() {
         <input
           type="text"
           placeholder="Enter arttoy name"
-          className="p-2 bg-transparent border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1"
+          className="p-2 bg-transparent  text-white border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1"
         />
       </div>
       {/* กล่อง 2 */}
@@ -19,7 +19,7 @@ export default function Search() {
         <input
           type="text"
           placeholder="animal, blue and unique"
-          className="p-2 bg-transparent border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1"
+          className="p-2 bg-transparent text-white border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1"
         />
       </div>
       {/* ปุ่ม Search */}
