@@ -1,11 +1,22 @@
-import React from 'react'
+"use client";
+import React from 'react';
+import { useRef } from "react";
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export default function OrderDetail() {
+    const aboutRef = useRef<HTMLDivElement>(null!);
+    const partnerRef = useRef<HTMLDivElement>(null!);
+    const contactRef = useRef<HTMLDivElement>(null!);
+
+    const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
+        if (ref.current) {
+            ref.current.scrollIntoView({ behavior: "smooth" });
+        }
+    };
     return (
         <div>
-            <Navbar />
+            <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
             <div className="w-full h-[90vh] mt-[5rem] place-items-center border border-white">
                 <div className="max-w-[1024px] w-full h-full border border-white pt-24">
                     <div className="border border-white">

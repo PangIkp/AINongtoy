@@ -1,7 +1,6 @@
 "use client";
-
 // นำเข้า React และ useState จาก React
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 // นำเข้าคอมโพเนนต์ Navbar, Footer, ImageGrid, และ Pagination
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -10,6 +9,12 @@ import Pagination from '../components/Pagination';
 
 // ฟังก์ชันหลักสำหรับหน้าโปรไฟล์
 export default function Profile() {
+    const aboutRef = useRef<HTMLDivElement>(null!);
+    const partnerRef = useRef<HTMLDivElement>(null!);
+    const contactRef = useRef<HTMLDivElement>(null!);
+
+
+
     // สร้าง state สำหรับจัดการหน้าปัจจุบันและจำนวนรูปภาพทั้งหมด
     const [currentPage, setCurrentPage] = useState(1);
     const [totalImages, setTotalImages] = useState(0); // จำนวนรูปภาพทั้งหมด 
@@ -22,9 +27,15 @@ export default function Profile() {
         setCurrentPage(page);
     };
 
+    const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
+        if (ref.current) {
+            ref.current.scrollIntoView({ behavior: "smooth" });
+        }
+    };
+
     return (
         <div>
-            <Navbar /> {/* แถบเมนูด้านบน */}
+            <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
             <div className='w-full place-content-center place-items-center h-[235px] mt-[5rem] bg-black'>
                 <h1 className='text-4xl font-semibold mb-3'>My Profile</h1>
             </div>

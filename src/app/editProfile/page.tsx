@@ -1,11 +1,22 @@
-import React from 'react'
+"use client";
+import React from 'react';
+import { useRef } from "react";
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export default function EditProfile() {
+    const aboutRef = useRef<HTMLDivElement>(null!);
+    const partnerRef = useRef<HTMLDivElement>(null!);
+    const contactRef = useRef<HTMLDivElement>(null!);
+
+    const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
+        if (ref.current) {
+            ref.current.scrollIntoView({ behavior: "smooth" });
+        }
+    };
     return (
         <div>
-            <Navbar />
+            <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
             <div className='w-full place-content-center place-items-center h-[235px] mt-[5rem] bg-black'>
                 <h1 className='text-4xl font-semibold mb-3'>My Profile</h1>
             </div>

@@ -1,12 +1,23 @@
-import React from 'react'
+"use client";
+import React from 'react';
+import { useRef } from "react";
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Image from 'next/image'
 
 const Login = () => {
+    const aboutRef = useRef<HTMLDivElement>(null!);
+    const partnerRef = useRef<HTMLDivElement>(null!);
+    const contactRef = useRef<HTMLDivElement>(null!);
+
+    const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
+        if (ref.current) {
+            ref.current.scrollIntoView({ behavior: "smooth" });
+        }
+    };
     return (
         <div>
-            <Navbar />
+            <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
             <div className="w-full h-[90vh] mt-[5rem]">
                 {/* ภาพพื้นหลัง */}
                 <div className="relative w-full h-full flex items-center justify-center">
