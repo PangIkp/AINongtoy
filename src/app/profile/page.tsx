@@ -1,6 +1,6 @@
 "use client";
 // นำเข้า React และ useState จาก React
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 // นำเข้าคอมโพเนนต์ Navbar, Footer, ImageGrid, และ Pagination
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -13,14 +13,19 @@ export default function Profile() {
     const partnerRef = useRef<HTMLDivElement>(null!);
     const contactRef = useRef<HTMLDivElement>(null!);
 
-
-
     // สร้าง state สำหรับจัดการหน้าปัจจุบันและจำนวนรูปภาพทั้งหมด
     const [currentPage, setCurrentPage] = useState(1);
     const [totalImages, setTotalImages] = useState(0); // จำนวนรูปภาพทั้งหมด 
     const itemsPerPage = 20; // จำนวนรูปภาพต่อหน้า
     const totalPages = Math.ceil(totalImages / itemsPerPage); // คำนวณจำนวนหน้าทั้งหมด
     const minHeight = "4*15rem+3*1rem"; // ความสูงขั้นต่ำของ ImageGrid
+
+    // สร้าง state สำหรับตรวจสอบว่ารันบน client หรือไม่
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     // ฟังก์ชันสำหรับเปลี่ยนหน้า
     const handlePageChange = (page: number) => {
@@ -32,6 +37,10 @@ export default function Profile() {
             ref.current.scrollIntoView({ behavior: "smooth" });
         }
     };
+
+    if (!isClient) {
+        return null; // หรือแสดง loading spinner
+    }
 
     return (
         <div>

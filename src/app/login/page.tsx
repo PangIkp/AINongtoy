@@ -1,11 +1,16 @@
 "use client";
-import React from 'react';
-import { useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Image from 'next/image'
 
 const Login = () => {
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
     const aboutRef = useRef<HTMLDivElement>(null!);
     const partnerRef = useRef<HTMLDivElement>(null!);
     const contactRef = useRef<HTMLDivElement>(null!);
@@ -15,6 +20,7 @@ const Login = () => {
             ref.current.scrollIntoView({ behavior: "smooth" });
         }
     };
+
     return (
         <div>
             <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
@@ -23,13 +29,15 @@ const Login = () => {
                 <div className="relative w-full h-full flex items-center justify-center">
                     {" "}
                     {/* กำหนดขนาดสูง */}
-                    <Image
-                        src="/Images/AINongtoy/mainbg.png"
-                        alt="mainbg"
-                        fill
-                        className="object-cover"
-                        priority
-                    />
+                    {isClient && (
+                        <Image
+                            src="/Images/AINongtoy/mainbg.png"
+                            alt="mainbg"
+                            fill
+                            className="object-cover"
+                            priority
+                        />
+                    )}
                     <div className="absolute max-w-[375px] w-full p-4">
                         <div>
                             <h1 className='text-4xl font-semibold mb-3'>Welcome back</h1>
