@@ -6,13 +6,12 @@ interface ImageGridProps {
     currentPage: number;
     itemsPerPage: number;
     setTotalImages: (total: number) => void;
-    minHeight?: string;
 }
 
 // ประกาศคอมโพเนนต์ ImageGrid โดยใช้ React.FC และรับ props ตามที่กำหนดใน ImageGridProps
-const ImageGrid: React.FC<ImageGridProps> = ({ maxRows, currentPage, itemsPerPage, setTotalImages, minHeight }) => {
+const ImageGrid: React.FC<ImageGridProps> = ({ maxRows, currentPage, itemsPerPage, setTotalImages }) => {
     // สร้างอาร์เรย์ images ที่มีความยาว 87 โดยแต่ละรายการในอาร์เรย์จะเป็น URL ของภาพ
-    const images = Array.from({ length: 87 }).map((_, index) => `/Images/AINongtoy/WhiteMiku.png`);
+    const images = Array.from({ length: 127 }).map((_, index) => `/Images/AINongtoy/WhiteMiku.png`);
 
     // ใช้ useEffect เพื่อเรียกฟังก์ชัน setTotalImages และส่งจำนวนภาพทั้งหมด (187) ไปยังคอมโพเนนต์พาเรนต์เมื่อคอมโพเนนต์นี้ถูกเรนเดอร์
     useEffect(() => {
@@ -26,7 +25,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({ maxRows, currentPage, itemsPerPag
 
     return (
         // เรนเดอร์ภาพในรูปแบบกริด โดยใช้ map เพื่อสร้าง <img> สำหรับแต่ละภาพใน currentImages
-        <section className={`min-h-[calc(${minHeight})] max-h-[calc(${minHeight})]`}>
+        <section className={`min-h-[calc(4*15rem+3*1rem)]`}>
             <div className={`grid gap-4 ${maxRows} overflow-hidden`}>
                 {currentImages.map((src, index) => (
                     <img key={index} className='w-full h-60 object-scale-down' src={src} alt="" />

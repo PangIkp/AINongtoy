@@ -9,7 +9,7 @@ const Signup = () => {
     return (
         <div>
             <Navbar />
-            <div className="w-full h-[90vh] mt-[75px]">
+            <div className="w-full h-[90vh] mt-[5rem]">
                 {/* ภาพพื้นหลัง */}
                 <div className="relative w-full h-full flex items-center justify-center">
                     {" "}

@@ -25,7 +25,7 @@ export default function Profile() {
     return (
         <div>
             <Navbar /> {/* แถบเมนูด้านบน */}
-            <div className='w-full place-content-center place-items-center h-[235px] mt-[75px] bg-black'>
+            <div className='w-full place-content-center place-items-center h-[235px] mt-[5rem] bg-black'>
                 <h1 className='text-4xl font-semibold mb-3'>My Profile</h1>
             </div>
             <div className='w-full place-items-center'>
@@ -52,8 +52,7 @@ export default function Profile() {
                     </section>
 
                     <ImageGrid
-                        maxRows="grid-cols-[repeat(auto-fill,minmax(180px,1fr))] "
-                        minHeight={minHeight}
+                        maxRows="grid-cols-[repeat(auto-fill,minmax(180px,1fr))] max-h-[calc(4*15rem+3*1rem)]"
                         currentPage={currentPage}
                         itemsPerPage={itemsPerPage}
                         setTotalImages={setTotalImages}

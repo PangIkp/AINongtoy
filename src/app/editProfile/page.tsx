@@ -6,7 +6,7 @@ export default function EditProfile() {
     return (
         <div>
             <Navbar />
-            <div className='w-full place-content-center place-items-center h-[235px] mt-[75px] bg-black'>
+            <div className='w-full place-content-center place-items-center h-[235px] mt-[5rem] bg-black'>
                 <h1 className='text-4xl font-semibold mb-3'>My Profile</h1>
             </div>
             <div className='w-full place-items-center'>
