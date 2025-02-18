@@ -35,9 +35,11 @@ const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
         </div>
       </div>
 
-      <div className="container mx-auto space-y-10">
+      <div className="container mx-auto">
         <div ref={aboutRef}><About /></div>
+        <div><Service /></div>
         <div ref={partnerRef}><Partner /></div>
+        
       </div>
 
       <div ref={contactRef}><Contact /></div>

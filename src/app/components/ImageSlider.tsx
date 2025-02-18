@@ -3,11 +3,11 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 // import useScreen from 'use-screen';
 const images = [
+  "/Images/AINongtoy/Princess.jpg",
+  "/Images/AINongtoy/Rabbit.jpg",
   "/Images/AINongtoy/WhiteMiku.png",
-  "/Images/AINongtoy/WhiteMiku.png",
-  "/Images/AINongtoy/WhiteMiku.png",
-  "/Images/AINongtoy/WhiteMiku.png",
-  "/Images/AINongtoy/WhiteMiku.png",
+  "/Images/AINongtoy/Cutegirl.jpg",
+  "/Images/AINongtoy/Anime.jpg",
 ];
 
 export default function ImageSlider() {
