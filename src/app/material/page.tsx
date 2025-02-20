@@ -11,6 +11,7 @@ export default function Material() {
   const partnerRef = useRef<HTMLDivElement>(null!);
   const contactRef = useRef<HTMLDivElement>(null!);
   const [isOpen, setIsOpen] = useState(false);
+  const [arttoyName, setArttoyName] = useState("");
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
@@ -45,7 +46,7 @@ export default function Material() {
         </div>
 
         <div className="mt-10 mb-10">
-          <Config />
+        <Config/>
         </div>
       </div>
 

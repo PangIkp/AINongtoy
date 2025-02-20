@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useMainStore } from "@/mainstore";
 
 type SearchProps = {
   setPrompt: (value: string) => void; // ระบุว่า setPrompt รับ string
@@ -6,6 +7,9 @@ type SearchProps = {
 
 export default function Search({ setPrompt }: SearchProps) {
   const [inputValue, setInputValue] = useState("");
+  const { setArtToyData } = useMainStore();
+  const [arttoyName, setArttoyName] = useState("");
+  const [keyword, setKeyword] = useState("");
 
   const handleSearch = () => {
     if (inputValue.trim() !== "") {
@@ -21,6 +25,8 @@ export default function Search({ setPrompt }: SearchProps) {
           type="text"
           placeholder="Enter art toy name"
           className="p-2 bg-transparent text-white border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1"
+          value={arttoyName}
+          onChange={(e) => setArttoyName(e.target.value)}
         />
       </div>
       <div className="flex sm:flex-row flex-col items-start sm:items-center gap-2">
