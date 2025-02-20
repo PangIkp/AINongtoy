@@ -47,8 +47,14 @@ export default function Payment() {
                             </section>
 
                             <QRCodeSection />
+
                         </section>
                     </form>
+                    <div className='flex flex-col sm:flex-row justify-between gap-4'>
+                        <button className='w-full sm:w-1/2 bg-[#51536D] h-[40px]'>Cancel</button>
+                        <button className='w-full sm:w-1/2 h-[40px]'>Confirm</button>
+                    </div>
+
                 </div>
             </main>
             <Footer />

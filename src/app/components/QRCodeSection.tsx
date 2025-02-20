@@ -49,7 +49,7 @@ const QRCodeSection: React.FC = () => {
                 {uploadedImage && (
                     <div className='relative w-full h-full'>
                         <img className='w-full max-h-[200px] min-h-[200px]  object-contain rounded-xl cursor-pointer' src={uploadedImage} alt="Uploaded QR Code" onClick={handleImageClick} />
-                        <button className='absolute top-3 right-2 text-black hover:bg-red-500 bg-transparent text-sm font-medium' onClick={handleDeleteImage}>
+                        <button className='absolute top-3 right-2 text-white bg-red-500 text-sm font-medium' onClick={handleDeleteImage}>
                             X
                         </button>
                         <label htmlFor="upload" className='hidden'>a</label>
