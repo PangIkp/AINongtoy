@@ -7,6 +7,7 @@ import Filter from "../components/Filter";
 import ArttoyCard from "../components/ArttoyCard";
 import Search from "../components/Search";
 import { usePollinationsImage } from "@pollinations/react";
+import { useMainStore } from "@/mainstore";
 
 export default function Arttoy() {
   const aboutRef = useRef<HTMLDivElement>(null!);
@@ -17,11 +18,14 @@ export default function Arttoy() {
   const [searchInput, setSearchInput] = useState("");
   const [finalPrompt, setFinalPrompt] = useState("");
   const [loadedImages, setLoadedImages] = useState(0);
+  const { setArtToyData } = useMainStore();
   const totalImages = 10;
 
   // ✅ Update prompt when Search or Filter changes
   useEffect(() => {
-    setFinalPrompt(`art toy${searchInput} ${selectedFilters.join(", ")}`.trim());
+    const prompt = `art toy${searchInput} ${selectedFilters.join(", ")}`.trim()
+    setFinalPrompt(prompt);
+    setArtToyData({prompt: prompt});
     setLoadedImages(0); // Reset loading state when new images are fetched
   }, [searchInput, selectedFilters]);
 

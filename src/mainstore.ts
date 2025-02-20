@@ -1,12 +1,11 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-
 interface MainStore {
   favorites: { [key: string]: boolean }; // เก็บสถานะหัวใจของแต่ละรูป
   toggleFavorite: (imageUrl: string) => void;
 
-  artToyData: string; // ✅ ใช้ artToyData เป็นหลัก
-  setArtToyData: (name: string) => void;
+  artToyData: { name: string; prompt: string }; // ✅ ชัดเจนขึ้น
+  setArtToyData: (data: Partial<{ name: string; prompt: string }>) => void; // ✅ อัปเดตเฉพาะบางค่า
 }
 
 // Zustand Store พร้อม persist
@@ -22,8 +21,15 @@ export const useMainStore = create<MainStore>()(
           },
         })),
 
-      artToyData: "Unnamed Art Toy", // ✅ ตั้งค่าเริ่มต้น
-      setArtToyData: (name) => set({ artToyData: name }),
+      artToyData: { name: "Unnamed Art Toy", prompt: "art toy" }, // ✅ ตั้งค่าเริ่มต้นให้ตรงกับโครงสร้างใหม่
+      setArtToyData: (data: Partial<{ name: string; prompt: string }>) =>
+        set((prevState) => ({
+          artToyData: {
+            ...prevState.artToyData, // คงค่าที่มีอยู่เดิม
+            ...data, // อัปเดตเฉพาะค่าที่ถูกส่งเข้ามา
+          },
+        })),
+      
     }),
     {
       name: "mainstore-data",

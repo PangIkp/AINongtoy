@@ -14,9 +14,11 @@ export default function Search({ setPrompt }: SearchProps) {
   const handleSearch = () => {
     if (inputValue.trim() !== "") {
       setPrompt(inputValue); // ส่งค่า input ไปที่ Arttoy
+      setArtToyData({prompt: inputValue});
     }
     if (arttoyName.trim() !== "") {
-      setArtToyData(arttoyName); // บันทึกค่า arttoyName ลงใน Zustand
+      setArtToyData({name: arttoyName}); // บันทึกค่า arttoyName ลงใน Zustand
+      
     }
   };
 

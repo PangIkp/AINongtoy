@@ -17,12 +17,13 @@ const Config = () => {
 
   // สร้าง state สำหรับชื่อ Art Toy
   const [artToyName, setArtToyNameLocal] = useState(() => {
-    return localStorage.getItem("artToyName") || artToyData;
+    // return localStorage.getItem("artToyName") || artToyData.name;
+    return artToyData.name;
   });
 
-  useEffect(() => {
-    localStorage.setItem("artToyName", artToyName);
-  }, [artToyName]);
+  // useEffect(() => {
+  //   localStorage.setItem("artToyName", artToyName);
+  // }, [artToyName]);
   const [isEditing, setIsEditing] = useState(false);
 
   const totalPrice = quantity * pricePerUnit;
@@ -40,7 +41,7 @@ const Config = () => {
     if ("key" in event && event.key !== "Enter") return; // เช็คว่าเป็น Key Event และต้องเป็น Enter เท่านั้น
 
     setIsEditing(false);
-    setArtToyData(artToyName); // ✅ อัปเดต Zustand
+    setArtToyData({name : artToyName}); // ✅ อัปเดต Zustand
   };
 
   return (
@@ -77,7 +78,7 @@ const Config = () => {
                 </button>
               )}
             </div>
-            <p className="text-sm text-gray-400">animal, blue and unique</p>
+            <p className="text-sm text-gray-400">{artToyData.prompt}</p>
           </div>
         </div>
 
