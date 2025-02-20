@@ -15,6 +15,9 @@ export default function Search({ setPrompt }: SearchProps) {
     if (inputValue.trim() !== "") {
       setPrompt(inputValue); // ส่งค่า input ไปที่ Arttoy
     }
+    if (arttoyName.trim() !== "") {
+      setArtToyData(arttoyName); // บันทึกค่า arttoyName ลงใน Zustand
+    }
   };
 
   return (

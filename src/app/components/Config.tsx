@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useMainStore } from "@/mainstore";
 import { useSearchParams } from "next/navigation";
 
 const Config = () => {
@@ -9,10 +10,38 @@ const Config = () => {
   const [quantity, setQuantity] = useState(3);
   const pricePerUnit = 500; // ปรับราคาได้ตามต้องการ
   const searchParams = useSearchParams();
-  const imageUrl = searchParams.get("image") || "/Images/AINongtoy/WhiteMiku.png";
+  const imageUrl =
+    searchParams.get("image") || "/Images/AINongtoy/WhiteMiku.png";
 
+  const { artToyData, setArtToyData } = useMainStore();
+
+  // สร้าง state สำหรับชื่อ Art Toy
+  const [artToyName, setArtToyNameLocal] = useState(() => {
+    return localStorage.getItem("artToyName") || artToyData;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("artToyName", artToyName);
+  }, [artToyName]);
+  const [isEditing, setIsEditing] = useState(false);
 
   const totalPrice = quantity * pricePerUnit;
+
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setArtToyNameLocal(event.target.value);
+  };
+
+  // ✅ กด Enter หรือคลิกนอก input เพื่อบันทึกค่าใน Zustand
+  const handleBlurOrEnter = (
+    event:
+      | React.FocusEvent<HTMLInputElement>
+      | React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if ("key" in event && event.key !== "Enter") return; // เช็คว่าเป็น Key Event และต้องเป็น Enter เท่านั้น
+
+    setIsEditing(false);
+    setArtToyData(artToyName); // ✅ อัปเดต Zustand
+  };
 
   return (
     <div className="w-full h-full text-white">
@@ -20,16 +49,33 @@ const Config = () => {
         {/* Left - Image */}
         <div className="md:w-full lg:w-1/2">
           <img
-           src={imageUrl} 
-           alt="Selected Art Toy"
+            src={imageUrl}
+            alt="Selected Art Toy"
             className="rounded-lg w-full"
           />
           <div className="mt-8 mb-6 p-2 w-full rounded-lg border border-gray-500">
             <div className="flex justify-between">
-              <p className="font-semibold">Moon Royal</p>
-              <button className="text-[13px] p-0 bg-transparent hover:bg-transparent font-medium text-gray-400 hover:underline">
-                Edit
-              </button>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={artToyName}
+                  onChange={handleNameChange}
+                  onBlur={handleBlurOrEnter}
+                  onKeyDown={handleBlurOrEnter}
+                  autoFocus
+                  className="bg-transparent border border-gray-400 rounded px-2 py-1 w-full text-white"
+                />
+              ) : (
+                <p className="font-semibold">{artToyName}</p>
+              )}
+              {!isEditing && (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="text-[13px] p-0 bg-transparent hover:bg-transparent font-medium text-gray-400 hover:underline"
+                >
+                  Edit
+                </button>
+              )}
             </div>
             <p className="text-sm text-gray-400">animal, blue and unique</p>
           </div>
@@ -124,8 +170,6 @@ const Config = () => {
               Total price : {totalPrice.toLocaleString()} Baht
             </p>
           </div>
-
-          {/* Total Price */}
 
           {/* Buttons */}
           <div className="flex justify-between mt-4 gap-4">
