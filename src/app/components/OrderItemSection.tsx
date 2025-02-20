@@ -7,7 +7,7 @@ interface OrderItemSectionProps {
     itemsPerPage: number;
 }
 
-const TOTAL_ITEMS = 33; // กำหนดค่าคงที่สำหรับจำนวนรายการทั้งหมด
+const TOTAL_ITEMS = 6; // กำหนดค่าคงที่สำหรับจำนวนรายการทั้งหมด
 
 const OrderItemSection: React.FC<OrderItemSectionProps> = ({ setTotalItems, currentPage, itemsPerPage }) => {
     const orderItems = Array.from({ length: TOTAL_ITEMS }).map((_, index) => ({
