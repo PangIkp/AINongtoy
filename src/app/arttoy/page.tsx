@@ -12,17 +12,20 @@ export default function Arttoy() {
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);
   const contactRef = useRef<HTMLDivElement>(null!);
-  
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [searchInput, setSearchInput] = useState("art toy");
-  const [finalPrompt, setFinalPrompt] = useState("");
 
-  // ✅ อัปเดต prompt เมื่อ Search หรือ Filter เปลี่ยน
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [searchInput, setSearchInput] = useState("");
+  const [finalPrompt, setFinalPrompt] = useState("");
+  const [loadedImages, setLoadedImages] = useState(0);
+  const totalImages = 10;
+
+  // ✅ Update prompt when Search or Filter changes
   useEffect(() => {
-    setFinalPrompt(`${searchInput} ${selectedFilters.join(", ")}`.trim());
+    setFinalPrompt(`art toy${searchInput} ${selectedFilters.join(", ")}`.trim());
+    setLoadedImages(0); // Reset loading state when new images are fetched
   }, [searchInput, selectedFilters]);
 
-  const imageUrls = Array.from({ length: 10 }, (_, i) =>
+  const imageUrls = Array.from({ length: totalImages }, (_, i) =>
     usePollinationsImage(finalPrompt, {
       width: 300,
       height: 300,
@@ -31,6 +34,10 @@ export default function Arttoy() {
       nologo: true,
     })
   );
+
+  const handleImageLoad = () => {
+    setLoadedImages((prev) => prev + 1);
+  };
 
   return (
     <div>
@@ -41,34 +48,39 @@ export default function Arttoy() {
         contactRef={contactRef}
       />
 
-<div className="relative mt-20 w-full h-[256px] flex justify-center items-center">
-  {/* ภาพพื้นหลัง */}
-  <Image
-    src="/Images/AINongtoy/mainbg.png"
-    alt="mainbg"
-    fill
-    className="object-cover"
-    priority
-  />
+      <div className="relative mt-20 w-full h-[256px] flex justify-center items-center">
+        {/* Background Image */}
+        <Image
+          src="/Images/AINongtoy/mainbg.png"
+          alt="mainbg"
+          fill
+          className="object-cover"
+          priority
+        />
 
-  {/* ข้อความตรงกลาง */}
-  <div className="absolute text-white text-[clamp(30px,5vw,45px)] font-bold flex flex-col items-center text-center">
-    <p>Create Unique Art Toys – Turn your ideas</p>
-    <p>ideas into 3D reality with AI</p>
-  </div>
-</div>
+        {/* Center Text */}
+        <div className="absolute text-white text-[clamp(30px,5vw,45px)] font-semibold flex flex-col items-center text-center">
+          <p>Create Unique Art Toys – Turn your ideas</p>
+          <p>ideas into 3D reality with AI</p>
+        </div>
+      </div>
 
       <div className="flex justify-between pl-10">
-        {/* Filter อัปเดต selectedFilters */}
-        <Filter onFilterChange={setSelectedFilters} />  
+        {/* Filter updates selectedFilters */}
+        <Filter onFilterChange={setSelectedFilters} />
 
         <div className="bg-[#202133] w-full">
-          {/* Search อัปเดต searchInput */}
+          {/* Search updates searchInput */}
           <Search setPrompt={setSearchInput} />
-          
+
           <div className="p-10">
-            {/* แสดงผลภาพที่สร้างจาก finalPrompt */}
-            <ArttoyCard imageUrls={imageUrls} />
+            {/* Show loading indicator until all images are loaded */}
+            {loadedImages < totalImages &&   (
+              <p className="text-white text-center">Loading images... ({loadedImages}/{totalImages})</p>
+            )}
+
+            {/* Render images with onLoad handler */}
+            <ArttoyCard imageUrls={imageUrls} onImageLoad={handleImageLoad} isLoading={loadedImages < totalImages}/>
           </div>
         </div>
       </div>

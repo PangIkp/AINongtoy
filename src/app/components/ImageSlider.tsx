@@ -56,7 +56,7 @@ export default function ImageSlider() {
         className={`${
           isMobile
             ? "flex items-center justify-center overflow-x-auto whitespace-nowrap gap-4 w-[360px]" // แสดง 2 ภาพและเลื่อนได้
-            : "flex items-center justify-center grid grid-cols-5 gap-4 w-[914px] h-[200px]" // แสดง 5 ภาพเต็ม ไม่ต้องเลื่อน
+            : "grid grid-cols-5 gap-4 w-[914px] h-[200px]" // แสดง 5 ภาพเต็ม ไม่ต้องเลื่อน
         }`}
       >
         {images
