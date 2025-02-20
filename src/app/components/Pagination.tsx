@@ -34,6 +34,11 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, onPage
         return pageNumbers;
     };
 
+    // ถ้าจำนวนหน้ามีเพียงหน้าเดียว ไม่ต้องแสดง Pagination
+    if (totalPages <= 1) {
+        return null;
+    }
+
     return (
         // เรนเดอร์ Pagination โดยมีปุ่มสำหรับเปลี่ยนหน้าและแสดงหมายเลขหน้า
         <section className='place-content-center place-items-center'>
