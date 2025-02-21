@@ -56,9 +56,9 @@ export default function Order() {
                         </div>
                     </section>
                     <section className='flex gap-10 font-semibold'>
-                        <a className='hover:text-[#0AACF0] transition-all' href="#">Favorite</a>
-                        <a className='hover:text-[#0AACF0] transition-all' href="#">Art Toy Config</a>
-                        <a className='text-[#0AACF0] underline' href="#">Order</a>
+                        <a className='hover:text-[#0AACF0] transition-all' href="/profile">Favorite</a>
+                        <a className='hover:text-[#0AACF0] transition-all' href="/configuration">Art Toy Config</a>
+                        <a className='text-[#0AACF0] underline' href="/order">Order</a>
                     </section>
                     <OrderItemSection setTotalItems={setTotalItems} currentPage={currentPage} itemsPerPage={itemsPerPage} />
                     <Pagination

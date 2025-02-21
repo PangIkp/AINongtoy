@@ -21,9 +21,6 @@ const Config = () => {
     return artToyData.name;
   });
 
-  // useEffect(() => {
-  //   localStorage.setItem("artToyName", artToyName);
-  // }, [artToyName]);
   const [isEditing, setIsEditing] = useState(false);
 
   const totalPrice = quantity * pricePerUnit;
@@ -41,7 +38,7 @@ const Config = () => {
     if ("key" in event && event.key !== "Enter") return; // เช็คว่าเป็น Key Event และต้องเป็น Enter เท่านั้น
 
     setIsEditing(false);
-    setArtToyData({name : artToyName}); // ✅ อัปเดต Zustand
+    setArtToyData({ name: artToyName }); // ✅ อัปเดต Zustand
   };
 
   return (

@@ -5,8 +5,21 @@ interface MainStore {
   toggleFavorite: (imageUrl: string) => void;
 
   artToyData: { name: string; prompt: string }; // ✅ ชัดเจนขึ้น
-  setArtToyData: (data: Partial<{ name: string; prompt: string }>) => void; // ✅ อัปเดตเฉพาะบางค่า
+  setArtToyData: (data: Partial<{ name: string; prompt: string }>) => void;
+
+  selecting: {
+    [artToyName: string]: {
+      size: string;
+      material: string;
+      painting: string;
+      assembly: string;
+      quantity: number;
+    };
+  };
+  setSelecting: (artToyName: string, data: Partial<MainStore["selecting"][string]>) => void;
 }
+
+
 
 // Zustand Store พร้อม persist
 export const useMainStore = create<MainStore>()(
@@ -29,6 +42,18 @@ export const useMainStore = create<MainStore>()(
             ...data, // อัปเดตเฉพาะค่าที่ถูกส่งเข้ามา
           },
         })),
+
+        selecting: {}, // เก็บข้อมูลเป็น object ที่แยกตามชื่อ Art Toy
+        setSelecting: (artToyName, data) =>
+          set((prevState) => ({
+            selecting: {
+              ...prevState.selecting,
+              [artToyName]: {
+                ...prevState.selecting[artToyName], // คงค่าที่มีอยู่
+                ...data, // อัปเดตค่าที่เปลี่ยน
+              },
+            },
+          })),
       
     }),
     {
