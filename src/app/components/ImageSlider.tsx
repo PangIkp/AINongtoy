@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 // import useScreen from 'use-screen';
@@ -32,14 +32,14 @@ export default function ImageSlider() {
       return prev > 0 ? prev - 1 : images.length - 1; // Desktop: วนกลับตามปกติ
     });
   };
-  
+
   const handleNext = () => {
     setActiveIndex((prev) => {
       if (isMobile) return prev === 1 ? 0 : 1; // Mobile: วนกลับระหว่าง 0 ↔ 1
       return prev < images.length - 1 ? prev + 1 : 0; // Desktop: วนกลับตามปกติ
     });
   };
-  
+
 
   return (
     <div className="flex items-center justify-center gap-4 py-8">
@@ -47,7 +47,7 @@ export default function ImageSlider() {
       <button
         className="p-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-all"
         onClick={handlePrev}
-      >
+      > <p className="hidden">a</p>
         <ChevronLeft size={24} />
       </button>
 
@@ -66,9 +66,8 @@ export default function ImageSlider() {
             return (
               <motion.div
                 key={index}
-                className={`relative rounded-lg overflow-hidden transition-all duration-500 ${
-                  isActive ? "w-[170px] h-[200px] opacity-100" : "w-[160px] h-[190px] opacity-70"
-                }`}
+                className={`relative rounded-lg overflow-hidden transition-all duration-500 ${isActive ? "w-[170px] h-[200px] opacity-100" : "w-[160px] h-[190px] opacity-70"
+                  }`}
               >
                 <img
                   src={src}
@@ -87,7 +86,7 @@ export default function ImageSlider() {
       <button
         className="p-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-all"
         onClick={handleNext}
-      >
+      > <p className="hidden">a</p>
         <ChevronRight size={24} />
       </button>
     </div>

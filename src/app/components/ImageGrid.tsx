@@ -10,8 +10,10 @@ interface ImageGridProps {
 
 // ประกาศคอมโพเนนต์ ImageGrid โดยใช้ React.FC และรับ props ตามที่กำหนดใน ImageGridProps
 const ImageGrid: React.FC<ImageGridProps> = ({ maxRows, currentPage, itemsPerPage, setTotalImages }) => {
-    // สร้างอาร์เรย์ images ที่มีความยาว 87 โดยแต่ละรายการในอาร์เรย์จะเป็น URL ของภาพ
-    const images = Array.from({ length: 127 }).map((_, index) => `/Images/AINongtoy/WhiteMiku.png`);
+    // ประกาศตัวแปร totalImages เพื่อกำหนดจำนวนรูปภาพ
+    const totalImages = 127;
+    // สร้างอาร์เรย์ images ที่มีความยาวตามตัวแปร totalImages โดยแต่ละรายการในอาร์เรย์จะเป็น URL ของภาพ
+    const images = Array.from({ length: totalImages }).map((_, index) => `/Images/AINongtoy/WhiteMiku.png`);
 
     // ใช้ useEffect เพื่อเรียกฟังก์ชัน setTotalImages และส่งจำนวนภาพทั้งหมด (187) ไปยังคอมโพเนนต์พาเรนต์เมื่อคอมโพเนนต์นี้ถูกเรนเดอร์
     useEffect(() => {

@@ -1,5 +1,4 @@
 "use client";
-import { useRouter, usePathname } from "next/navigation";
 import { useRef } from "react";
 import Image from "next/image";
 import Navbar from "./components/Navbar";
@@ -9,22 +8,21 @@ import Contact from "./components/Contact";
 import Partner from "./components/Partner";
 import About from "./components/About";
 import Service from "./components/Service";
-import Filter from "./components/Filter";
 
 export default function Home() {
-const aboutRef = useRef<HTMLDivElement>(null!);
-const partnerRef = useRef<HTMLDivElement>(null!);
-const contactRef = useRef<HTMLDivElement>(null!);
+  const aboutRef = useRef<HTMLDivElement>(null!);
+  const partnerRef = useRef<HTMLDivElement>(null!);
+  const contactRef = useRef<HTMLDivElement>(null!);
 
-const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
-  if (ref.current) {
-    ref.current.scrollIntoView({ behavior: "smooth" });
-  }
-};
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <div>
-     <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
+      <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
 
       <div className="relative w-full h-[600px] flex justify-center items-center">
         <Image src="/Images/AINongtoy/mainbg.png" alt="mainbg" fill className="object-cover" priority />
@@ -39,7 +37,7 @@ const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
         <div ref={aboutRef}><About /></div>
         <div><Service /></div>
         <div ref={partnerRef}><Partner /></div>
-        
+
       </div>
 
       <div ref={contactRef}><Contact /></div>
