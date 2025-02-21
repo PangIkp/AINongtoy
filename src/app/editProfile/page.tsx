@@ -1,8 +1,13 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { useRef } from "react";
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import Province from '../components/Province';
+import District from '../components/District';
+import Subdistrict from '../components/Subdistrict';
+import PostalCode from '../components/PostalCode';
+import { IoIosAddCircle } from "react-icons/io";
 
 export default function EditProfile() {
     const aboutRef = useRef<HTMLDivElement>(null!);
@@ -14,6 +19,16 @@ export default function EditProfile() {
             ref.current.scrollIntoView({ behavior: "smooth" });
         }
     };
+
+    const [charCount, setCharCount] = useState(0);
+
+    const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const value = event.target.value;
+        if (value.length <= 500) {
+            setCharCount(value.length);
+        }
+    };
+
     return (
         <div>
             <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
@@ -21,11 +36,11 @@ export default function EditProfile() {
                 <h1 className='text-4xl font-semibold mb-3'>My Profile</h1>
             </div>
             <div className='w-full place-items-center'>
-                <div className='w-full  max-w-[980px] px-4 py-20 flex flex-col gap-12'>
+                <div className='w-full max-w-[980px] px-4 py-20 flex flex-col gap-12'>
                     <div className='flex justify-between border-b border-white pb-6'>
                         <p className='text-xl font-semibold'>Information</p>
                         <div className='place-aitems-end place-content-center'>
-                            <button className='bg-background border border-white font-normal text-xs py-1 px-3'>Edit</button>
+                            <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => alert('Button clicked!')}>Edit</button>
                         </div>
                     </div>
 
@@ -55,53 +70,36 @@ export default function EditProfile() {
                     </div>
 
                     <div className='flex justify-between border-b border-white pb-6'>
-                        <div className='flex justify-center items-center gap-2'>
+                        <div className='flex justify-center items-center'>
                             <p className='text-xl font-semibold'>Address</p>
-                            <button className='bg-white text-black hover:text-white rounded-full page-content-center place-items-center'>
-                                <p className='w-fit h-fit'>+</p>
+
+                            <button className='bg-[#07081C] hover:bg-[#07081C] hover:text-white rounded-full' onClick={() => alert('Button clicked!')}>
+                                <IoIosAddCircle className='w-[20px] h-[20px] hover:text-[#0AACF0]' /><p className='hidden'>+</p>
                             </button>
                         </div>
 
-
                         <div className='flex justify-center items-center gap-2'>
-                            <button className='bg-background border border-white font-normal text-xs py-1 px-3'>Edit</button>
-                            <button className='bg-[#51536D] border border-white font-normal text-xs py-1 px-3'>Delete</button>
+                            <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => alert('Button clicked!')}>Edit</button>
+                            <button className='bg-[#51536D] border border-white font-normal text-xs py-1 px-3' onClick={() => alert('Button clicked!')}>Delete</button>
                         </div>
                     </div>
 
                     <div>
                         <form action="#address" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
-                            <label htmlFor="province">
-                                <p className='hidden'>Province</p>
-                                <select className='text-[#9F9F9F]'>
-                                    <option value="">Province</option>
-                                    {/* Add options for provinces */}
-                                </select>
-                            </label>
-                            <label htmlFor="district">
-                                <p className='hidden'>District</p>
-                                <select className='text-[#9F9F9F]'>
-                                    <option value="">District</option>
-                                    {/* Add options for districts */}
-                                </select>
-                            </label>
-                            <label htmlFor="subdistrict">
-                                <p className='hidden'>Subdistrict</p>
-                                <select className='text-[#9F9F9F]'>
-                                    <option value="">Subdistrict</option>
-                                    {/* Add options for subdistricts */}
-                                </select>
-                            </label>
-                            <label htmlFor="postalcode">
-                                <p className='hidden'>Posta lcode</p>
-                                <select className='text-[#9F9F9F]'>
-                                    <option value="">Postal code</option>
-                                    {/* Add options for subdistricts */}
-                                </select>
-                            </label>
-                            <label htmlFor="address" className='col-span-2'>
+                            <Province />
+                            <District />
+                            <Subdistrict />
+                            <PostalCode />
+                            <label htmlFor="address" className='col-span-2 relative'>
                                 <p className='hidden'>Address</p>
-                                <textarea className='resize-none' placeholder='Address Detail such as House number, Apartment name, Condo, Village name ' rows={4}></textarea>
+                                <textarea
+                                    className='resize-none'
+                                    placeholder='Address Detail such as House number, Apartment name, Condo, Village name '
+                                    rows={4}
+                                    maxLength={500}
+                                    onChange={handleTextareaChange}
+                                ></textarea>
+                                <span className='absolute bottom-3 right-2 text-xs text-gray-500'>{charCount}/500</span>
                             </label>
                         </form>
                     </div>
@@ -111,5 +109,5 @@ export default function EditProfile() {
             </div>
             <Footer />
         </div>
-    )
+    );
 }

@@ -1,15 +1,37 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import Image from 'next/image'
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import Image from 'next/image';
 
 const Login = () => {
     const [isClient, setIsClient] = useState(false);
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [usernameError, setUsernameError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
 
     useEffect(() => {
         setIsClient(true);
     }, []);
+
+    useEffect(() => {
+        const usernamePattern = /^[A-Za-z][A-Za-z0-9._]{3,}$/;
+        if (username && !usernamePattern.test(username)) {
+            setUsernameError('Username: 4-20 chars, letters, numbers, ., _ only');
+        } else {
+            setUsernameError('');
+        }
+    }, [username]);
+
+    useEffect(() => {
+        const passwordPattern = /^[A-Za-z][A-Za-z0-9._]{7,}$/;
+        if (password && !passwordPattern.test(password)) {
+            setPasswordError('Password: More than 8 characters, letters, numbers, ., _ only.');
+        } else {
+            setPasswordError('');
+        }
+    }, [password]);
 
     const aboutRef = useRef<HTMLDivElement>(null!);
     const partnerRef = useRef<HTMLDivElement>(null!);
@@ -25,10 +47,7 @@ const Login = () => {
         <div>
             <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
             <div className="w-full h-[90vh] mt-[5rem]">
-                {/* ภาพพื้นหลัง */}
                 <div className="relative w-full h-full flex items-center justify-center">
-                    {" "}
-                    {/* กำหนดขนาดสูง */}
                     {isClient && (
                         <Image
                             src="/Images/AINongtoy/mainbg.png"
@@ -44,12 +63,27 @@ const Login = () => {
                             <p className='font-extralight'>Please enter your details</p>
                         </div>
                         <div>
-                            <form action="" className='flex flex-col justify-between gap-4 w-full h-[70%]  pt-5'>
+                            <form action="" className='flex flex-col justify-between gap-4 w-full h-[70%] pt-5'>
                                 <label className='hidden' htmlFor="username"><p>Username</p></label>
-                                <input className='block' type="text" id='username' placeholder='Username' />
+                                <input
+                                    className='block'
+                                    type="text"
+                                    id='username'
+                                    placeholder='Username'
+                                    maxLength={20}
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                />
 
                                 <label className='hidden' htmlFor="password"><p>Password</p></label>
-                                <input className='block' type="password" id='password' placeholder='Password' />
+                                <input
+                                    className='block'
+                                    type="password"
+                                    id='password'
+                                    placeholder='Password'
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
 
                                 <div className='flex justify-between text-[13px]'>
                                     <label htmlFor="remember" className='flex items-center gap-2 cursor-pointer'>
@@ -63,12 +97,17 @@ const Login = () => {
                                     <p>Not registered yet ? <a href="/signup" className='text-[#0AACF0]'>Sign up</a></p>
                                 </div>
                             </form>
+                            <div className='mt-4 h-[40px] text-[11px] font-thin'>
+                                <p>{usernameError}</p>
+                                <p>{passwordError}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <Footer />
         </div>
-    )
-}
-export default Login
+    );
+};
+
+export default Login;
