@@ -1,9 +1,10 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import MyProfile from "../components/MyProfile";
-
+import ArtToyCard from "../components/ArttoyCard";
+import { useMainStore } from "@/mainstore";
 export default function Configuration() {
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);
@@ -24,7 +25,7 @@ export default function Configuration() {
         contactRef={contactRef}
       />
       <div className="w-full place-content-center place-items-center h-[100px] mt-[5rem] bg-black">
-        <h1 className="text-4xl font-semibold mb-3">My Profile</h1>
+        <h1 className="text-4xl font-semibold mb-3 text-white">My Profile</h1>
       </div>
       <div className="w-full place-items-center">
         <div className="w-full max-w-[1024px] py-20 flex flex-col gap-12">
@@ -41,6 +42,10 @@ export default function Configuration() {
               Order
             </a>
           </section>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          </div>
         </div>
       </div>
       <Footer />

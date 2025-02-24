@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useMainStore } from "@/mainstore";
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const Config = () => {
   const [size, setSize] = useState("Medium");
@@ -10,10 +11,13 @@ const Config = () => {
   const [quantity, setQuantity] = useState(3);
   const pricePerUnit = 500; // ปรับราคาได้ตามต้องการ
   const searchParams = useSearchParams();
+  const { saveArtToy } = useMainStore(); 
   const imageUrl =
     searchParams.get("image") || "/Images/AINongtoy/WhiteMiku.png";
 
   const { artToyData, setArtToyData } = useMainStore();
+  const [showModal, setShowModal] = useState(false);
+  const router = useRouter();
 
   // สร้าง state สำหรับชื่อ Art Toy
   const [artToyName, setArtToyNameLocal] = useState(() => {
@@ -40,6 +44,39 @@ const Config = () => {
     setIsEditing(false);
     setArtToyData({ name: artToyName }); // ✅ อัปเดต Zustand
   };
+
+  const handleSave = () => {
+    setArtToyData({
+      name: artToyName,
+      size,
+      material,
+      painting,
+      assembly,
+      quantity,
+      totalPrice,
+    });
+
+    saveArtToy(); 
+
+    setShowModal(true); // ✅ เปิด Modal แจ้งเตือน
+  };
+
+  const handleCheckout = () => {
+    setArtToyData({
+      name: artToyName,
+      size,
+      material,
+      painting,
+      assembly,
+      quantity,
+      totalPrice,
+      imageUrl,
+    });
+    localStorage.setItem("artToyData", JSON.stringify(artToyData));
+  
+    router.push("/payment");
+  };
+
 
   return (
     <div className="w-full h-full text-white">
@@ -171,13 +208,30 @@ const Config = () => {
 
           {/* Buttons */}
           <div className="flex justify-between mt-4 gap-4">
-            <button className="w-full py-2 bg-[#51536D] hover:bg-[#3E4058] rounded-lg">
+            <button className="w-full py-2 bg-[#51536D] hover:bg-[#3E4058] rounded-lg" onClick={handleSave}>
               Save
             </button>
-            <button className="w-full">Checkout</button>
+            <button className="w-full" onClick={handleCheckout}>Checkout</button>
           </div>
         </div>
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white text-black p-6 rounded-lg shadow-lg w-[300px]">
+            <h2 className="text-lg font-bold">Successfully recorded!</h2>
+            <p className="mt-2">Your Art Toy has been saved.</p>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

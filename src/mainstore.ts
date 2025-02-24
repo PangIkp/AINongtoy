@@ -1,30 +1,34 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-interface MainStore {
-  favorites: { [key: string]: boolean }; // เก็บสถานะหัวใจของแต่ละรูป
-  toggleFavorite: (imageUrl: string) => void;
 
-  artToyData: { name: string; prompt: string }; // ✅ ชัดเจนขึ้น
-  setArtToyData: (data: Partial<{ name: string; prompt: string }>) => void;
-
-  selecting: {
-    [artToyName: string]: {
-      size: string;
-      material: string;
-      painting: string;
-      assembly: string;
-      quantity: number;
-    };
-  };
-  setSelecting: (artToyName: string, data: Partial<MainStore["selecting"][string]>) => void;
+export interface ArtToy {
+  name: string;
+  prompt: string;
+  size: string;
+  material: string;
+  painting: string;
+  assembly: string;
+  quantity: number;
+  totalPrice: number;
+  imageUrl: string;
+  shipingCost: number;
 }
 
+interface MainStore {
+  favorites: { [key: string]: boolean };
+  toggleFavorite: (imageUrl: string) => void;
 
+  artToyData: ArtToy; 
+  setArtToyData: (data: Partial<ArtToy>) => void;
 
-// Zustand Store พร้อม persist
+  savedArtToys: ArtToy[];  // ✅ เก็บรายการ Art Toy ที่บันทึกไว้
+  saveArtToy: () => void; 
+
+}
+
 export const useMainStore = create<MainStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       favorites: {},
       toggleFavorite: (imageUrl) =>
         set((state) => ({
@@ -34,27 +38,34 @@ export const useMainStore = create<MainStore>()(
           },
         })),
 
-      artToyData: { name: "Unnamed Art Toy", prompt: "art toy" }, // ✅ ตั้งค่าเริ่มต้นให้ตรงกับโครงสร้างใหม่
-      setArtToyData: (data: Partial<{ name: string; prompt: string }>) =>
+      artToyData: {
+        name: "Unnamed Art Toy",
+        prompt: "art toy",
+        size: "",
+        material: "",
+        painting: "",
+        assembly: "",
+        quantity: 1,
+        totalPrice: 0,
+        imageUrl: "",
+        shipingCost: 0,
+      }, 
+
+      setArtToyData: (data) =>
         set((prevState) => ({
           artToyData: {
-            ...prevState.artToyData, // คงค่าที่มีอยู่เดิม
-            ...data, // อัปเดตเฉพาะค่าที่ถูกส่งเข้ามา
+            ...prevState.artToyData,
+            ...data,
           },
         })),
 
-        selecting: {}, // เก็บข้อมูลเป็น object ที่แยกตามชื่อ Art Toy
-        setSelecting: (artToyName, data) =>
-          set((prevState) => ({
-            selecting: {
-              ...prevState.selecting,
-              [artToyName]: {
-                ...prevState.selecting[artToyName], // คงค่าที่มีอยู่
-                ...data, // อัปเดตค่าที่เปลี่ยน
-              },
-            },
-          })),
-      
+      savedArtToys: [],  // ✅ เริ่มต้นเป็นอาร์เรย์ว่าง
+      saveArtToy: () => {
+        const { artToyData, savedArtToys } = get();
+        set({
+          savedArtToys: [...savedArtToys, artToyData],  // ✅ เพิ่ม Art Toy ใหม่เข้าไปในอาร์เรย์
+        });
+      },
     }),
     {
       name: "mainstore-data",
