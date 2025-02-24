@@ -62,7 +62,7 @@ const Config = () => {
   };
 
   const handleCheckout = () => {
-    setArtToyData({
+    const newArtToyData = {
       name: artToyName,
       size,
       material,
@@ -71,11 +71,20 @@ const Config = () => {
       quantity,
       totalPrice,
       imageUrl,
-    });
-    localStorage.setItem("artToyData", JSON.stringify(artToyData));
+    };
   
+    setArtToyData(newArtToyData); // ✅ อัปเดตค่า state ก่อน
     router.push("/payment");
   };
+  
+  // ✅ ใช้ useEffect เพื่อลงค่า localStorage เมื่อ state อัปเดต
+  useEffect(() => {
+    if (artToyData) {
+      localStorage.setItem("artToyData", JSON.stringify(artToyData));
+    }
+  }, [artToyData]);
+  
+  
 
 
   return (
