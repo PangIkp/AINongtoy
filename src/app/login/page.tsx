@@ -33,6 +33,35 @@ const Login = () => {
         }
     }, [password]);
 
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!username || !password) {
+            setUsernameError(!username ? 'Username is required' : '');
+            setPasswordError(!password ? 'Password is required' : '');
+            return;
+        }
+
+        const usernamePattern = /^[A-Za-z][A-Za-z0-9._]{3,}$/;
+        const passwordPattern = /^[A-Za-z][A-Za-z0-9._]{7,}$/;
+
+        if (!usernamePattern.test(username)) {
+            setUsernameError('Username: 4-20 chars, letters, numbers, ., _ only');
+        } else {
+            setUsernameError('');
+        }
+
+        if (!passwordPattern.test(password)) {
+            setPasswordError('Password: More than 8 characters, letters, numbers, ., _ only.');
+        } else {
+            setPasswordError('');
+        }
+
+        if (!usernameError && !passwordError) {
+            // Perform login action
+            console.log('Logging in...');
+        }
+    };
+
     const aboutRef = useRef<HTMLDivElement>(null!);
     const partnerRef = useRef<HTMLDivElement>(null!);
     const contactRef = useRef<HTMLDivElement>(null!);
@@ -63,7 +92,7 @@ const Login = () => {
                             <p className='font-extralight'>Please enter your details</p>
                         </div>
                         <div>
-                            <form action="" className='flex flex-col justify-between gap-4 w-full h-[70%] pt-5'>
+                            <form onSubmit={handleSubmit} className='flex flex-col justify-between gap-4 w-full h-[70%] pt-5'>
                                 <label className='hidden' htmlFor="username"><p>Username</p></label>
                                 <input
                                     className='block'
@@ -92,12 +121,12 @@ const Login = () => {
                                     </label>
                                     <a href="#" className='text-[#0AACF0]'>Forgot password ?</a>
                                 </div>
-                                <button className='h-[40px]'>Login</button>
+                                <button type='submit' className='h-[40px]'>Login</button>
                                 <div className='flex justify-center text-[13px]'>
                                     <p>Not registered yet ? <a href="/signup" className='text-[#0AACF0]'>Sign up</a></p>
                                 </div>
                             </form>
-                            <div className='mt-4 h-[40px] text-[11px] font-thin'>
+                            <div className='mt-4 h-[40px] text-[11px] font-thin text-yellow-400'>
                                 <p>{usernameError}</p>
                                 <p>{passwordError}</p>
                             </div>
