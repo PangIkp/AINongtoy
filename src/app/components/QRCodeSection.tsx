@@ -27,20 +27,20 @@ const QRCodeSection: React.FC = () => {
     };
 
     return (
-        <section className='bg-[#202133] border border-[#202133] rounded-xl w-full md:w-1/2 p-8 flex flex-col gap-4 h-full sm:flex-row justify-center'>
-            <div className='flex flex-col gap-2 items-center p-4 w-full md:w-1/2 justify-center'>
+        <section className='bg-[#202133] border border-[#202133] rounded-xl w-full flex flex-col gap-4 h-full sm:flex-row justify-center'>
+            <div className='flex flex-col gap-2 items-center p-4 w-full justify-center h-full'>
                 <p className='text-sm'>Scan QR Code</p>
-                <img className='w-full max-h-[200px] min-h-[200px] object-contain rounded-xl' src="/Images/AINongtoy/Qr_code.png" alt="QR Code" />
+                <img className='w-[200px] h-[200px] object-fill rounded-xl' src="/Images/AINongtoy/Qr_code.png" alt="QR Code" />
                 <div className='flex gap-2 text-sm'>
                     <p>Account :</p>
                     <p>Nongtoy</p>
                 </div>
             </div>
 
-            <div className='flex flex-col gap-2 items-center p-4 w-full md:w-1/2 justify-center'>
+            <div className='flex flex-col gap-2 items-center p-4 w-full justify-center'>
                 <p className='text-sm'>Upload QR Code</p>
                 {!uploadedImage && (
-                    <div className='flex justify-center items-center w-full h-full'>
+                    <div className='flex justify-center items-center w-[200px] h-[200px] outline-2 outline-dashed rounded-xl'>
                         <label className="upload-btn text-sm">
                             Upload File
                             <input ref={fileInputRef} type="file" accept="image/*" name="qrCode" onChange={handleImageUpload} className="hidden" />
@@ -48,9 +48,9 @@ const QRCodeSection: React.FC = () => {
                     </div>
                 )}
                 {uploadedImage && (
-                    <div className='relative w-full h-full'>
-                        <img className='w-full max-h-[200px] min-h-[200px]  object-contain rounded-xl cursor-pointer' src={uploadedImage} alt="Uploaded QR Code" onClick={handleImageClick} />
-                        <button className='absolute top-3 right-2 text-white bg-red-500 text-sm font-medium' onClick={handleDeleteImage}>
+                    <div className='relative w-[200px] h-[200px] place-content-center place-items-center'>
+                        <img className='w-full h-full object-fill rounded-xl cursor-pointer' src={uploadedImage} alt="Uploaded QR Code" onClick={handleImageClick} />
+                        <button className='absolute top-2 right-2 text-white bg-red-500 text-sm font-medium' onClick={handleDeleteImage}>
                             X
                         </button>
                         <label htmlFor="upload" className='hidden'>a</label>

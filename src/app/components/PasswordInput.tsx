@@ -18,7 +18,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ id, label, value, onChang
     return (
         <label htmlFor={id} className="relative">
             {label}
-            <input required
+            <input
                 type={showPassword ? "text" : "password"}
                 id={id}
                 value={value}
