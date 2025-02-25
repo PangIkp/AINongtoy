@@ -18,7 +18,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, onPage
 
     // ฟังก์ชัน getPageNumbers ใช้เพื่อคำนวณหมายเลขหน้าที่จะแสดงใน Pagination
     const getPageNumbers = () => {
-        const maxPagesToShow = 5; // จำนวนหน้าสูงสุดที่จะแสดงใน Pagination
+        const maxPagesToShow = 20; // จำนวนหน้าสูงสุดที่จะแสดงใน Pagination
         let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
         let endPage = startPage + maxPagesToShow - 1;
 

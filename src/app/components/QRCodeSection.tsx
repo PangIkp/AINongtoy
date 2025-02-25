@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useRef } from 'react';
 
 const QRCodeSection: React.FC = () => {
@@ -26,7 +27,7 @@ const QRCodeSection: React.FC = () => {
     };
 
     return (
-        <section className='bg-[#202133] border border-[#202133] rounded-xl w-full md:w-1/2 p-4 flex flex-col gap-4 h-full sm:flex-row justify-center'>
+        <section className='bg-[#202133] border border-[#202133] rounded-xl w-full md:w-1/2 p-8 flex flex-col gap-4 h-full sm:flex-row justify-center'>
             <div className='flex flex-col gap-2 items-center p-4 w-full md:w-1/2 justify-center'>
                 <p className='text-sm'>Scan QR Code</p>
                 <img className='w-full max-h-[200px] min-h-[200px] object-contain rounded-xl' src="/Images/AINongtoy/Qr_code.png" alt="QR Code" />
