@@ -1,4 +1,5 @@
     "use client";
+    import { useRouter } from "next/navigation";
     import { ArtToy } from "@/mainstore"; // ✅ นำเข้า interface ArtToy
     import React, { useEffect, useRef, useState } from "react";
     import Navbar from "../components/Navbar";
@@ -12,6 +13,7 @@
         const contactRef = useRef<HTMLDivElement>(null!);
         const [artToyData, setArtToyData] = useState<ArtToy | null>(null);
         const [shippingCost, setShippingCost] = useState(50);
+        const router = useRouter();
     
         const handleShippingChange = (cost: number) => {
             setShippingCost(cost);
@@ -150,7 +152,7 @@
                 </section>
             </form>
             <div className="flex flex-col sm:flex-row justify-between gap-4">
-                <button className="w-full sm:w-1/2 bg-[#51536D] h-[40px]">
+                <button className="w-full sm:w-1/2 bg-[#51536D] h-[40px]" onClick={() => router.back()}>
                 Cancel
                 </button>
                 <button className="w-full sm:w-1/2 h-[40px]">Confirm</button>
