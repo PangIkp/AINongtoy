@@ -3,12 +3,12 @@ import React, { useRef } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import MyProfile from "../components/MyProfile";
-import ArtToyCard from "../components/ArttoyCard";
-import { useMainStore } from "@/mainstore";
+import ConfigCard from "../components/ConfigCard";
+
 export default function Configuration() {
-  const aboutRef = useRef<HTMLDivElement>(null!);
-  const partnerRef = useRef<HTMLDivElement>(null!);
-  const contactRef = useRef<HTMLDivElement>(null!);
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const partnerRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
@@ -43,9 +43,7 @@ export default function Configuration() {
             </a>
           </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          
-          </div>
+          <ConfigCard />
         </div>
       </div>
       <Footer />

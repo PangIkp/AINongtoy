@@ -84,9 +84,6 @@ const Config = () => {
     }
   }, [artToyData]);
   
-  
-
-
   return (
     <div className="w-full h-full text-white">
       <div className="md:block lg:flex gap-10">

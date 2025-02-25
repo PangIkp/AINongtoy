@@ -18,12 +18,12 @@ interface MainStore {
   favorites: { [key: string]: boolean };
   toggleFavorite: (imageUrl: string) => void;
 
-  artToyData: ArtToy; 
+  artToyData: ArtToy;
   setArtToyData: (data: Partial<ArtToy>) => void;
 
-  savedArtToys: ArtToy[];  // ✅ เก็บรายการ Art Toy ที่บันทึกไว้
-  saveArtToy: () => void; 
-
+  savedArtToys: ArtToy[]; // ✅ เก็บรายการ Art Toy ที่บันทึกไว้
+  saveArtToy: () => void;
+  removeArtToy: (index: number) => void;
 }
 
 export const useMainStore = create<MainStore>()(
@@ -49,23 +49,27 @@ export const useMainStore = create<MainStore>()(
         totalPrice: 0,
         imageUrl: "",
         shipingCost: 0,
-      }, 
+      },
 
       setArtToyData: (data) =>
-        set((prevState) => ({
+        set((state) => ({
           artToyData: {
-            ...prevState.artToyData,
-            ...data,
+            ...state.artToyData, // ✅ คงค่าเดิมไว้
+            ...data, // ✅ รวมค่าที่อัปเดต
           },
         })),
-
-      savedArtToys: [],  // ✅ เริ่มต้นเป็นอาร์เรย์ว่าง
+        
+      savedArtToys: [], // ✅ เริ่มต้นเป็นอาร์เรย์ว่าง
       saveArtToy: () => {
         const { artToyData, savedArtToys } = get();
         set({
-          savedArtToys: [...savedArtToys, artToyData],  // ✅ เพิ่ม Art Toy ใหม่เข้าไปในอาร์เรย์
+          savedArtToys: [...savedArtToys, artToyData], // ✅ เพิ่ม Art Toy ใหม่เข้าไปในอาร์เรย์
         });
       },
+      removeArtToy: (index: number) =>
+        set((state) => ({
+          savedArtToys: state.savedArtToys.filter((_, i) => i !== index),
+        })),
     }),
     {
       name: "mainstore-data",

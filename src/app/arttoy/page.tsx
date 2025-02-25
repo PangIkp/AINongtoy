@@ -33,7 +33,7 @@ export default function Arttoy() {
     usePollinationsImage(finalPrompt, {
       width: 300,
       height: 300,
-      seed: 4 + i * 2,
+      seed: 2 + i * 2,
       model: "flux",
       nologo: true,
     })
