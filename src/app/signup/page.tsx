@@ -40,10 +40,7 @@ const Signup = () => {
         const { id, value } = e.target;
 
         if (id === 'phone') {
-            const formattedValue = value
-                .replace(/\D/g, '')
-                .replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3')
-                .slice(0, 12);
+            const formattedValue = value.replace(/\D/g, '').slice(0, 10);
             setFormData({ ...formData, [id]: formattedValue });
         } else {
             setFormData({ ...formData, [id]: value });
@@ -61,7 +58,7 @@ const Signup = () => {
         const namePattern = /^[A-Za-z][A-Za-z0-9._]*$/;
         const usernamePattern = /^[A-Za-z][A-Za-z0-9._]*$/;
         const passwordPattern = /^[A-Za-z][A-Za-z0-9._]*$/;
-        const phonePattern = /^0\d{2}-\d{3}-\d{4}$/;
+        const phonePattern = /^\d{10}$/;
         const emailPattern = /^[a-zA-Z][a-zA-Z0-9._]*@(gmail\.com|hotmail\.com|hotmail\.co\.th|yahoo\.com|outlook\.com|domain\.co\.th)$/;
 
         if (formData.fname && (!namePattern.test(formData.fname) || formData.fname.length < 4)) {
@@ -86,7 +83,7 @@ const Signup = () => {
         }
 
         if (formData.phone && !phonePattern.test(formData.phone)) {
-            newErrors.phone = 'Phone number: must start with 0 and be 10 digits';
+            newErrors.phone = 'Phone number: must be 10 digits';
             valid = false;
         } else {
             newErrors.phone = '';
@@ -154,18 +151,18 @@ const Signup = () => {
                                 <div className='grid grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 gap-5'>
                                     <label htmlFor="fname">
                                         <p>First name</p>
-                                        <input type="text" id='fname' minLength={4} maxLength={20} value={formData.fname} onChange={handleChange} />
+                                        <input type="text" id='fname' minLength={4} maxLength={40} value={formData.fname} onChange={handleChange} />
                                     </label>
                                     <label htmlFor="lname">
                                         <p>Last name</p>
-                                        <input type="text" id='lname' minLength={4} maxLength={20} value={formData.lname} onChange={handleChange} />
+                                        <input type="text" id='lname' minLength={4} maxLength={40} value={formData.lname} onChange={handleChange} />
                                     </label>
                                 </div>
 
                                 <div className='grid grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 gap-5'>
                                     <label htmlFor="username">
                                         <p>Username</p>
-                                        <input type="text" id='username' minLength={4} maxLength={20} value={formData.username} onChange={handleChange} />
+                                        <input type="text" id='username' minLength={4} maxLength={40} value={formData.username} onChange={handleChange} />
                                     </label>
                                     <label htmlFor="phone">
                                         <p>Phone number</p>
@@ -175,7 +172,7 @@ const Signup = () => {
 
                                 <label htmlFor="email">
                                     <p>Email address</p>
-                                    <input type="email" id='email' minLength={5} maxLength={50} value={formData.email} onChange={handleChange} />
+                                    <input type="email" id='email' value={formData.email} onChange={handleChange} />
                                 </label>
 
                                 <div className='grid grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 gap-x-5 gap-5'>
