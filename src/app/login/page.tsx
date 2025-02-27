@@ -99,7 +99,7 @@ const Login = () => {
                                     type="text"
                                     id='username'
                                     placeholder='Username'
-                                    maxLength={20}
+                                    maxLength={40}
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                 />

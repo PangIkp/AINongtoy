@@ -57,3 +57,11 @@ button {
   opacity: 0;
   cursor: pointer;
 }
+
+.select-default {
+  color: #9F9F9F;
+}
+
+.select-selected {
+  color: black;
+}
