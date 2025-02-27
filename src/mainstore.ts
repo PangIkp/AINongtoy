@@ -58,14 +58,19 @@ export const useMainStore = create<MainStore>()(
             ...data, // ✅ รวมค่าที่อัปเดต
           },
         })),
-        
+
       savedArtToys: [], // ✅ เริ่มต้นเป็นอาร์เรย์ว่าง
-      saveArtToy: () => {
-        const { artToyData, savedArtToys } = get();
-        set({
-          savedArtToys: [...savedArtToys, artToyData], // ✅ เพิ่ม Art Toy ใหม่เข้าไปในอาร์เรย์
-        });
-      },
+        saveArtToy: () => {
+          const { artToyData, savedArtToys } = get();
+          // set({
+          //   savedArtToys: [...savedArtToys, artToyData], // ✅ เพิ่ม Art Toy ใหม่เข้าไปในอาร์เรย์
+          // });
+          set({
+            savedArtToys: savedArtToys.map((toy) => 
+              toy.imageUrl === artToyData.imageUrl ? artToyData : toy // ✅ Replace existing toy
+            ),
+          });
+        },
       removeArtToy: (index: number) =>
         set((state) => ({
           savedArtToys: state.savedArtToys.filter((_, i) => i !== index),

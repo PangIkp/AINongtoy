@@ -76,6 +76,7 @@ export default function ArtToyCard({
                 className="w-42 h-42 object-cover rounded-md"
                 placeholder="blur"
                 blurDataURL="data:image/svg+xml;base64,..."
+                unoptimized // ✅ Disables Next.js optimizations, making it behave like <img>
               />
             </div>
           </div>
