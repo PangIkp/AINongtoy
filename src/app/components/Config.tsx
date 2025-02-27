@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useMainStore } from "@/mainstore";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const Config = () => {
   const [size, setSize] = useState("Medium");
@@ -11,11 +12,9 @@ const Config = () => {
   const [quantity, setQuantity] = useState(3);
   const pricePerUnit = 500; // ปรับราคาได้ตามต้องการ
   const searchParams = useSearchParams();
-  const { saveArtToy } = useMainStore(); 
   const imageUrl =
     searchParams.get("image") || "/Images/AINongtoy/WhiteMiku.png";
-
-  const { artToyData, setArtToyData } = useMainStore();
+  const { artToyData, setArtToyData, saveArtToy } = useMainStore();
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
 
@@ -56,7 +55,7 @@ const Config = () => {
       totalPrice,
     });
 
-    saveArtToy(); 
+    saveArtToy();
 
     setShowModal(true); // ✅ เปิด Modal แจ้งเตือน
   };
@@ -72,18 +71,18 @@ const Config = () => {
       totalPrice,
       imageUrl,
     };
-  
+
     setArtToyData(newArtToyData); // ✅ อัปเดตค่า state ก่อน
     router.push("/payment");
   };
-  
+
   // ✅ ใช้ useEffect เพื่อลงค่า localStorage เมื่อ state อัปเดต
   useEffect(() => {
     if (artToyData) {
       localStorage.setItem("artToyData", JSON.stringify(artToyData));
     }
   }, [artToyData]);
-  
+
   return (
     <div className="w-full h-full text-white">
       <div className="md:block lg:flex gap-10">
@@ -214,10 +213,15 @@ const Config = () => {
 
           {/* Buttons */}
           <div className="flex justify-between mt-4 gap-4">
-            <button className="w-full py-2 bg-[#51536D] hover:bg-[#3E4058] rounded-lg" onClick={handleSave}>
+            <button
+              className="w-full py-2 bg-[#51536D] hover:bg-[#3E4058] rounded-lg"
+              onClick={handleSave}
+            >
               Save
             </button>
-            <button className="w-full" onClick={handleCheckout}>Checkout</button>
+            <button className="w-full" onClick={handleCheckout}>
+              Checkout
+            </button>
           </div>
         </div>
       </div>
@@ -228,10 +232,7 @@ const Config = () => {
             <h2 className="text-lg font-bold">Successfully recorded!</h2>
             <p className="mt-2">Your Art Toy has been saved.</p>
             <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2"
-              >
+              <button onClick={() => setShowModal(false)} className="px-4 py-2">
                 OK
               </button>
             </div>
