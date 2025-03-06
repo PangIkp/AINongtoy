@@ -11,6 +11,10 @@ const Signup = () => {
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);
   const contactRef = useRef<HTMLDivElement>(null!);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [userCount, setUserCount] = useState<number>(0);
+
   const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: "smooth" });
@@ -26,10 +30,6 @@ const Signup = () => {
     password: "",
     confirmpassword: "",
   });
-
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [userCount, setUserCount] = useState<number>(0);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -59,34 +59,41 @@ const Signup = () => {
     setError(null);
     setSuccess(null);
 
-    // Basic client-side validation
+    // ตรวจสอบรหัสผ่านว่าตรงกันหรือไม่
     if (formData.password !== formData.confirmpassword) {
       setError("Passwords do not match");
       return;
     }
-    console.log("test")
+
     try {
       const newUser = {
         id: userCount + 1, // Generate unique ID
         ...formData, // Spread the form data
       };
 
-      console.log("test2")
       const response = await axios.post(
         "http://localhost:3001/api/v1/user/",
         newUser
       );
 
-      console.log("test3")
-      setSuccess(response.data.message);
+      setSuccess(response.data.message || "Registered successfully!");
 
-      // Optionally, redirect to login after successful registration
+      // ✅ Redirect ไปหน้า login หลังสมัครเสร็จ
       setTimeout(() => {
         router.push("/login");
       }, 2000);
     } catch (err: any) {
-      console.error("❌ Error:", err.message);
-      setError(err.message);
+      console.error("❌ Error:", err.response?.data?.message || err.message);
+
+      // ✅ เช็คว่า API ส่ง error อะไรมาบ้าง
+      if (err.response?.data?.errors) {
+        setError(err.response.data.errors.join(", ")); // รวม error message เป็นข้อความเดียว
+      } else {
+        setError(
+          err.response?.data?.message ||
+            "Something went wrong. Please try again."
+        );
+      }
     }
   };
 
@@ -206,11 +213,13 @@ const Signup = () => {
                 </button>
 
                 {error && (
-                  <div className="text-red-400 rounded mb-4">{error}</div>
+                  <div className="text-red-300 text-[14px] rounded mb-4">
+                    {error}
+                  </div>
                 )}
 
                 {success && (
-                  <div className="w-[480px] text-green-400 rounded mb-4">
+                  <div className="text-green-200 text-[14px] rounded mb-4">
                     {success}
                   </div>
                 )}
