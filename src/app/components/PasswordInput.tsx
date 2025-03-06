@@ -3,13 +3,14 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 interface PasswordInputProps {
     id: string;
-    name: string; // ✅ เพิ่ม name เป็น props
-    label: string;
+    name: string;
+    label?: string;
     value: string;
+    placeholder?: string; // เพิ่ม placeholder เป็น optional props
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const PasswordInput: React.FC<PasswordInputProps> = ({ id, name, label, value, onChange }) => {
+const PasswordInput: React.FC<PasswordInputProps> = ({ id, name, label, value, placeholder, onChange }) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const togglePasswordVisibility = () => {
@@ -23,10 +24,11 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ id, name, label, value, o
                 <input
                     type={showPassword ? "text" : "password"}
                     id={id}
-                    name={name}  // ✅ ใช้ name ที่ส่งมา
+                    name={name}
                     value={value}
+                    placeholder={placeholder} // ใช้ placeholder ที่ส่งมา
                     onChange={onChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full py-2 border border-gray-300 rounded"
                 />
                 <button
                     type="button"
