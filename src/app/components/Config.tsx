@@ -45,7 +45,8 @@ const Config = () => {
   };
 
   const handleSave = () => {
-    setArtToyData({
+    const updatedArtToy = {
+      ...artToyData,
       name: artToyName,
       size,
       material,
@@ -53,12 +54,12 @@ const Config = () => {
       assembly,
       quantity,
       totalPrice,
-    });
-
-    saveArtToy();
-
-    setShowModal(true); // ✅ เปิด Modal แจ้งเตือน
-  };
+    };
+  
+    setArtToyData(updatedArtToy); // ✅ อัปเดต State
+    saveArtToy(); // ✅ บันทึกลง Zustand
+    setShowModal(true);
+  };  
 
   const handleCheckout = () => {
     const newArtToyData = {

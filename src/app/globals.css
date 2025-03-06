@@ -3,65 +3,65 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --background: #ffffff;
+    --foreground: #171717;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #070922;
-    --foreground: #ededed;
-  }
+    :root {
+        --background: #070922;
+        --foreground: #ededed;
+    }
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: var(--font-poppins), sans-serif;
-  min-height: 1000px;
+    color: var(--foreground);
+    background: var(--background);
+    font-family: var(--font-poppins), sans-serif;
+    min-height: 1000px;
 }
 
 input,
 select,
 textarea {
-  @apply w-full px-4 py-2 border border-gray-300 text-[14px] text-black font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-[#0AACF0] mt-1;
+    @apply w-full px-4 py-2 border border-gray-300 text-[14px] text-black font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-[#0AACF0] mt-1;
 }
 
 button {
-  @apply bg-[#0CACF3] text-white hover:bg-[#0578AB] font-bold px-2 rounded-md transition-all;
+    @apply bg-[#0CACF3] text-white hover:bg-[#0578AB] font-bold px-2 rounded-md transition-all;
 }
 
 .upload-btn {
-  position: relative;
-  display: inline-block;
-  background: #00B4D8;
-  color: white;
-  font-weight: bold;
-  padding: 0.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: inline-block;
+    background: #00B4D8;
+    color: white;
+    font-weight: bold;
+    padding: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .upload-btn:hover {
-  background: #0578AB;
+    background: #0578AB;
 }
 
 .upload-btn input[type="file"] {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
 }
 
 .select-default {
-  color: #9F9F9F;
+    color: #9F9F9F;
 }
 
 .select-selected {
-  color: black;
+    color: black;
 }

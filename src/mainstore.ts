@@ -60,17 +60,24 @@ export const useMainStore = create<MainStore>()(
         })),
 
       savedArtToys: [], // ✅ เริ่มต้นเป็นอาร์เรย์ว่าง
-        saveArtToy: () => {
-          const { artToyData, savedArtToys } = get();
-          // set({
-          //   savedArtToys: [...savedArtToys, artToyData], // ✅ เพิ่ม Art Toy ใหม่เข้าไปในอาร์เรย์
-          // });
-          set({
-            savedArtToys: savedArtToys.map((toy) => 
-              toy.imageUrl === artToyData.imageUrl ? artToyData : toy // ✅ Replace existing toy
-            ),
-          });
-        },
+      saveArtToy: () => {
+        const { artToyData, savedArtToys } = get();
+
+        const existingIndex = savedArtToys.findIndex(
+          (toy) => toy.imageUrl === artToyData.imageUrl
+        );
+
+        if (existingIndex !== -1) {
+          // ✅ อัปเดตเฉพาะ ArtToy ที่ตรงกัน
+          const updatedToys = [...savedArtToys];
+          updatedToys[existingIndex] = { ...artToyData };
+
+          set({ savedArtToys: updatedToys });
+        } else {
+          // ✅ ถ้าไม่เจอให้เพิ่มเข้าไปใหม่
+          set({ savedArtToys: [...savedArtToys, artToyData] });
+        }
+      },
       removeArtToy: (index: number) =>
         set((state) => ({
           savedArtToys: state.savedArtToys.filter((_, i) => i !== index),

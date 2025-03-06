@@ -6,7 +6,7 @@ import useHydration from "../../../useHydration";
 
 function ConfigCard() {
   const isHydrated = useHydration();
-  const { savedArtToys, removeArtToy } = useMainStore(); // ดึง removeArtToy มาใช้
+  const { savedArtToys, removeArtToy,setArtToyData } = useMainStore(); // ดึง removeArtToy มาใช้
   const [isClient, setIsClient] = useState(false);
 
   const router = useRouter();
@@ -15,14 +15,12 @@ function ConfigCard() {
     setIsClient(true); // ✅ กำหนด state เมื่อคอมโพเนนต์โหลดแล้ว
   }, []);
 
-  const handleEdit = useCallback((artToy: ArtToy) => {
-    if (!isClient) return; // ✅ ป้องกันการรันบน SSR
-    router.push(`/material?name=${encodeURIComponent(artToy.name)}&image=${encodeURIComponent(artToy.imageUrl)}`);
-  }, [router, isClient]);
+const handleEdit = useCallback((artToy: ArtToy) => {
+  if (!isClient) return;
+  setArtToyData(artToy); // ✅ กำหนดค่าก่อนพาไปแก้ไข
+  router.push(`/material?name=${encodeURIComponent(artToy.name)}&image=${encodeURIComponent(artToy.imageUrl)}`);
+}, [router, isClient]);
 
-  if (!isClient) {
-    return <p className="text-center text-gray-500 col-span-3">Loading...</p>;
-  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
