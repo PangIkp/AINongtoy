@@ -5,36 +5,39 @@ import Footer from "../components/Footer";
 import Image from "next/image";
 import { login } from "@/api/authAPI";
 
+interface LoginResponse {
+    token: string;
+    username: string;
+    firstName: string; 
+    lastName:string}
+  
 const Login = () => {
-  const [isClient, setIsClient] = useState(false);
+    const [isClient, setIsClient] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [user, setUser] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [firstName, setFirstName] = useState<string | null>(null); // State สำหรับ firstName
+  const [lastName, setLastName] = useState<string | null>(null);
 
-//   useEffect(() => {
-//     setIsClient(true);
-//   }, []);
 
-//   useEffect(() => {
-//     const usernamePattern = /^[A-Za-z][A-Za-z0-9._]{3,}$/;
-//     if (username && !usernamePattern.test(username)) {
-//       setUsernameError("Username: 4-20 chars, letters, numbers, ., _ only");
-//     } else {
-//       setUsernameError("");
-//     }
-//   }, [username]);
-
-//   useEffect(() => {
-//     const passwordPattern = /^[A-Za-z][A-Za-z0-9._]{7,}$/;
-//     if (password && !passwordPattern.test(password)) {
-//       setPasswordError(
-//         "Password: More than 8 characters, letters, numbers, ., _ only."
-//       );
-//     } else {
-//       setPasswordError("");
-//     }
-//   }, [password]);
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    const storedFirstName = localStorage.getItem("firstname");
+    const storedLastName = localStorage.getItem("lastname");
+    
+    if (storedUsername) {
+      setUser(storedUsername);
+    }
+    if (storedFirstName) {
+      setFirstName(storedFirstName);
+    }
+    if (storedLastName) {
+      setLastName(storedLastName);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,20 +48,36 @@ const Login = () => {
     }
 
     try {
-      const data = await login(username, password); // ✅ เรียก API จาก authService
-
+      const data = await login(username, password); // เรียก API จาก authService
       console.log("Login successful:", data);
 
       if (data.token) {
+        // เก็บข้อมูลทั้งหมดใน localStorage
         localStorage.setItem("token", data.token);
+        localStorage.setItem("username", data.username);
+        localStorage.setItem("firstname", data.firstName);  // เก็บ firstName
+        localStorage.setItem("lastname", data.lastName);    // เก็บ lastName
+        setUser(data.username);
+        setFirstName(data.firstName); // อัปเดตค่า firstName ใน state
+        setLastName(data.lastName);   // อัปเดตค่า lastName ใน state
+        setIsLoggedIn(true);
       }
 
-      window.location.href = "/"; // ✅ Redirect ไปหน้าอื่น
     } catch (error: any) {
       console.error("Login error:", error.message);
       setPasswordError("Invalid username or password");
     }
   };
+  
+
+  useEffect(() => {
+    // หากผู้ใช้ล็อกอินสำเร็จ ให้ไปหน้า Home
+    if (isLoggedIn) {
+      window.location.href = "/"; // ✅ Redirect ไปหน้า Home
+    }
+  }, [isLoggedIn]);
+
+  
 
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);
@@ -156,6 +175,9 @@ const Login = () => {
                 <p>{usernameError}</p>
                 <p>{passwordError}</p>
               </div>
+
+               {/* แสดงข้อมูลผู้ใช้เมื่อล็อกอินสำเร็จ */}
+
             </div>
           </div>
         </div>

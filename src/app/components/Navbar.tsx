@@ -19,9 +19,23 @@ export default function Navbar({
   contactRef,
 }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [pendingRef, setPendingRef] = useState<React.RefObject<HTMLDivElement | null> | null>(null);
+  const [pendingRef, setPendingRef] =
+    useState<React.RefObject<HTMLDivElement | null> | null>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [firstName, setFirstName] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    const userJson = localStorage.getItem("user");
+
+    if (storedToken && userJson) {
+      const parsedUser = JSON.parse(userJson);
+      setIsLoggedIn(true); // ถ้ามี token แสดงว่าผู้ใช้ล็อกอินแล้ว
+      setFirstName(parsedUser.firstName); // ตั้งค่า firstName
+    }
+  }, []);
 
   useEffect(() => {
     if (pendingRef && pathname === "/") {
@@ -40,8 +54,6 @@ export default function Navbar({
       router.push("/", { scroll: false }); // กลับไปหน้า Home โดยไม่ Scroll เอง
     }
   };
-
-  
 
   return (
     <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-8 lg:px-20 py-6 bg-[#010312] text-white drop-shadow-lg z-50">
@@ -146,22 +158,51 @@ export default function Navbar({
             </button>
           </li>
           <li>
-            <Link
-              href="/login"
-              className="font-bold bg-transparent hover:bg-transparent hover:text-[#0AACF0]"
-            >
-              Login
-            </Link>
+            {!isLoggedIn ? (
+              <Link href="/login">
+                <button className="bg-transparent hover:bg-transparent hover:text-[#0AACF0]">
+                  Login
+                </button>
+              </Link>
+            ) : (
+              // ถ้าล็อกอินแล้วจะแสดงรูปภาพแทนปุ่ม Login
+              <Link href="/profile" className="flex items-center space-x-2">
+                <button
+                  onClick={() => {
+                    handleNavigation(contactRef);
+                    setMenuOpen(false);
+                  }}
+                  className="bg-transparent hover:bg-transparent hover:text-[#0AACF0]"
+                >
+                  My Profile
+                </button>
+              </Link>
+            )}
           </li>
         </ul>
       )}
 
       {/* Login Button */}
-      <Link href="/login" className="hidden lg:block">
-        <button className="bg-[#0AACF0] hover:bg-[#0578AB] text-white font-extrabold px-6 py-1 rounded-[5px] text-[15px] transition-all">
-          Login
-        </button>
-      </Link>
+      {!isLoggedIn ? (
+        <Link href="/login" className="hidden lg:block">
+          <button className="bg-[#0AACF0] hover:bg-[#0578AB] text-white font-extrabold px-6 py-1 rounded-[5px] text-[15px] transition-all">
+            Login
+          </button>
+        </Link>
+      ) : (
+        // ถ้าล็อกอินแล้วจะแสดงรูปภาพแทนปุ่ม Login
+        <Link
+          href="/profile"
+          className="flex items-center space-x-2 hidden lg:flex border border-[#51536D] rounded-[10px] p-1 px-2"
+        >
+          <img
+            src="/Images/AINongtoy/User.png"
+            alt="Profile"
+            className="w-7 rounded-full"
+          />
+          <span className="text-[13px] font-medium">{firstName}</span>
+        </Link>
+      )}
     </nav>
   );
 }

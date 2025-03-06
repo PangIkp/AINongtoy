@@ -219,7 +219,7 @@ export default function EditProfile() {
 
                         <div className='flex justify-center items-center gap-2'>
                             <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => alert('Button clicked!')}>Edit</button>
-                            <button className='bg-[#51536D] border border-white font-normal text-xs py-1 px-3' onClick={handleDelete}>Delete</button>
+                            <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={handleDelete}>Delete</button>
                         </div>
                     </div>
 

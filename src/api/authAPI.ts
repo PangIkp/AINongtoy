@@ -8,10 +8,9 @@ const isEmail = (value: string): boolean => {
 
 export const login = async (username: string, password: string) => {
     try {
-        // ตรวจสอบว่า username เป็นอีเมลหรือไม่
         const body = isEmail(username)
-            ? { email: username, password }  // ถ้าเป็นอีเมล
-            : { username, password };        // ถ้าเป็นชื่อผู้ใช้
+            ? { email: username, password }
+            : { username, password };
 
         const response = await fetch(`${API_URL}/login`, {
             method: "POST",
@@ -19,18 +18,23 @@ export const login = async (username: string, password: string) => {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(body),
-        });
+        }); 
 
         const data = await response.json();
+        console.log("Login API Response:", data); // ✅ Debug
 
         if (!response.ok) {
             throw new Error(data.message || "Login failed");
         }
 
-        return data; // ✅ ส่งข้อมูลกลับไปใช้ใน Login.tsx
+        localStorage.setItem("user", JSON.stringify(data.data)); // เก็บข้อมูล user
+        localStorage.setItem("token", data.token); // เก็บ token
 
+        console.log("Stored user in localStorage:", localStorage.getItem("user"));
+        console.log("Stored token in localStorage:", localStorage.getItem("token"));
+
+        return data; // ✅ ต้องแน่ใจว่า data มี user
     } catch (error: any) {
         throw new Error(error.message);
     }
 };
-
