@@ -4,15 +4,17 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Image from "next/image";
 import { login } from "@/api/authAPI";
+import PasswordInput from "../components/PasswordInput";
 
 interface LoginResponse {
-    token: string;
-    username: string;
-    firstName: string; 
-    lastName:string}
-  
+  token: string;
+  username: string;
+  firstName: string;
+  lastName: string
+}
+
 const Login = () => {
-    const [isClient, setIsClient] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
@@ -27,7 +29,7 @@ const Login = () => {
     const storedUsername = localStorage.getItem("username");
     const storedFirstName = localStorage.getItem("firstname");
     const storedLastName = localStorage.getItem("lastname");
-    
+
     if (storedUsername) {
       setUser(storedUsername);
     }
@@ -68,7 +70,7 @@ const Login = () => {
       setPasswordError("Invalid username or password");
     }
   };
-  
+
 
   useEffect(() => {
     // หากผู้ใช้ล็อกอินสำเร็จ ให้ไปหน้า Home
@@ -77,7 +79,7 @@ const Login = () => {
     }
   }, [isLoggedIn]);
 
-  
+
 
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);
@@ -131,14 +133,10 @@ const Login = () => {
                   onChange={(e) => setUsername(e.target.value)}
                 />
 
-                <label className="hidden" htmlFor="password">
-                  <p>Password</p>
-                </label>
-                <input
-                  className="block"
-                  type="password"
+                <PasswordInput
                   id="password"
-                  placeholder="Password"
+                  name="password"
+                  label=""
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -176,7 +174,7 @@ const Login = () => {
                 <p>{passwordError}</p>
               </div>
 
-               {/* แสดงข้อมูลผู้ใช้เมื่อล็อกอินสำเร็จ */}
+              {/* แสดงข้อมูลผู้ใช้เมื่อล็อกอินสำเร็จ */}
 
             </div>
           </div>
