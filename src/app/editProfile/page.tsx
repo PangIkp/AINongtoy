@@ -1,11 +1,11 @@
-// ส่วนนี้เป็นการนำเข้าโมดูลและคอมโพเนนต์ที่จำเป็น
-"use client";
+'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { IoIosAddCircle } from "react-icons/io";
+import { updateUserProfile } from '../../api/userAPI';
+import { getUserData, setUserData } from '../../utils/localStorageUtils';
 
-// กำหนด interface สำหรับข้อมูลจังหวัด อำเภอ ตำบล และข้อมูลที่ถูกเลือก
 interface Province {
     id: number;
     name_th: string;
@@ -34,7 +34,6 @@ interface Selected {
     zip_code?: number;
 }
 
-// กำหนด interface สำหรับ props ของคอมโพเนนต์ DropdownList
 interface DropdownListProps {
     label: string;
     id: keyof Selected;
@@ -46,25 +45,20 @@ interface DropdownListProps {
     disabled?: boolean;
 }
 
-// ฟังก์ชันหลักของคอมโพเนนต์ EditProfile
 export default function EditProfile() {
-    // การใช้ useRef เพื่อสร้าง reference สำหรับการเลื่อนหน้าไปยังส่วนต่างๆ
     const aboutRef = useRef<HTMLDivElement>(null!);
     const partnerRef = useRef<HTMLDivElement>(null!);
     const contactRef = useRef<HTMLDivElement>(null!);
 
-    // ฟังก์ชันสำหรับเลื่อนหน้าไปยังส่วนที่ต้องการ
     const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
         if (ref.current) {
             ref.current.scrollIntoView({ behavior: "smooth" });
         }
     };
 
-    // การใช้ useState เพื่อสร้าง state สำหรับการนับจำนวนตัวอักษรและรายละเอียดที่อยู่
     const [charCount, setCharCount] = useState(0);
     const [addressDetail, setAddressDetail] = useState("");
 
-    // ฟังก์ชันสำหรับจัดการการเปลี่ยนแปลงใน textarea
     const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = event.target.value;
         if (value.length <= 500) {
@@ -73,7 +67,6 @@ export default function EditProfile() {
         }
     };
 
-    // การใช้ useState เพื่อสร้าง state สำหรับข้อมูลจังหวัด อำเภอ ตำบล รหัสไปรษณีย์ และข้อมูลที่ถูกเลือก
     const [provinces, setProvinces] = useState<Province[]>([]);
     const [amphures, setAmphures] = useState<Amphure[]>([]);
     const [tambons, setTambons] = useState<Tambon[]>([]);
@@ -86,27 +79,56 @@ export default function EditProfile() {
     });
     const [isFormValid, setIsFormValid] = useState(false);
 
-    // การใช้ useEffect เพื่อดึงข้อมูลจังหวัดจาก API เมื่อคอมโพเนนต์ถูกสร้างขึ้น
+    const [username, setUsername] = useState<string | null>(null);
+    const [email, setEmail] = useState<string | null>(null);
+    const [firstName, setFirstName] = useState<string | null>(null);
+    const [lastName, setLastName] = useState<string | null>(null);
+    const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+
+    const [originalFirstName, setOriginalFirstName] = useState<string | null>(null);
+    const [originalLastName, setOriginalLastName] = useState<string | null>(null);
+    const [originalPhone, setOriginalPhone] = useState<string | null>(null);
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [userId, setUserId] = useState<string | null>(null); // Add this state to store the user id
+
+    const fetchUserData = () => {
+        const parsedUser = getUserData();
+        if (parsedUser) {
+            console.log('Parsed User:', parsedUser); // Log parsed user data
+            console.log('User ID:', parsedUser._id); // Log the user id
+            setUserId(parsedUser._id); // Update this line to store the user id
+            setUsername(parsedUser.username);
+            setEmail(parsedUser.email);
+            setFirstName(parsedUser.firstName);
+            setLastName(parsedUser.lastName);
+            setPhoneNumber(parsedUser.phoneNumber);
+
+            setOriginalFirstName(parsedUser.firstName);
+            setOriginalLastName(parsedUser.lastName);
+            setOriginalPhone(parsedUser.phoneNumber);
+        }
+    };
+
     useEffect(() => {
         fetch("https://raw.githubusercontent.com/kongvut/thai-province-data/master/api_province_with_amphure_tambon.json")
             .then((response) => response.json())
             .then((result) => {
                 setProvinces(result);
             });
+
+        fetchUserData();
     }, []);
 
-    // การใช้ useEffect เพื่อเช็คความถูกต้องของฟอร์มเมื่อข้อมูลที่ถูกเลือกเปลี่ยนแปลง
     useEffect(() => {
         const { province_id, amphure_id, tambon_id, zip_code } = selected;
         setIsFormValid(!!province_id && !!amphure_id && !!tambon_id && !!zip_code);
     }, [selected]);
 
-    // ฟังก์ชันสำหรับเช็คความถูกต้องของ dropdown
     const isDropdownValid = (value: number | undefined) => {
         return value !== undefined && value !== 0;
     };
 
-    // ฟังก์ชันสำหรับลบข้อมูลที่ถูกเลือก
     const handleDelete = () => {
         setSelected({
             province_id: undefined,
@@ -121,7 +143,51 @@ export default function EditProfile() {
         setCharCount(0);
     };
 
-    // คอมโพเนนต์ DropdownList สำหรับสร้าง dropdown list
+    const handleEdit = () => {
+        setIsEditing(true);
+    };
+
+    const handleCancel = () => {
+        setFirstName(originalFirstName);
+        setLastName(originalLastName);
+        setPhoneNumber(originalPhone);
+        setIsEditing(false);
+    };
+
+    const handleSave = async () => {
+        const userData = {
+            firstName,
+            lastName,
+            phoneNumber
+        };
+
+        console.log('User Data save:', userData); // Log user data
+        console.log('User ID save:', userId); // Log user ID
+
+        if (userId) { // Ensure userId is not null
+            try {
+                const result = await updateUserProfile(userId, userData);
+                console.log('Update Result:', result); // Log the result
+
+                const user = getUserData();
+                if (user) {
+                    const updatedUser = { ...user, ...userData };
+                    setUserData(updatedUser);
+                }
+
+                console.log('Local Storage User:', localStorage.getItem("user")); // Log the updated user data in localStorage
+
+                setIsEditing(false);
+                alert('Profile updated successfully');
+            } catch (error: any) {
+                console.error('Error:', error);
+                alert(error.message || 'Failed to update profile');
+            }
+        } else {
+            alert('User ID is missing');
+        }
+    };
+
     const DropdownList: React.FC<DropdownListProps> = ({ label, id, list, child, childsId = [], setChilds = [], placeholder, disabled }) => {
         const onChangeHandle = (event: React.ChangeEvent<HTMLSelectElement>) => {
             const value = parseInt(event.target.value);
@@ -167,7 +233,6 @@ export default function EditProfile() {
         );
     };
 
-    // การคืนค่า JSX ที่จะถูกแสดงผลในหน้าเว็บ
     return (
         <div>
             <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
@@ -179,7 +244,14 @@ export default function EditProfile() {
                     <div className='flex justify-between border-b border-white pb-6'>
                         <p className='text-xl font-semibold'>Information</p>
                         <div className='place-aitems-end place-content-center'>
-                            <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => alert('Button clicked!')}>Edit</button>
+                            {!isEditing ? (
+                                <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={handleEdit}>Edit</button>
+                            ) : (
+                                <div className='flex gap-2'>
+                                    <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={handleCancel}>Cancel</button>
+                                    <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={handleSave}>Save</button>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -187,23 +259,62 @@ export default function EditProfile() {
                         <form action="#information" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
                             <label htmlFor="username">
                                 <p>Username</p>
-                                <input type="text" id="username" />
+                                <input
+                                    type="text"
+                                    id="username"
+                                    value={username || ''}
+                                    readOnly disabled
+                                    className='bg-[#51536D] border-transparent' />
                             </label>
                             <label htmlFor="email">
                                 <p>Email address</p>
-                                <input type="email" id="email" />
+                                <input
+                                    type="email"
+                                    id="email"
+                                    value={email || ''}
+                                    readOnly disabled
+                                    className='bg-[#51536D] border-transparent' />
                             </label>
                             <label htmlFor="fname">
                                 <p>First Name</p>
-                                <input type="text" id="fname" />
+                                <input
+                                    type="text"
+                                    id="fname"
+                                    pattern='[A-Za-z]'
+                                    value={firstName || ''}
+                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
+                                    className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                />
                             </label>
                             <label htmlFor="lname">
                                 <p>Last Name</p>
-                                <input type="text" id="lname" />
+                                <input
+                                    type="text"
+                                    id="lname"
+                                    pattern='[A-Za-z]'
+                                    value={lastName || ''}
+                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
+                                    className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                />
                             </label>
                             <label htmlFor="phone">
                                 <p>Phone Number</p>
-                                <input type="tel" id="phone" />
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    minLength={10}
+                                    maxLength={10}
+                                    pattern="[0-9]"
+                                    value={phoneNumber || ''}
+                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
+                                    className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
+                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                />
                             </label>
                         </form>
                     </div>
@@ -222,67 +333,64 @@ export default function EditProfile() {
                             <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={handleDelete}>Delete</button>
                         </div>
                     </div>
+                    <form action="#address" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
+                        <div>
+                            <DropdownList
+                                label=""
+                                id="province_id"
+                                list={provinces}
+                                child="amphure"
+                                childsId={["amphure_id", "tambon_id"]}
+                                setChilds={[setAmphures, setTambons]}
+                                placeholder="Province"
+                            />
+                        </div>
 
-                    <div>
-                        <form action="#address" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
-                            <div>
-                                <DropdownList
-                                    label=""
-                                    id="province_id"
-                                    list={provinces}
-                                    child="amphure"
-                                    childsId={["amphure_id", "tambon_id"]}
-                                    setChilds={[setAmphures, setTambons]}
-                                    placeholder="Province"
-                                />
-                            </div>
+                        <div>
+                            <DropdownList
+                                label=""
+                                id="amphure_id"
+                                list={amphures}
+                                child="tambon"
+                                childsId={["tambon_id"]}
+                                setChilds={[setTambons]}
+                                placeholder="District"
+                                disabled={!isDropdownValid(selected.province_id)}
+                            />
+                        </div>
+                        <div>
+                            <DropdownList
+                                label=""
+                                id="tambon_id"
+                                list={tambons}
+                                placeholder="Subdistrict"
+                                disabled={!isDropdownValid(selected.amphure_id)}
+                            />
+                        </div>
+                        <div>
+                            <DropdownList
+                                label=""
+                                id="zip_code"
+                                list={postalCodes ? postalCodes.map((code) => ({ id: code, name_en: code.toString() })) : []}
+                                placeholder="Postal code"
+                                disabled={!isDropdownValid(selected.tambon_id)}
+                            />
+                        </div>
+                        <label htmlFor="address" className='col-span-2 relative'>
+                            <p className='hidden'>Address</p>
+                            <textarea
+                                className='resize-none'
+                                placeholder='Address Detail such as House number, Apartment name, Condo, Village name '
+                                rows={4}
+                                maxLength={500}
+                                onChange={handleTextareaChange}
+                                value={addressDetail}
+                            ></textarea>
+                            <span className='absolute bottom-3 right-2 text-xs text-gray-500'>{charCount}/500</span>
+                        </label>
+                        <button className='h-[50px] col-span-2' disabled={!isFormValid}>Save</button>
+                    </form>
 
-                            <div>
-                                <DropdownList
-                                    label=""
-                                    id="amphure_id"
-                                    list={amphures}
-                                    child="tambon"
-                                    childsId={["tambon_id"]}
-                                    setChilds={[setTambons]}
-                                    placeholder="District"
-                                    disabled={!isDropdownValid(selected.province_id)}
-                                />
-                            </div>
-                            <div>
-                                <DropdownList
-                                    label=""
-                                    id="tambon_id"
-                                    list={tambons}
-                                    placeholder="Subdistrict"
-                                    disabled={!isDropdownValid(selected.amphure_id)}
-                                />
-                            </div>
-                            <div>
-                                <DropdownList
-                                    label=""
-                                    id="zip_code"
-                                    list={postalCodes ? postalCodes.map((code) => ({ id: code, name_en: code.toString() })) : []}
-                                    placeholder="Postal code"
-                                    disabled={!isDropdownValid(selected.tambon_id)}
-                                />
-                            </div>
-                            <label htmlFor="address" className='col-span-2 relative'>
-                                <p className='hidden'>Address</p>
-                                <textarea
-                                    className='resize-none'
-                                    placeholder='Address Detail such as House number, Apartment name, Condo, Village name '
-                                    rows={4}
-                                    maxLength={500}
-                                    onChange={handleTextareaChange}
-                                    value={addressDetail}
-                                ></textarea>
-                                <span className='absolute bottom-3 right-2 text-xs text-gray-500'>{charCount}/500</span>
-                            </label>
-                        </form>
-                    </div>
-
-                    <button className='h-[50px]' disabled={!isFormValid}>Save</button>
                 </div>
             </div>
             <Footer />

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { getUserData } from '../../utils/localStorageUtils';
 
 function MyProfile() {
   const [firstName, setFirstName] = useState<string | null>(null);
@@ -6,9 +7,8 @@ function MyProfile() {
 
   useEffect(() => {
     // ดึงข้อมูล user จาก localStorage
-    const user = localStorage.getItem("user");
-    if (user) {
-      const parsedUser = JSON.parse(user);
+    const parsedUser = getUserData();
+    if (parsedUser) {
       setFirstName(parsedUser.firstName); // ตั้งค่า firstName จากข้อมูล user
       setLastName(parsedUser.lastName); // ตั้งค่า lastName จากข้อมูล user
     }

@@ -101,15 +101,14 @@ const Login = () => {
       />
       <div className="w-full h-[90vh] mt-[5rem]">
         <div className="relative w-full h-full flex items-center justify-center">
-          {isClient && (
-            <Image
-              src="/Images/AINongtoy/mainbg.png"
-              alt="mainbg"
-              fill
-              className="object-cover"
-              priority
-            />
-          )}
+
+          <Image
+            src="/Images/AINongtoy/mainbg.png"
+            alt="mainbg"
+            fill
+            className="object-cover"
+            priority
+          />
           <div className="absolute max-w-[375px] w-full p-4">
             <div>
               <h1 className="text-4xl font-semibold mb-3">Welcome back</h1>

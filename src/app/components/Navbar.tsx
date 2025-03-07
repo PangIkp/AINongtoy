@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
+import { getUserData } from '../../utils/localStorageUtils';
 
 interface NavbarProps {
   scrollToSection: (ref: React.RefObject<HTMLDivElement | null>) => void;
@@ -28,10 +29,9 @@ export default function Navbar({
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    const userJson = localStorage.getItem("user");
+    const parsedUser = getUserData();
 
-    if (storedToken && userJson) {
-      const parsedUser = JSON.parse(userJson);
+    if (storedToken && parsedUser) {
       setIsLoggedIn(true); // ถ้ามี token แสดงว่าผู้ใช้ล็อกอินแล้ว
       setFirstName(parsedUser.firstName); // ตั้งค่า firstName
     }
@@ -193,7 +193,7 @@ export default function Navbar({
         // ถ้าล็อกอินแล้วจะแสดงรูปภาพแทนปุ่ม Login
         <Link
           href="/profile"
-          className="flex items-center space-x-2 hidden lg:flex border border-[#51536D] rounded-[10px] p-1 px-2"
+          className="items-center space-x-2 hidden lg:flex border border-[#51536D] rounded-[10px] p-1 px-2"
         >
           <img
             src="/Images/AINongtoy/User.png"
