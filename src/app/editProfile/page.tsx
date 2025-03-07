@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import { IoIosAddCircle } from "react-icons/io";
 import { updateUserProfile } from '../../api/userAPI';
 import { getUserData, setUserData } from '../../utils/localStorageUtils';
+import AddressForm from '../components/AddressForm';
 
 interface Province {
     id: number;
@@ -116,7 +117,9 @@ export default function EditProfile() {
             .then((result) => {
                 setProvinces(result);
             });
+    }, []);
 
+    useEffect(() => {
         fetchUserData();
     }, []);
 
@@ -186,6 +189,12 @@ export default function EditProfile() {
         } else {
             alert('User ID is missing');
         }
+    };
+
+    const [addressFormsCount, setAddressFormsCount] = useState(1);
+
+    const handleAddAddressForm = () => {
+        setAddressFormsCount(prevCount => (prevCount < 3 ? prevCount + 1 : prevCount));
     };
 
     const DropdownList: React.FC<DropdownListProps> = ({ label, id, list, child, childsId = [], setChilds = [], placeholder, disabled }) => {
@@ -319,11 +328,11 @@ export default function EditProfile() {
                         </form>
                     </div>
 
-                    <div className='flex justify-between border-b border-white pb-6'>
+                    <div className='flex justify-between'>
                         <div className='flex justify-center items-center'>
                             <p className='text-xl font-semibold'>Address</p>
 
-                            <button className='bg-[#07081C] hover:bg-[#07081C] hover:text-white rounded-full' onClick={() => alert('Button clicked!')}>
+                            <button className='bg-[#07081C] hover:bg-[#07081C] hover:text-white rounded-full' onClick={handleAddAddressForm}>
                                 <IoIosAddCircle className='w-[20px] h-[20px] hover:text-[#0AACF0]' /><p className='hidden'>+</p>
                             </button>
                         </div>
@@ -333,63 +342,11 @@ export default function EditProfile() {
                             <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={handleDelete}>Delete</button>
                         </div>
                     </div>
-                    <form action="#address" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
-                        <div>
-                            <DropdownList
-                                label=""
-                                id="province_id"
-                                list={provinces}
-                                child="amphure"
-                                childsId={["amphure_id", "tambon_id"]}
-                                setChilds={[setAmphures, setTambons]}
-                                placeholder="Province"
-                            />
-                        </div>
 
-                        <div>
-                            <DropdownList
-                                label=""
-                                id="amphure_id"
-                                list={amphures}
-                                child="tambon"
-                                childsId={["tambon_id"]}
-                                setChilds={[setTambons]}
-                                placeholder="District"
-                                disabled={!isDropdownValid(selected.province_id)}
-                            />
-                        </div>
-                        <div>
-                            <DropdownList
-                                label=""
-                                id="tambon_id"
-                                list={tambons}
-                                placeholder="Subdistrict"
-                                disabled={!isDropdownValid(selected.amphure_id)}
-                            />
-                        </div>
-                        <div>
-                            <DropdownList
-                                label=""
-                                id="zip_code"
-                                list={postalCodes ? postalCodes.map((code) => ({ id: code, name_en: code.toString() })) : []}
-                                placeholder="Postal code"
-                                disabled={!isDropdownValid(selected.tambon_id)}
-                            />
-                        </div>
-                        <label htmlFor="address" className='col-span-2 relative'>
-                            <p className='hidden'>Address</p>
-                            <textarea
-                                className='resize-none'
-                                placeholder='Address Detail such as House number, Apartment name, Condo, Village name '
-                                rows={4}
-                                maxLength={500}
-                                onChange={handleTextareaChange}
-                                value={addressDetail}
-                            ></textarea>
-                            <span className='absolute bottom-3 right-2 text-xs text-gray-500'>{charCount}/500</span>
-                        </label>
-                        <button className='h-[50px] col-span-2' disabled={!isFormValid}>Save</button>
-                    </form>
+                    {Array.from({ length: addressFormsCount }).map((_, index) => (
+                        <AddressForm key={index} setIsFormValid={setIsFormValid} />
+                    ))}
+                    <button className='h-[50px] col-span-2'>Save</button>
 
                 </div>
             </div>
