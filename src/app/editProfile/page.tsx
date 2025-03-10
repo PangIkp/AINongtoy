@@ -93,6 +93,8 @@ export default function EditProfile() {
     const [isEditing, setIsEditing] = useState(false);
     const [userId, setUserId] = useState<string | null>(null); // Add this state to store the user id
 
+    const [addressFormsData, setAddressFormsData] = useState<any[]>([]);
+
     const fetchUserData = () => {
         const parsedUser = getUserData();
         if (parsedUser) {
@@ -108,7 +110,25 @@ export default function EditProfile() {
             setOriginalFirstName(parsedUser.firstName);
             setOriginalLastName(parsedUser.lastName);
             setOriginalPhone(parsedUser.phoneNumber);
+
+            // Loop through addresses if available
+            if (parsedUser.addresses && Array.isArray(parsedUser.addresses)) {
+                parsedUser.addresses.forEach((address: any, index: number) => {
+                    // Assuming you have a function to set each address form
+                    setAddressForm(index, address);
+                });
+            }
         }
+    };
+
+    // Example function to set address form data
+    const setAddressForm = (index: number, address: any) => {
+        setAddressFormsData(prevData => {
+            const newData = [...prevData];
+            newData[index] = address;
+            return newData;
+        });
+        console.log(`Setting address form ${index + 1}:`, address);
     };
 
     useEffect(() => {
@@ -132,7 +152,8 @@ export default function EditProfile() {
         return value !== undefined && value !== 0;
     };
 
-    const handleDelete = () => {
+    const handleDelete = (index: number) => {
+        setAddressFormsCount(prevCount => prevCount - 1);
         setSelected({
             province_id: undefined,
             amphure_id: undefined,
@@ -250,7 +271,7 @@ export default function EditProfile() {
             </div>
             <div className='w-full place-items-center'>
                 <div className='w-full max-w-[980px] px-4 py-20 flex flex-col gap-12'>
-                    <div className='flex justify-between border-b border-white pb-6'>
+                    <div className='flex justify-between border-b border-white pb-2'>
                         <p className='text-xl font-semibold'>Information</p>
                         <div className='place-aitems-end place-content-center'>
                             {!isEditing ? (
@@ -328,26 +349,29 @@ export default function EditProfile() {
                         </form>
                     </div>
 
-                    <div className='flex justify-between'>
-                        <div className='flex justify-center items-center'>
-                            <p className='text-xl font-semibold'>Address</p>
-
-                            <button className='bg-[#07081C] hover:bg-[#07081C] hover:text-white rounded-full' onClick={handleAddAddressForm}>
-                                <IoIosAddCircle className='w-[20px] h-[20px] hover:text-[#0AACF0]' /><p className='hidden'>+</p>
-                            </button>
-                        </div>
-
-                        <div className='flex justify-center items-center gap-2'>
-                            <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => alert('Button clicked!')}>Edit</button>
-                            <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={handleDelete}>Delete</button>
-                        </div>
-                    </div>
 
                     {Array.from({ length: addressFormsCount }).map((_, index) => (
-                        <AddressForm key={index} setIsFormValid={setIsFormValid} />
+                        <div key={index}>
+                            <div className='flex justify-between'>
+                                <div>
+                                    <h1 className='text-xl font-semibold'>
+                                        Address {index === 0 ? '' : index + 1}
+                                    </h1>
+                                </div>
+                                <div className='flex justify-center items-center gap-2'>
+                                    <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => alert('Button clicked!')}>Edit</button>
+                                    <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={() => handleDelete(index)}>Delete</button>
+                                </div>
+                            </div>
+                            <hr className='border border-white mb-10 mt-2 ' />
+                            <AddressForm setIsFormValid={setIsFormValid} addressData={addressFormsData[index]} />
+                        </div>
                     ))}
-                    <button className='h-[50px] col-span-2'>Save</button>
-
+                    {addressFormsCount < 3 && (
+                        <button onClick={handleAddAddressForm} className='h-[50px] col-span-2 flex justify-center items-center gap-1'>
+                            <IoIosAddCircle className='w-[20px] h-[20px] hover:text-[#0AACF0]' />Address
+                        </button>
+                    )}
                 </div>
             </div>
             <Footer />

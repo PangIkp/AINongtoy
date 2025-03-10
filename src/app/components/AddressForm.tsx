@@ -42,9 +42,10 @@ interface DropdownListProps {
 
 interface AddressFormProps {
     setIsFormValid: React.Dispatch<React.SetStateAction<boolean>>;
+    addressData?: any;
 }
 
-const AddressForm: React.FC<AddressFormProps> = ({ setIsFormValid }) => {
+const AddressForm: React.FC<AddressFormProps> = ({ setIsFormValid, addressData }) => {
     const [provinces, setProvinces] = useState<Province[]>([]);
     const [amphures, setAmphures] = useState<Amphure[]>([]);
     const [tambons, setTambons] = useState<Tambon[]>([]);
@@ -71,16 +72,38 @@ const AddressForm: React.FC<AddressFormProps> = ({ setIsFormValid }) => {
         setIsFormValid(!!province_id && !!amphure_id && !!tambon_id && !!zip_code);
     }, [selected, setIsFormValid]);
 
+    useEffect(() => {
+        if (addressData) {
+            // Initialize form fields with addressData
+            console.log('Address Data:', addressData);
+            // Add your logic to set form fields with addressData
+        }
+    }, [addressData]);
+
     const isDropdownValid = (value: number | undefined) => {
         return value !== undefined && value !== 0;
     };
 
     const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = event.target.value;
-        if (value.length <= 500) {
+        if (value.length <= 200) {
             setCharCount(value.length);
             setAddressDetail(value);
         }
+    };
+
+    const handleDelete = () => {
+        setSelected({
+            province_id: undefined,
+            amphure_id: undefined,
+            tambon_id: undefined,
+            zip_code: undefined
+        });
+        setAmphures([]);
+        setTambons([]);
+        setPostalCodes([]);
+        setAddressDetail("");
+        setCharCount(0);
     };
 
     const DropdownList: React.FC<DropdownListProps> = ({ label, id, list, child, childsId = [], setChilds = [], placeholder, disabled }) => {
@@ -130,7 +153,6 @@ const AddressForm: React.FC<AddressFormProps> = ({ setIsFormValid }) => {
 
     return (
         <div>
-            <hr className='border border-white mb-10 ' />
             <form action="#address" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
                 <div>
                     <DropdownList
@@ -180,14 +202,14 @@ const AddressForm: React.FC<AddressFormProps> = ({ setIsFormValid }) => {
                         className='resize-none'
                         placeholder='Address Detail such as House number, Apartment name, Condo, Village name '
                         rows={4}
-                        maxLength={500}
+                        maxLength={200}
                         onChange={handleTextareaChange}
                         value={addressDetail}
                     ></textarea>
-                    <span className='absolute bottom-3 right-2 text-xs text-gray-500'>{charCount}/500</span>
+                    <span className='absolute bottom-3 right-2 text-xs text-gray-500'>{charCount}/200</span>
                 </label>
-
             </form>
+
         </div>
 
     );
