@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useMainStore } from "@/mainstore";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { createArtToy } from "@/api/arttoyAPI"; 
 
 const Config = () => {
   const [size, setSize] = useState("Medium");
@@ -26,7 +26,7 @@ const Config = () => {
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const totalPrice = quantity * pricePerUnit;
+  const price = quantity * pricePerUnit;
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setArtToyNameLocal(event.target.value);
@@ -44,22 +44,36 @@ const Config = () => {
     setArtToyData({ name: artToyName }); // ✅ อัปเดต Zustand
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const updatedArtToy = {
       ...artToyData,
-      name: artToyName,
+      name: artToyData.name,
       size,
       material,
       painting,
       assembly,
       quantity,
-      totalPrice,
+      price,
+      imageUrl, 
     };
-  
-    setArtToyData(updatedArtToy); // ✅ อัปเดต State
-    saveArtToy(); // ✅ บันทึกลง Zustand
-    setShowModal(true);
-  };  
+
+    setArtToyData(updatedArtToy); // อัปเดต Zustand State
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You are not logged in.");
+      return;
+    }
+
+    try {
+      const response = await createArtToy(updatedArtToy, token); // เรียกใช้ฟังก์ชันที่ import มา
+      console.log("API Response:", response);
+      setShowModal(true); // แสดง modal เมื่อบันทึกสำเร็จ
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to save Art Toy"); // หากเกิดข้อผิดพลาด
+    }
+  };
 
   const handleCheckout = () => {
     const newArtToyData = {
@@ -69,7 +83,7 @@ const Config = () => {
       painting,
       assembly,
       quantity,
-      totalPrice,
+      price,
       imageUrl,
     };
 
@@ -118,7 +132,7 @@ const Config = () => {
                 </button>
               )}
             </div>
-            <p className="text-sm text-gray-400">{artToyData.prompt}</p>
+            {/* <p className="text-sm text-gray-400">{artToyData.prompt}</p> */}
           </div>
         </div>
 
@@ -208,7 +222,7 @@ const Config = () => {
             </div>
 
             <p className="font-semibold">
-              Total price : {totalPrice.toLocaleString()} Baht
+              Total price : {price.toLocaleString()} Baht
             </p>
           </div>
 

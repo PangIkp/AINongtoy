@@ -1,31 +1,91 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { useMainStore } from "@/mainstore";
 import React, { useState, useEffect, useCallback } from "react";
-import { ArtToy, useMainStore } from "@/mainstore";
+import { ArtToy } from "@/mainstore"; // ถ้า ArtToy มี type ให้ใช้
 import useHydration from "../../../useHydration";
+import { deleteArtToy } from "@/api/arttoyAPI";
 
 function ConfigCard() {
   const isHydrated = useHydration();
-  const { savedArtToys, removeArtToy,setArtToyData } = useMainStore(); // ดึง removeArtToy มาใช้
-  const [isClient, setIsClient] = useState(false);
-
   const router = useRouter();
+  const [artToys, setArtToys] = useState<ArtToy[]>([]); // ใช้ state เก็บข้อมูลจาก database
+  const [isClient, setIsClient] = useState(false);
+  const [forceFetchData, setForceFetchData] = useState(false);
+  const { artToyData, setArtToyData, saveArtToy } = useMainStore();
 
   useEffect(() => {
-    setIsClient(true); // ✅ กำหนด state เมื่อคอมโพเนนต์โหลดแล้ว
-  }, []);
+    setIsClient(true);
 
-const handleEdit = useCallback((artToy: ArtToy) => {
-  if (!isClient) return;
-  setArtToyData(artToy); // ✅ กำหนดค่าก่อนพาไปแก้ไข
-  router.push(`/material?name=${encodeURIComponent(artToy.name)}&image=${encodeURIComponent(artToy.imageUrl)}`);
-}, [router, isClient]);
+    // ดึงข้อมูลจาก API
+    const fetchArtToys = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("You are not logged in.");
+          return;
+        }
+        const response = await fetch("http://localhost:3001/api/v1/arttoy", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch ArtToys");
+        }
+        const data: ArtToy[] = await response.json(); // แปลง JSON เป็น array ของ ArtToy
+        setArtToys(data); // บันทึกข้อมูลลง state
+      } catch (error) {
+        console.error("Error fetching ArtToys:", error);
+      }
+    };
 
+    fetchArtToys();
+  }, [forceFetchData]);
+
+  const handleEdit = useCallback(
+    (artToy: ArtToy) => {
+      if (!isClient) return;
+      router.push(
+        `/material?name=${encodeURIComponent(
+          artToy.name
+        )}&image=${encodeURIComponent(artToy.imageUrl)}`
+      );
+    },
+    [router, isClient]
+  );
+
+  const handleDelete = async (id: any) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You are not logged in.");
+      return;
+    }
+
+    if (!artToyData) {
+      alert("Invalid ArtToy data");
+      return;
+    }
+
+    try {
+      const response = await deleteArtToy(id, token); // เรียก API ลบ
+      console.log("API Response:", response);
+
+      alert("ArtToy deleted successfully"); // แจ้งเตือนเมื่อลบสำเร็จ
+      setForceFetchData(!forceFetchData); // อัปเดต state เพื่อดึงข้อมูลใหม่
+      // setArtToys((prev) => prev.filter((item) => item !== artToyData)); // อัปเดต state
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to delete ArtToy"); // แจ้งเตือนหากเกิดข้อผิดพลาด
+    }
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {savedArtToys?.length > 0 ? (
-        savedArtToys.map((artToy, index) => (
+      {artToys.length > 0 ? (
+        artToys.map((artToy, index) => (
           <div
             key={index}
             className="relative bg-[#202133] shadow-lg rounded-lg p-4 cursor-pointer"
@@ -33,12 +93,13 @@ const handleEdit = useCallback((artToy: ArtToy) => {
           >
             {/* ปุ่มลบ */}
             <button
-             onClick={(e) => {
-                e.stopPropagation(); // ป้องกัน event ซ้อนกัน
-                removeArtToy(index);
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log("Clicked ArtToy ID:", artToy._id);
+                handleDelete(artToy._id);
               }}
               className="absolute top-2 right-2 bg-[#51536D] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm 
-             hover:bg-red-500 hover:text-white transition duration-200"
+    hover:bg-red-500 hover:text-white transition duration-200"
             >
               ✕
             </button>
