@@ -2,21 +2,26 @@ import { useState, useEffect } from "react";
 import { useMainStore } from "@/mainstore";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { createArtToy } from "@/api/arttoyAPI"; 
+import { createArtToy,getArtToys, updateArtToy } from "@/api/arttoyAPI"; 
+import { getUser } from "@/api/authAPI";
+
 
 const Config = () => {
-  const [size, setSize] = useState("Medium");
+  const [size, setSize] = useState("Small");
   const [material, setMaterial] = useState("PLA");
   const [painting, setPainting] = useState("Hand-painting");
   const [assembly, setAssembly] = useState("Fixed Pose");
-  const [quantity, setQuantity] = useState(3);
+  const [quantity, setQuantity] = useState(1);
   const pricePerUnit = 500; // ปรับราคาได้ตามต้องการ
   const searchParams = useSearchParams();
   const imageUrl =
     searchParams.get("image") || "/Images/AINongtoy/WhiteMiku.png";
-  const { artToyData, setArtToyData, saveArtToy } = useMainStore();
+
+  const {artToyData, setArtToyData, saveArtToy } = useMainStore();
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
+
+  const [isNew, setIsNew] = useState(true);
 
   // สร้าง state สำหรับชื่อ Art Toy
   const [artToyName, setArtToyNameLocal] = useState(() => {
@@ -25,8 +30,47 @@ const Config = () => {
   });
 
   const [isEditing, setIsEditing] = useState(false);
-
   const price = quantity * pricePerUnit;
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You are not logged in.");
+      return;
+    }
+
+    const fetchArtToyData = async () => {
+      try {
+      const user = await getUser(token);
+      console.log("User Data:", user);
+      const userId = user.data._id; // Assuming user object has an id property
+
+      const artToys = await getArtToys(token);
+      console.log("Fetched ArtToys:", artToys);
+      const userArtToys = artToys.filter((toy:any) => toy.user === userId && toy.imageUrl === imageUrl); // Assuming art toy object has a userId and imageUrl property
+      console.log("User ArtToys:", userArtToys);
+
+      if (userArtToys.length > 0) {
+        setIsNew(false);
+        setArtToyData(userArtToys[0]); // Assuming you want the first art toy of the user
+      }
+      } catch (error) {
+      console.error("Error fetching art toys:", error);
+      }
+    };
+
+    fetchArtToyData();
+
+    if (artToyData) {
+      console.log("Fetched ArtToy Data:", artToyData); // Log ดูว่าข้อมูลถูกต้องไหม
+      setSize(artToyData.size || "Small");
+      setMaterial(artToyData.material || "PLA");
+      setPainting(artToyData.painting || "Hand-painting");
+      setAssembly(artToyData.assembly || "Fixed Pose");
+      setQuantity(artToyData.quantity || 1);
+    }
+  }, []);
+  
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setArtToyNameLocal(event.target.value);
@@ -45,8 +89,7 @@ const Config = () => {
   };
 
   const handleSave = async () => {
-    const updatedArtToy = {
-      ...artToyData,
+    const updatedArtToy = { 
       name: artToyData.name,
       size,
       material,
@@ -66,7 +109,12 @@ const Config = () => {
     }
 
     try {
-      const response = await createArtToy(updatedArtToy, token); // เรียกใช้ฟังก์ชันที่ import มา
+      let response;
+      if (isNew) {
+        response = await createArtToy(updatedArtToy, token); // เรียกใช้ฟังก์ชันที่ import มา
+      } else {
+        response = await updateArtToy(artToyData._id,updatedArtToy, token); // เรียกใช้ฟังก์ชันที่ import มา
+      }
       console.log("API Response:", response);
       setShowModal(true); // แสดง modal เมื่อบันทึกสำเร็จ
     } catch (error) {
@@ -91,6 +139,7 @@ const Config = () => {
     router.push("/payment");
   };
 
+  
   // ✅ ใช้ useEffect เพื่อลงค่า localStorage เมื่อ state อัปเดต
   useEffect(() => {
     if (artToyData) {

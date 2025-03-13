@@ -5,6 +5,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { ArtToy } from "@/mainstore"; // ถ้า ArtToy มี type ให้ใช้
 import useHydration from "../../../useHydration";
 import { deleteArtToy } from "@/api/arttoyAPI";
+import { getArtToyById } from "@/api/arttoyAPI";
+
 
 function ConfigCard() {
   const isHydrated = useHydration();
@@ -16,8 +18,7 @@ function ConfigCard() {
 
   useEffect(() => {
     setIsClient(true);
-
-    // ดึงข้อมูลจาก API
+  
     const fetchArtToys = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -35,28 +36,78 @@ function ConfigCard() {
         if (!response.ok) {
           throw new Error("Failed to fetch ArtToys");
         }
-        const data: ArtToy[] = await response.json(); // แปลง JSON เป็น array ของ ArtToy
-        setArtToys(data); // บันทึกข้อมูลลง state
+        let data: ArtToy[] = await response.json(); // แปลง JSON เป็น array ของ ArtToy
+  
+        // ✅ ตรวจสอบว่า arttoy ตัวไหนไม่มี `_id` (ยังไม่ถูก save)
+        data = data.map((toy) =>
+          toy._id
+            ? toy // ถ้ามี _id ให้ใช้ค่าที่ได้จาก API
+            : {
+                _id: "default-arttoy",
+                name: "Default ArtToy",
+                size: "Small",
+                material: "PLA",
+                painting: "Hand-painting",
+                assembly: "Fixed Pose",
+                quantity: 1,
+                price: 500,
+                imageUrl: "/Images/AINongtoy/WhiteMiku.png",
+              }
+        );
+  
+        setArtToys(data);
       } catch (error) {
         console.error("Error fetching ArtToys:", error);
       }
     };
-
+  
     fetchArtToys();
   }, [forceFetchData]);
+  
 
   const handleEdit = useCallback(
-    (artToy: ArtToy) => {
+    async (artToy: ArtToy) => {
       if (!isClient) return;
-      router.push(
-        `/material?name=${encodeURIComponent(
-          artToy.name
-        )}&image=${encodeURIComponent(artToy.imageUrl)}`
-      );
+  
+      console.log("Selected ArtToy:", artToy); // Log ค่า artToy เพื่อตรวจสอบ
+  
+      if (!artToy._id) {
+        console.error("ArtToy object is missing '_id' property:", artToy);
+        alert("Invalid ArtToy data");
+        return;
+      }
+  
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("You are not logged in.");
+          return;
+        }
+  
+        const artToyData = await getArtToyById(artToy._id, token); // ใช้ _id แทน id
+        console.log("Fetched ArtToy Data:", artToyData);
+  
+        if (!artToyData) {
+          alert("Failed to fetch ArtToy details");
+          return;
+        }
+  
+        setArtToyData(artToyData);
+  
+        router.push(
+          `/material?name=${encodeURIComponent(
+            artToyData.name
+          )}&image=${encodeURIComponent(artToyData.imageUrl)}`
+        );
+      } catch (error) {
+        console.error("Error fetching ArtToy details:", error);
+        alert("Failed to load ArtToy details");
+      }
     },
-    [router, isClient]
+    [router, isClient, setArtToyData]
   );
-
+  
+  
   const handleDelete = async (id: any) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -98,8 +149,7 @@ function ConfigCard() {
                 console.log("Clicked ArtToy ID:", artToy._id);
                 handleDelete(artToy._id);
               }}
-              className="absolute top-2 right-2 bg-[#51536D] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm 
-    hover:bg-red-500 hover:text-white transition duration-200"
+              className="absolute top-2 right-2 bg-[#51536D] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-500 hover:text-white transition duration-200"
             >
               ✕
             </button>
