@@ -38,3 +38,25 @@ export const login = async (username: string, password: string) => {
         throw new Error(error.message);
     }
 };
+
+// http://localhost:3001/api/v1/auth/about
+export const getUser = async (token: string) => {
+    try {
+      const response = await fetch("http://localhost:3001/api/v1/auth/about", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ส่ง token สำหรับการตรวจสอบสิทธิ์
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to create ArtToy");
+      }
+  
+      const data = await response.json(); // รับข้อมูลกลับมาจาก API
+      return data;
+    } catch (error) {
+      console.error("Error creating ArtToy:", error);
+      throw error; // แจ้งข้อผิดพลาด
+    }
+  };

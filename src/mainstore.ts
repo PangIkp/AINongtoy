@@ -2,17 +2,19 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 export interface ArtToy {
+  _id: string;
+  // id:string;
   name: string;
-  prompt: string;
+  // prompt: string;
   size: string;
   material: string;
   painting: string;
   assembly: string;
   quantity: number;
-  totalPrice: number;
+  price: number;
   imageUrl: string;
-  shipingCost: number;
-}
+  // shipingCost: number;
+} 
 
 interface MainStore {
   favorites: { [key: string]: boolean };
@@ -39,6 +41,7 @@ export const useMainStore = create<MainStore>()(
         })),
 
       artToyData: {
+        _id:"",
         name: "Unnamed Art Toy",
         prompt: "art toy",
         size: "",
@@ -46,16 +49,16 @@ export const useMainStore = create<MainStore>()(
         painting: "",
         assembly: "",
         quantity: 1,
-        totalPrice: 0,
+        price: 0,
         imageUrl: "",
-        shipingCost: 0,
+        // shipingCost: 0,
       },
 
       setArtToyData: (data) =>
         set((state) => ({
           artToyData: {
-            ...state.artToyData, // ✅ คงค่าเดิมไว้
-            ...data, // ✅ รวมค่าที่อัปเดต
+            ...state.artToyData,
+            ...data, 
           },
         })),
 
