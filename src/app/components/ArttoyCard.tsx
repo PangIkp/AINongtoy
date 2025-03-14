@@ -1,8 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
 import { useMainStore } from "@/mainstore";
+import {
+  createFavorite,
+  getAllFavorites,
+  deleteFavorite,
+} from "@/api/favoriteAPI";
 
 interface ArtToyCardProps {
   imageUrls: string[];
@@ -16,10 +21,10 @@ export default function ArtToyCard({
   isLoading,
 }: ArtToyCardProps) {
   const router = useRouter();
-  const { favorites, toggleFavorite } = useMainStore(); // ✅ ใช้ Zustand Store
   const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>(
     {}
   );
+  const [favorites, setFavorites] = useState<{ [key: string]: string }>({});
 
   // ฟังก์ชันเมื่อรูปโหลดเสร็จ
   const handleImageLoad = (imageUrl: string) => {
@@ -30,6 +35,76 @@ export default function ArtToyCard({
 
     if (onImageLoad) {
       onImageLoad();
+    }
+  };
+
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      try {
+        const favoriteList = await getAllFavorites(token);
+        const favoriteMap = favoriteList.reduce((acc: any, item: any) => {
+          acc[item.imageUrl] = item._id; // ✅ บันทึก `_id` ของ Favorite
+          return acc;
+        }, {} as { [key: string]: boolean });
+
+        setFavorites(favoriteMap);
+      } catch (error) {
+        console.error("Error fetching favorites:", error);
+      }
+    };
+
+    fetchFavorites();
+  }, []);
+
+  const handleFavoriteClick = async (imageUrl: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You need to login first!");
+      return;
+    }
+
+    if (favorites[imageUrl]) {
+      // ถ้าเป็น Favorite อยู่แล้ว → ให้ลบ
+      handleDeleteFavorite(favorites[imageUrl]); // ส่ง `_id` ของ Favorite ไม่ใช่ `imageUrl`
+    } else {
+      try {
+        const favoriteData = await createFavorite(token, imageUrl);
+        setFavorites((prev) => ({
+          ...prev,
+          [imageUrl]: favoriteData._id, // บันทึก `_id` ที่ได้จาก API
+        }));
+        console.log("✅ Favorite added successfully!");
+      } catch (error) {
+        console.error("❌ Error adding favorite:", error);
+      }
+    }
+  };
+
+  const handleDeleteFavorite = async (favoriteId: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You are not logged in.");
+      return;
+    }
+
+    try {
+      await deleteFavorite(token, favoriteId);
+      setFavorites((prev) => {
+        const updatedFavorites = { ...prev };
+        Object.keys(updatedFavorites).forEach((key) => {
+          if (updatedFavorites[key] === favoriteId) {
+            delete updatedFavorites[key]; // ✅ ลบ `_id` ออกจาก state
+          }
+        });
+        return updatedFavorites;
+      });
+      console.log("✅ Favorite deleted successfully!");
+    } catch (error) {
+      console.error("❌ Failed to remove favorite", error);
+      alert("Failed to remove favorite");
     }
   };
 
@@ -44,7 +119,7 @@ export default function ArtToyCard({
                 className="absolute top-4 right-4 z-10 bg-transparent hover:bg-transparent"
                 onClick={(e) => {
                   e.stopPropagation(); // ป้องกันการเปิดหน้าใหม่เมื่อกดหัวใจ
-                  toggleFavorite(imageUrl);
+                  handleFavoriteClick(imageUrl); // เรียก API บันทึก Favorite
                 }}
               >
                 <Heart
