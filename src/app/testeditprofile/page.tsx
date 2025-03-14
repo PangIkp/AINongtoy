@@ -30,6 +30,7 @@ interface Result {
     amphureId: number | string | null;
     tambonId: number | string | null;
     zipCode: number | string | null;
+    detail?: string; // Add this line
 }
 
 interface Address {
@@ -57,6 +58,11 @@ export default function Page() {
     const [isEditing, setIsEditing] = useState(false); // สร้าง state ที่เก็บค่าของการแก้ไข
     const UserData = getUserData(); // ดึงข้อมูลของผู้ใช้จาก localStorage
     const [userID, setUserID] = useState(UserData?._id); // สร้าง state ที่เก็บค่าของ ID ของผู้ใช้
+    const [initialUserData, setInitialUserData] = useState({
+        firstName: '',
+        lastName: '',
+        phoneNumber: ''
+    });
 
     // สร้าง state ที่เก็บค่าของข้อมูลผู้ใช้
     const [username, setUsername] = useState<string | undefined>(undefined);
@@ -94,7 +100,6 @@ export default function Page() {
                 });
 
             } catch (error: any) {
-                console.error('Error:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -112,6 +117,13 @@ export default function Page() {
                 showConfirmButton: false,
             });
         }
+    };
+
+    const handleCancelEdit = () => {
+        setFirstName(initialUserData.firstName);
+        setLastName(initialUserData.lastName);
+        setPhoneNumber(initialUserData.phoneNumber);
+        setIsEditing(false);
     };
 
     // ==================================================================================================
@@ -160,9 +172,9 @@ export default function Page() {
     };
 
     const handleAddressDetailChange = (e: React.ChangeEvent<HTMLTextAreaElement>, index: number) => {
-        const newAddresses = [...addresses];
-        newAddresses[index].detail = e.target.value;
-        setAddresses(newAddresses);
+        const newResults = [...results];
+        newResults[index].detail = e.target.value;
+        setResults(newResults);
 
         const newCharCount = [...charCount];
         newCharCount[index] = e.target.value.length;
@@ -175,6 +187,7 @@ export default function Page() {
 
         const updatedAddresses = addresses.filter((_, i) => i !== index);
         setAddresses(updatedAddresses);
+        setIsEditingAddress(false);
 
         if (isEmptyAddress) {
             return;
@@ -196,7 +209,6 @@ export default function Page() {
                     showConfirmButton: false,
                 });
             } catch (error: any) {
-                console.error('Error:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -253,7 +265,6 @@ export default function Page() {
                     }
                 });
             } catch (error: any) {
-                console.error('Error:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -288,6 +299,64 @@ export default function Page() {
         setCharCount(prevCharCount => [...prevCharCount, 0]);
     };
 
+    const handleCancelEditAddress = () => {
+        const newResults: Result[] = [];
+        const newCharCount: number[] = [];
+
+        addresses.forEach(address => {
+            const province = data?.find((province: Province) => province.name_en === address.province);
+            if (province) {
+                const amphure = province.amphure.find((amphure: Amphure) => amphure.name_en === address.district);
+                if (amphure) {
+                    const tambon = amphure.tambon.find((tambon: Tambon) => tambon.name_en === address.subdistrict);
+                    if (tambon) {
+                        const zipCode = tambon.zip_code === parseInt(address.postalCode) ? tambon.zip_code : null;
+                        newResults.push({
+                            provinceId: province.id,
+                            amphureId: amphure.id,
+                            tambonId: tambon.id,
+                            zipCode: zipCode,
+                            detail: address.detail // Add this line
+                        });
+                        newCharCount.push(address.detail.length);
+                    } else {
+                        newResults.push({
+                            provinceId: province.id,
+                            amphureId: amphure.id,
+                            tambonId: null,
+                            zipCode: null,
+                            detail: address.detail // Add this line
+                        });
+                        newCharCount.push(address.detail.length);
+                    }
+                } else {
+                    newResults.push({
+                        provinceId: province.id,
+                        amphureId: null,
+                        tambonId: null,
+                        zipCode: null,
+                        detail: address.detail // Add this line
+                    });
+                    newCharCount.push(address.detail.length);
+                }
+            } else {
+                newResults.push({
+                    provinceId: null,
+                    amphureId: null,
+                    tambonId: null,
+                    zipCode: null,
+                    detail: address.detail // Add this line
+                });
+                newCharCount.push(address.detail.length);
+            }
+        });
+
+        setResults(newResults);
+        setCharCount(newCharCount);
+        setAddressFormsCount(addresses.length);
+        setIsEditingAddress(false);
+    };
+
     // สร้าง function ที่ใช้ในการดึงข้อมูลผู้ใช้ และ ที่อยู่ของผู้ใช้
     const fetchUserData = async () => {
         if (userID) {
@@ -301,14 +370,30 @@ export default function Page() {
                     setPhoneNumber(response.data.phoneNumber);
                     setAddresses(response.data.address);
 
-                    console.log('User data:', response.data);
-                    console.log('Address data:', response.data.address);
+                    // ตั้งค่าข้อมูลเริ่มต้นของผู้ใช้
+                    setInitialUserData({
+                        firstName: response.data.firstName,
+                        lastName: response.data.lastName,
+                        phoneNumber: response.data.phoneNumber
+                    });
 
                 } else {
-                    console.error('Response data is missing or invalid');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message || 'Failed to fetch user data',
+                        timer: 1500,
+                        showConfirmButton: false,
+                    });
                 }
-            } catch (error) {
-                console.error('Failed to fetch user data:', error);
+            } catch (error: any) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Failed to fetch user data',
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
             }
         }
     };
@@ -319,7 +404,7 @@ export default function Page() {
             .then(response => response.json())
             .then(data => setData(data))
             .catch(error => {
-                console.error('Error fetching data:', error);
+                console.error('Error:', error);
             });
 
         fetchUserData();
@@ -328,11 +413,9 @@ export default function Page() {
     // สร้าง function หาค่า id ของจังหวัด อำเภอ ตำบล และรหัสไปรษณีย์ จากข้อมูลที่ได้จากการค้นหา
     useEffect(() => {
         if (!data) {
-            console.error('Data not loaded');
             return;
         }
 
-        console.log('data:', data);
         const newResults: Result[] = [];
         const newCharCount: number[] = [];
 
@@ -348,7 +431,8 @@ export default function Page() {
                             provinceId: province.id,
                             amphureId: amphure.id,
                             tambonId: tambon.id,
-                            zipCode: zipCode
+                            zipCode: zipCode,
+                            detail: address.detail // Add this line
                         });
                         newCharCount.push(address.detail.length);
                     } else {
@@ -356,7 +440,8 @@ export default function Page() {
                             provinceId: province.id,
                             amphureId: amphure.id,
                             tambonId: null,
-                            zipCode: null
+                            zipCode: null,
+                            detail: address.detail // Add this line
                         });
                         newCharCount.push(address.detail.length);
                     }
@@ -365,7 +450,8 @@ export default function Page() {
                         provinceId: province.id,
                         amphureId: null,
                         tambonId: null,
-                        zipCode: null
+                        zipCode: null,
+                        detail: address.detail // Add this line
                     });
                     newCharCount.push(address.detail.length);
                 }
@@ -374,7 +460,8 @@ export default function Page() {
                     provinceId: null,
                     amphureId: null,
                     tambonId: null,
-                    zipCode: null
+                    zipCode: null,
+                    detail: address.detail // Add this line
                 });
                 newCharCount.push(address.detail.length);
             }
@@ -383,10 +470,6 @@ export default function Page() {
         setResults(newResults);
         setCharCount(newCharCount);
         setAddressFormsCount(addresses.length);
-
-        console.log('Results:', newResults);
-        console.log('Char count:', newCharCount);
-        console.log('Address forms count:', addressFormsCount);
     }, [addresses.length, data]); // useEffect will run when addresses.length or data changes
 
     return (
@@ -408,7 +491,7 @@ export default function Page() {
                                     <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => setIsEditing(true)}>Edit</button>
                                 ) : (
                                     <div className='flex gap-2'>
-                                        <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={() => setIsEditing(false)}>Cancel</button>
+                                        <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={handleCancelEdit}>Cancel</button>
                                         <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={handleSaveUserdata}>Save</button>
                                     </div>
                                 )}
@@ -493,11 +576,22 @@ export default function Page() {
                                             Edit
                                         </button>
                                     ) : (
-                                        <div className='flex gap-2'>
-                                            <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={() => setIsEditingAddress(false)}>Cancel</button>
-                                            <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={handleSaveAddresses}>Save</button>
+                                        <div className="flex gap-2">
+                                            <button
+                                                className="bg-background border border-white font-normal text-xs py-1 px-3"
+                                                onClick={handleCancelEditAddress}
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                className="bg-background border border-white font-normal text-xs py-1 px-3"
+                                                onClick={handleSaveAddresses}
+                                            >
+                                                Save
+                                            </button>
                                         </div>
-                                    )}
+                                    )
+                                    }
                                 </div>
                             </div>
                             <hr className='border border-white mt-2 ' />
@@ -509,7 +603,13 @@ export default function Page() {
                                             <div className='flex justify-between my-4'>
                                                 <p>{index === 0 ? 'Address Form' : `Address Form ${index + 1}`}</p>
                                                 <div className='place-aitems-end place-content-center'>
-                                                    <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => handleDeleteAddress(index)}>Delete</button>
+                                                    <button
+                                                        className={`bg-background border border-white font-normal text-xs py-1 px-3 ${!isEditingAddress ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                        onClick={() => isEditingAddress && handleDeleteAddress(index)}
+                                                        disabled={!isEditingAddress}
+                                                    >
+                                                        Delete
+                                                    </button>
                                                 </div>
                                             </div>
 
@@ -523,6 +623,7 @@ export default function Page() {
                                                         value={results[index]?.provinceId || ''}
                                                         onChange={(e) => handleProvinceChange(e, index)}
                                                         disabled={!isEditingAddress}
+                                                        className={!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''}
                                                     >
                                                         <option value="" label="Province" />
                                                         {data?.map((province) => (
@@ -542,6 +643,7 @@ export default function Page() {
                                                         value={results[index]?.amphureId || ''}
                                                         onChange={(e) => handleAmphureChange(e, index)}
                                                         disabled={!isEditingAddress}
+                                                        className={!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''}
                                                     >
                                                         <option value="" label="District" />
                                                         {data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.map((amphure) => (
@@ -561,6 +663,7 @@ export default function Page() {
                                                         value={results[index]?.tambonId || ''}
                                                         onChange={(e) => handleTambonChange(e, index)}
                                                         disabled={!isEditingAddress}
+                                                        className={!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''}
                                                     >
                                                         <option value="" label="Subdistrict" />
                                                         {data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))?.tambon.map((tambon) => (
@@ -580,6 +683,7 @@ export default function Page() {
                                                         value={results[index]?.zipCode || ''}
                                                         onChange={(e) => handleZipCodeChange(e, index)}
                                                         disabled={!isEditingAddress}
+                                                        className={!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''}
                                                     >
                                                         <option value="" label="Postal Code" />
                                                         {Array.from(
@@ -598,11 +702,11 @@ export default function Page() {
 
                                                 <label htmlFor="address" className='col-span-2 relative'>
                                                     <textarea
-                                                        className='resize-none border-transparent'
+                                                        className={`resize-none border-transparent placeholder-black ${!isEditingAddress ? 'bg-[#51536D]' : ''}`}
                                                         placeholder='Address Detail such as House number, Apartment name, Condo, Village name '
                                                         rows={4}
                                                         maxLength={200}
-                                                        value={addresses[index]?.detail || ''}
+                                                        value={results[index]?.detail || ''}
                                                         onChange={(e) => handleAddressDetailChange(e, index)}
                                                         readOnly={!isEditingAddress}
                                                         disabled={!isEditingAddress}
@@ -621,7 +725,6 @@ export default function Page() {
                                 </button>
                             )}
                         </div>
-
                     </div>
                 )}
             </div>
