@@ -55,11 +55,11 @@ const Config = () => {
       quantity,
       totalPrice,
     };
-  
+
     setArtToyData(updatedArtToy); // ✅ อัปเดต State
     saveArtToy(); // ✅ บันทึกลง Zustand
     setShowModal(true);
-  };  
+  };
 
   const handleCheckout = () => {
     const newArtToyData = {
@@ -98,6 +98,7 @@ const Config = () => {
             <div className="flex justify-between">
               {isEditing ? (
                 <input
+                  aria-hidden="true"
                   type="text"
                   value={artToyName}
                   onChange={handleNameChange}
@@ -130,9 +131,8 @@ const Config = () => {
             {["Small", "Medium", "Large"].map((s) => (
               <button
                 key={s}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
-                  size === s ? "border-[#0CACF3]" : "border-gray-600"
-                }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${size === s ? "border-[#0CACF3]" : "border-gray-600"
+                  }`}
                 onClick={() => setSize(s)}
               >
                 {s}
@@ -146,9 +146,8 @@ const Config = () => {
             {["PLA", "Resin", "PVC", "Metal"].map((m) => (
               <button
                 key={m}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
-                  material === m ? "border-[#0CACF3]" : "border-gray-600"
-                }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${material === m ? "border-[#0CACF3]" : "border-gray-600"
+                  }`}
                 onClick={() => setMaterial(m)}
               >
                 {m}
@@ -162,9 +161,8 @@ const Config = () => {
             {["Hand-painting", "Airbrush", "Pad Printing"].map((p) => (
               <button
                 key={p}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
-                  painting === p ? "border-[#0CACF3]" : "border-gray-600"
-                }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${painting === p ? "border-[#0CACF3]" : "border-gray-600"
+                  }`}
                 onClick={() => setPainting(p)}
               >
                 {p}
@@ -178,9 +176,8 @@ const Config = () => {
             {["Fixed Pose", "Articulated Joints", "Magnet Joints"].map((a) => (
               <button
                 key={a}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
-                  assembly === a ? "border-[#0CACF3]" : "border-gray-600"
-                }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${assembly === a ? "border-[#0CACF3]" : "border-gray-600"
+                  }`}
                 onClick={() => setAssembly(a)}
               >
                 {a}
