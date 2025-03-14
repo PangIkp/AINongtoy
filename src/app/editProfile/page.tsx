@@ -511,7 +511,7 @@ export default function Page() {
     return (
         <div>
             <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
-            <div className='w-full place-content-center place-items-center h-[235px] mt-[5rem] bg-black'>
+            <div className='w-full place-content-center place-items-center h-[100px] mt-[5rem] bg-black'>
                 <h1 className='text-4xl font-semibold mb-3'>My Profile</h1>
             </div>
 
