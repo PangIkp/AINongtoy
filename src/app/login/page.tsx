@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import Image from "next/image";
 import { login } from "@/api/authAPI";
 import PasswordInput from "../components/PasswordInput";
+import Swal from "sweetalert2";
 
 interface LoginResponse {
   token: string;
@@ -46,6 +47,11 @@ const Login = () => {
     if (!username || !password) {
       setUsernameError(!username ? "Username is required" : "");
       setPasswordError(!password ? "Password is required" : "");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Please fill in all fields',
+        text: 'Username and Password are required',
+      });
       return;
     }
 
@@ -68,6 +74,11 @@ const Login = () => {
     } catch (error: any) {
       console.error("Login error:", error.message);
       setPasswordError("Invalid username or password");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Login Failed',
+        text: 'Invalid username or password',
+      });
     }
   };
 
@@ -168,10 +179,10 @@ const Login = () => {
                   </p>
                 </div>
               </form>
-              <div className="mt-4 h-[40px] text-[14px] font-thin text-red-300">
+              {/* <div className="mt-4 h-[40px] text-[14px] font-thin text-red-300">
                 <p>{usernameError}</p>
                 <p>{passwordError}</p>
-              </div>
+              </div> */}
 
               {/* แสดงข้อมูลผู้ใช้เมื่อล็อกอินสำเร็จ */}
 

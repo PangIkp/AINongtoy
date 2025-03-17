@@ -5,6 +5,8 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProductDetailsSection from "../components/ProductDetailsSection";
 import QRCodeSection from "../components/QRCodeSection";
+import { getUserData } from "@/utils/localStorageUtils";
+import { IoIosAddCircle } from "react-icons/io";
 
 export default function Payment() {
     const aboutRef = useRef<HTMLDivElement>(null!);
@@ -12,6 +14,27 @@ export default function Payment() {
     const contactRef = useRef<HTMLDivElement>(null!);
     const [artToyData, setArtToyData] = useState<ArtToy | null>(null);
     const [shippingCost, setShippingCost] = useState(50);
+    const userData = getUserData();
+    const fname = userData?.firstName;
+    const lname = userData?.lastName;
+    const phone = userData?.phoneNumber;
+    const address = userData?.address;
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedAddress, setSelectedAddress] = useState<any>(null);
+
+    const handleAddressSelect = (addr: any) => {
+        setSelectedAddress(addr);
+        handleClosePopUp();
+    };
+
+    const handleOpenPopUp = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleClosePopUp = () => {
+        setIsModalOpen(false);
+    };
 
     const handleShippingChange = (cost: number) => {
         setShippingCost(cost);
@@ -61,7 +84,11 @@ export default function Payment() {
 
                     {/* ตรวจสอบว่ามีข้อมูลหรือไม่ก่อนแสดงผล */}
                     {artToyData ? (
-                        <ProductDetailsSection {...artToyData} shipingCost={shippingCost} />
+                        <ProductDetailsSection
+                            {...artToyData}
+                            shipingCost={shippingCost}
+                            totalPrice={artToyData.price}
+                        />
                     ) : (
                         <p>Loading...</p>
                     )}
@@ -71,18 +98,30 @@ export default function Payment() {
                             <section className="w-full h-full flex flex-col gap-3">
                                 <div className="bg-[#202133] border border-[#202133] rounded-xl p-4">
                                     <h2 className="mb-1 text-[16px] font-semibold">Address</h2>
-                                    <button className="w-full py-2 bg-[#202133] border border-[#828399] rounded-lg place-items-start font-thin text-xs leading-5">
-                                        <p>
-                                            <strong className="text-[14px]">
-                                                Mr.Aekkaphop Sreesunthorn
-                                            </strong>
-                                        </p>
-                                        <p className="text-left text-[14px]">
-                                            11/1 Sansuk Village, Soi Phatthana, Sawasdee Road, Sukjai,
-                                            Jamsai, Bangkok 12345 Thailand
-                                        </p>
-                                        <p className="text-[14px]">0655759995</p>
-                                    </button>
+                                    {address && address.length > 0 ? (
+                                        <div
+                                            className="w-full h-30 py-2 bg-[#202133] border border-[#828399] rounded-lg place-items-start font-thin text-xs leading-5 cursor-pointer hover:bg-[#0578AB] px-2"
+                                            onClick={handleOpenPopUp}
+                                        >
+                                            <p>
+                                                <strong className="text-[14px]">
+                                                    {fname} {lname}
+                                                </strong>
+                                            </p>
+                                            <p className="text-left text-[14px]">
+                                                {selectedAddress ? `${selectedAddress.detail} ${selectedAddress.subdistrict} ${selectedAddress.district} ${selectedAddress.province} ${selectedAddress.postalCode}` : `${address[0].detail} ${address[0].subdistrict} ${address[0].district} ${address[0].province} ${address[0].postalCode}`}
+                                            </p>
+                                            <p className="text-[14px]">{phone}</p>
+                                        </div>
+                                    ) : (
+                                        <a
+                                            className="w-full h-[40px] gap-1 py-2 border border-[#828399] rounded-lg flex justify-center items-center leading-5 cursor-pointer hover:bg-[#0578AB] px-2"
+                                            href="/editProfile"
+                                        >
+                                            <IoIosAddCircle className='text-white text-xl' />
+                                            <p className='text-white'>Add Address</p>
+                                        </a>
+                                    )}
                                 </div>
                                 <div className="bg-[#202133] border border-[#202133] rounded-xl p-4">
                                     <h2 className="mb-1 text-[16px] font-semibold">
@@ -159,6 +198,42 @@ export default function Payment() {
                 </div>
             </main>
             <Footer />
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className=" bg-[#202133] border border-[#202133] rounded-xl p-4">
+                        <div className="flex justify-between">
+                            <h2>Select Address</h2>
+                            <button onClick={handleClosePopUp}>X</button>
+                        </div>
+                        <div className="flex flex-col gap-4 my-4">
+
+                            {address.map((addr: any, index: number) => (
+                                <div
+                                    key={index}
+                                    className="w-full h-30 py-2 bg-[#202133] border border-[#828399] rounded-lg place-items-start font-thin text-xs leading-5 cursor-pointer hover:bg-[#0578AB] px-2"
+                                    onClick={() => handleAddressSelect(addr)}
+                                >
+                                    <p>
+                                        <strong className="text-[14px]">{fname} {lname}</strong>
+                                    </p>
+                                    <p className="text-left text-[14px]">
+                                        {addr.detail}  {addr.subdistrict}  {addr.district}  {addr.province} {addr.postalCode}
+                                    </p>
+                                    <p className="text-[14px]">{phone}</p>
+                                </div>
+                            ))}
+
+                            <a
+                                className="w-full h-[40px] gap-1 py-2 border border-[#828399] rounded-lg flex justify-center items-center leading-5 cursor-pointer bg-[#0CACF3] hover:bg-[#0578AB] px-2"
+                                href="/editProfile"
+                            >
+                                <p className='text-white'>Edit Address</p>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

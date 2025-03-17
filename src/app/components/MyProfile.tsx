@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { getUserData } from "../../utils/localStorageUtils";
+import Swal from "sweetalert2";
 
 function MyProfile() {
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     // ดึงข้อมูล user จาก localStorage
@@ -18,15 +18,31 @@ function MyProfile() {
   const handleLogout = async () => {
     // เรียก API logout
     await fetch("/api/logout", { method: "POST" });
-  
+
     // ลบข้อมูลที่เก็บไว้ใน localStorage และ sessionStorage
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
-  
+
     // รีเฟรชไปที่หน้า Login
     window.location.href = "/login";
   };
-  
+
+  const confirmLogout = () => {
+    Swal.fire({
+      title: 'Log out',
+      text: 'Are you sure you want to log out?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#51536D',
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleLogout();
+      }
+    });
+  };
 
   return (
     <section className="px-4 flex justify-between">
@@ -55,39 +71,13 @@ function MyProfile() {
         <button
           onClick={(e) => {
             e.preventDefault(); // ป้องกันการรีเฟรชหน้า
-            setShowModal(true);
+            confirmLogout();
           }}
           className="bg-red-300 hover:bg-red-400 border border-red-400 text-black font-normal text-xs py-1 px-3 rounded"
         >
           Log out
         </button>
       </div>
-
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white text-black p-6 rounded-lg shadow-lg w-[300px]">
-            <h2 className="text-lg font-bold">Log out</h2>
-            <p className="mt-2">Are you sure you want to log out?</p>
-            <div className="mt-4 flex justify-end gap-2">
-              {/* ปุ่มยกเลิก */}
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
-              >
-                Cancel
-              </button>
-
-              {/* ปุ่มยืนยัน */}
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 }

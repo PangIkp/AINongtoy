@@ -6,6 +6,7 @@ import { ArtToy } from "@/mainstore"; // ถ้า ArtToy มี type ให้�
 import useHydration from "../../../useHydration";
 import { deleteArtToy } from "@/api/arttoyAPI";
 import { getArtToyById } from "@/api/arttoyAPI";
+import Swal from "sweetalert2";
 
 
 function ConfigCard() {
@@ -18,12 +19,18 @@ function ConfigCard() {
 
   useEffect(() => {
     setIsClient(true);
-  
+
     const fetchArtToys = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
-          alert("You are not logged in.");
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'You are not logged in.',
+            timer: 1500,
+            showConfirmButton: false,
+          });
           return;
         }
         const response = await fetch("http://localhost:3001/api/v1/arttoy", {
@@ -37,86 +44,129 @@ function ConfigCard() {
           throw new Error("Failed to fetch ArtToys");
         }
         let data: ArtToy[] = await response.json(); // แปลง JSON เป็น array ของ ArtToy
-  
+
         // ✅ ตรวจสอบว่า arttoy ตัวไหนไม่มี `_id` (ยังไม่ถูก save)
         data = data.map((toy) =>
           toy._id
             ? toy // ถ้ามี _id ให้ใช้ค่าที่ได้จาก API
             : {
-                _id: "default-arttoy",
-                name: "Default ArtToy",
-                size: "Small",
-                material: "PLA",
-                painting: "Hand-painting",
-                assembly: "Fixed Pose",
-                quantity: 1,
-                price: 500,
-                imageUrl: "/Images/AINongtoy/WhiteMiku.png",
-              }
+              _id: "default-arttoy",
+              name: "Default ArtToy",
+              size: "Small",
+              material: "PLA",
+              painting: "Hand-painting",
+              assembly: "Fixed Pose",
+              quantity: 1,
+              price: 500,
+              imageUrl: "/Images/AINongtoy/WhiteMiku.png",
+            }
         );
-  
+
         setArtToys(data);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error fetching ArtToys:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message || 'Failed to fetch ArtToys',
+          timer: 1500,
+          showConfirmButton: false,
+        });
       }
     };
-  
+
     fetchArtToys();
   }, [forceFetchData]);
-  
+
 
   const handleEdit = useCallback(
     async (artToy: ArtToy) => {
       if (!isClient) return;
-  
+
       console.log("Selected ArtToy:", artToy); // Log ค่า artToy เพื่อตรวจสอบ
-  
+
       if (!artToy._id) {
         console.error("ArtToy object is missing '_id' property:", artToy);
-        alert("Invalid ArtToy data");
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Invalid ArtToy data',
+          timer: 1500,
+          showConfirmButton: false,
+        });
         return;
       }
-  
+
       try {
         const token = localStorage.getItem("token");
         if (!token) {
-          alert("You are not logged in.");
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'You are not logged in.',
+            timer: 1500,
+            showConfirmButton: false,
+          });
           return;
         }
-  
+
         const artToyData = await getArtToyById(artToy._id, token); // ใช้ _id แทน id
         console.log("Fetched ArtToy Data:", artToyData);
-  
+
         if (!artToyData) {
-          alert("Failed to fetch ArtToy details");
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to fetch ArtToy details',
+            timer: 1500,
+            showConfirmButton: false,
+          });
           return;
         }
-  
+
         setArtToyData(artToyData);
-  
+
         router.push(
           `/material?name=${encodeURIComponent(
             artToyData.name
           )}&image=${encodeURIComponent(artToyData.imageUrl)}`
         );
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error fetching ArtToy details:", error);
-        alert("Failed to load ArtToy details");
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message || 'Failed to load ArtToy details',
+          timer: 1500,
+          showConfirmButton: false,
+        });
       }
     },
     [router, isClient, setArtToyData]
   );
-  
-  
+
+
   const handleDelete = async (id: any) => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("You are not logged in.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'You are not logged in.',
+        timer: 1500,
+        showConfirmButton: false,
+      });
       return;
     }
 
     if (!artToyData) {
-      alert("Invalid ArtToy data");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Invalid ArtToy data',
+        timer: 1500,
+        showConfirmButton: false,
+      });
       return;
     }
 
@@ -124,12 +174,24 @@ function ConfigCard() {
       const response = await deleteArtToy(id, token); // เรียก API ลบ
       console.log("API Response:", response);
 
-      alert("ArtToy deleted successfully"); // แจ้งเตือนเมื่อลบสำเร็จ
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'ArtToy deleted successfully',
+        timer: 1500,
+        showConfirmButton: false,
+      });
       setForceFetchData(!forceFetchData); // อัปเดต state เพื่อดึงข้อมูลใหม่
       // setArtToys((prev) => prev.filter((item) => item !== artToyData)); // อัปเดต state
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error:", error);
-      alert("Failed to delete ArtToy"); // แจ้งเตือนหากเกิดข้อผิดพลาด
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'Failed to delete ArtToy',
+        timer: 1500,
+        showConfirmButton: false,
+      });
     }
   };
 
@@ -149,7 +211,7 @@ function ConfigCard() {
                 console.log("Clicked ArtToy ID:", artToy._id);
                 handleDelete(artToy._id);
               }}
-              className="absolute top-2 right-2 bg-[#51536D] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-500 hover:text-white transition duration-200"
+              className="z-10 absolute top-2 right-2 bg-[#51536D] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-500 hover:text-white transition duration-200"
             >
               ✕
             </button>

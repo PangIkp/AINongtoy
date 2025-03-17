@@ -57,7 +57,7 @@ export default function Page() {
     // information
     const [isEditing, setIsEditing] = useState(false); // สร้าง state ที่เก็บค่าของการแก้ไข
     const UserData = getUserData(); // ดึงข้อมูลของผู้ใช้จาก localStorage
-    const [userID, setUserID] = useState(UserData?._id); // สร้าง state ที่เก็บค่าของ ID ของผู้ใช้
+    const userID = UserData?._id; // ดึงค่า _id ของผู้ใช้
     const [initialUserData, setInitialUserData] = useState({
         firstName: '',
         lastName: '',
@@ -263,8 +263,8 @@ export default function Page() {
 
         if (incompleteAddress) {
             Swal.fire({
-                icon: 'error',
-                title: 'Error',
+                icon: 'warning',
+                title: 'Warning',
                 text: 'Please fill out all address fields completely.',
                 timer: 1500,
                 showConfirmButton: false,

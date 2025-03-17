@@ -39,12 +39,12 @@ export default function Order() {
     return (
         <div>
             <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
-            <div className='w-full place-content-center place-items-center h-[235px] mt-[5rem] bg-black'>
+            <div className='w-full place-content-center place-items-center h-[100px] mt-[5rem] bg-black'>
                 <h1 className='text-4xl font-semibold mb-3'>My Profile</h1>
             </div>
             <div className='w-full place-items-center'>
                 <div className='w-full max-w-[1024px] px-4 py-20 flex flex-col gap-12'>
-              <MyProfile/>
+                    <MyProfile />
                     <section className='flex gap-10 font-semibold'>
                         <a className='hover:text-[#0AACF0] transition-all' href="/profile">Favorite</a>
                         <a className='hover:text-[#0AACF0] transition-all' href="/configuration">Art Toy Config</a>

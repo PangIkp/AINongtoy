@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useMainStore } from "@/mainstore";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { createArtToy,getArtToys, updateArtToy } from "@/api/arttoyAPI"; 
+import { createArtToy, getArtToys, updateArtToy } from "@/api/arttoyAPI";
 import { getUser } from "@/api/authAPI";
+import Swal from "sweetalert2";
 
 
 const Config = () => {
@@ -17,8 +18,7 @@ const Config = () => {
   const imageUrl =
     searchParams.get("image") || "/Images/AINongtoy/WhiteMiku.png";
 
-  const {artToyData, setArtToyData, saveArtToy } = useMainStore();
-  const [showModal, setShowModal] = useState(false);
+  const { artToyData, setArtToyData, saveArtToy } = useMainStore();
   const router = useRouter();
 
   const [isNew, setIsNew] = useState(true);
@@ -35,27 +35,38 @@ const Config = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("You are not logged in.");
+      Swal.fire({
+        title: "You are not logged in.",
+        icon: "error",
+        timer: 1500,
+        showConfirmButton: false,
+      });
       return;
     }
 
     const fetchArtToyData = async () => {
       try {
-      const user = await getUser(token);
-      console.log("User Data:", user);
-      const userId = user.data._id; // Assuming user object has an id property
+        const user = await getUser(token);
+        console.log("User Data:", user);
+        const userId = user.data._id; // Assuming user object has an id property
 
-      const artToys = await getArtToys(token);
-      console.log("Fetched ArtToys:", artToys);
-      const userArtToys = artToys.filter((toy:any) => toy.user === userId && toy.imageUrl === imageUrl); // Assuming art toy object has a userId and imageUrl property
-      console.log("User ArtToys:", userArtToys);
+        const artToys = await getArtToys(token);
+        console.log("Fetched ArtToys:", artToys);
+        const userArtToys = artToys.filter((toy: any) => toy.user === userId && toy.imageUrl === imageUrl); // Assuming art toy object has a userId and imageUrl property
+        console.log("User ArtToys:", userArtToys);
 
-      if (userArtToys.length > 0) {
-        setIsNew(false);
-        setArtToyData(userArtToys[0]); // Assuming you want the first art toy of the user
-      }
-      } catch (error) {
-      console.error("Error fetching art toys:", error);
+        if (userArtToys.length > 0) {
+          setIsNew(false);
+          setArtToyData(userArtToys[0]); // Assuming you want the first art toy of the user
+        }
+      } catch (error: any) {
+        Swal.fire({
+          title: "Error fetching Art Toy data",
+          text: error.message || "Failed to fetch Art Toy data",
+          icon: "error",
+          timer: 1500,
+          showConfirmButton: false,
+        });
       }
     };
 
@@ -70,7 +81,7 @@ const Config = () => {
       setQuantity(artToyData.quantity || 1);
     }
   }, []);
-  
+
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setArtToyNameLocal(event.target.value);
@@ -89,7 +100,7 @@ const Config = () => {
   };
 
   const handleSave = async () => {
-    const updatedArtToy = { 
+    const updatedArtToy = {
       name: artToyData.name,
       size,
       material,
@@ -97,14 +108,19 @@ const Config = () => {
       assembly,
       quantity,
       price,
-      imageUrl, 
+      imageUrl,
     };
 
     setArtToyData(updatedArtToy); // อัปเดต Zustand State
 
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("You are not logged in.");
+      Swal.fire({
+        title: "You are not logged in.",
+        icon: "error",
+        timer: 1500,
+        showConfirmButton: false,
+      });
       return;
     }
 
@@ -113,13 +129,24 @@ const Config = () => {
       if (isNew) {
         response = await createArtToy(updatedArtToy, token); // เรียกใช้ฟังก์ชันที่ import มา
       } else {
-        response = await updateArtToy(artToyData._id,updatedArtToy, token); // เรียกใช้ฟังก์ชันที่ import มา
+        response = await updateArtToy(artToyData._id, updatedArtToy, token); // เรียกใช้ฟังก์ชันที่ import มา
       }
       console.log("API Response:", response);
-      setShowModal(true); // แสดง modal เมื่อบันทึกสำเร็จ
-    } catch (error) {
+      Swal.fire({
+        title: "Successfully recorded!",
+        text: "Your Art Toy has been saved.",
+        icon: "success",
+        confirmButtonText: "OK"
+      });
+    } catch (error: any) {
       console.error("Error:", error);
-      alert("Failed to save Art Toy"); // หากเกิดข้อผิดพลาด
+      Swal.fire({
+        title: "Error",
+        text: error.message || "Failed to save Art Toy data",
+        icon: "error",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     }
   };
 
@@ -139,7 +166,7 @@ const Config = () => {
     router.push("/payment");
   };
 
-  
+
   // ✅ ใช้ useEffect เพื่อลงค่า localStorage เมื่อ state อัปเดต
   useEffect(() => {
     if (artToyData) {
@@ -193,9 +220,8 @@ const Config = () => {
             {["Small", "Medium", "Large"].map((s) => (
               <button
                 key={s}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
-                  size === s ? "border-[#0CACF3]" : "border-gray-600"
-                }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${size === s ? "border-[#0CACF3]" : "border-gray-600"
+                  }`}
                 onClick={() => setSize(s)}
               >
                 {s}
@@ -209,9 +235,8 @@ const Config = () => {
             {["PLA", "Resin", "PVC", "Metal"].map((m) => (
               <button
                 key={m}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
-                  material === m ? "border-[#0CACF3]" : "border-gray-600"
-                }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${material === m ? "border-[#0CACF3]" : "border-gray-600"
+                  }`}
                 onClick={() => setMaterial(m)}
               >
                 {m}
@@ -225,9 +250,8 @@ const Config = () => {
             {["Hand-painting", "Airbrush", "Pad Printing"].map((p) => (
               <button
                 key={p}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
-                  painting === p ? "border-[#0CACF3]" : "border-gray-600"
-                }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${painting === p ? "border-[#0CACF3]" : "border-gray-600"
+                  }`}
                 onClick={() => setPainting(p)}
               >
                 {p}
@@ -241,9 +265,8 @@ const Config = () => {
             {["Fixed Pose", "Articulated Joints", "Magnet Joints"].map((a) => (
               <button
                 key={a}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
-                  assembly === a ? "border-[#0CACF3]" : "border-gray-600"
-                }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${assembly === a ? "border-[#0CACF3]" : "border-gray-600"
+                  }`}
                 onClick={() => setAssembly(a)}
               >
                 {a}
@@ -290,19 +313,6 @@ const Config = () => {
         </div>
       </div>
 
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white text-black p-6 rounded-lg shadow-lg w-[300px]">
-            <h2 className="text-lg font-bold">Successfully recorded!</h2>
-            <p className="mt-2">Your Art Toy has been saved.</p>
-            <div className="mt-4 flex justify-end">
-              <button onClick={() => setShowModal(false)} className="px-4 py-2">
-                OK
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
