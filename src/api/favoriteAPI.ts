@@ -7,8 +7,10 @@ export const getAllFavorites = async (token: string) => {
   const res = await axios.get(API_URL, {
     headers: { Authorization: `Bearer ${token}` },
   });
+  console.log("Favorites Fetched:", res.data);
   return res.data;
 };
+
 
 // เพิ่ม Favorite
 export const createFavorite = async (token: string, imageUrl: string) => {

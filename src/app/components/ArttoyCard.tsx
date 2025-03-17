@@ -38,6 +38,7 @@ export default function ArtToyCard({
     }
   };
 
+
   useEffect(() => {
     const fetchFavorites = async () => {
       const token = localStorage.getItem("token");
@@ -111,8 +112,8 @@ export default function ArtToyCard({
   return (
     <div className="flex justify-center">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {imageUrls.map((imageUrl) => (
-          <div key={imageUrl} className="relative p-3 rounded-lg">
+        {imageUrls.map((imageUrl, index) => (
+          <div key={index} className="relative p-3 rounded-lg">
             {/* ปุ่มหัวใจ (แสดงเฉพาะตอนรูปโหลดเสร็จ) */}
             {imageLoaded[imageUrl] && !isLoading && (
               <button
