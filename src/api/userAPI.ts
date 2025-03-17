@@ -14,3 +14,30 @@ export const updateUserProfile = async (userId: string, userData: any) => {
         throw new Error(error.response?.data?.error || 'Failed to update profile');
     }
 };
+
+export const updateUserAddresses = async (userId: string, addressData: any) => {
+    try {
+        console.log('Updating user addresses:', userId, addressData); // Log request details
+        const response = await axios.patch(`${API_URL}/${userId}`, { address: addressData });
+        console.log('API Response:', response.data); // Log response data
+        return response.data;
+    } catch (error: any) {
+        console.error('API Error Data:', error.response?.data); // Log error response data
+        console.error('Fetch Error:', error); // Log full error
+        throw new Error(error.response?.data?.error || 'Failed to update addresses');
+    }
+};
+
+// New function to get user by ID
+export const getUserById = async (userId: string) => {
+    try {
+        console.log('Fetching user data for ID:', userId); // Log request details
+        const response = await axios.get(`${API_URL}/${userId}`);
+        console.log('API Response:', response.data); // Log response data
+        return response.data;
+    } catch (error: any) {
+        console.error('API Error Data:', error.response?.data); // Log error response data
+        console.error('Fetch Error:', error); // Log full error
+        throw new Error(error.response?.data?.error || 'Failed to fetch user data');
+    }
+};

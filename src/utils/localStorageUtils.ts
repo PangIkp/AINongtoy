@@ -1,8 +1,13 @@
 export const getUserData = () => {
-    const user = localStorage.getItem("user");
-    return user ? JSON.parse(user) : null;
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        const user = localStorage.getItem("user");
+        return user ? JSON.parse(user) : null;
+    }
+    return null;
 };
 
-export const setUserData = (userData: any) => {
-    localStorage.setItem("user", JSON.stringify(userData));
+export const setUserData = (user: any) => {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        localStorage.setItem("user", JSON.stringify(user));
+    }
 };

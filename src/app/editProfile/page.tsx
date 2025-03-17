@@ -3,50 +3,47 @@ import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { IoIosAddCircle } from "react-icons/io";
-import { updateUserProfile } from '../../api/userAPI';
+import { updateUserProfile, updateUserAddresses, getUserById } from '../../api/userAPI';
 import { getUserData, setUserData } from '../../utils/localStorageUtils';
-import AddressForm from '../components/AddressForm';
+import Swal from "sweetalert2";
 
 interface Province {
     id: number;
-    name_th: string;
     name_en: string;
     amphure: Amphure[];
 }
 
 interface Amphure {
     id: number;
-    name_th: string;
     name_en: string;
     tambon: Tambon[];
 }
 
 interface Tambon {
     id: number;
-    name_th: string;
     name_en: string;
     zip_code: number;
 }
 
-interface Selected {
-    province_id?: number;
-    amphure_id?: number;
-    tambon_id?: number;
-    zip_code?: number;
+interface Result {
+    provinceId: number | string | null;
+    amphureId: number | string | null;
+    tambonId: number | string | null;
+    zipCode: number | string | null;
+    detail?: string; // Add this line
 }
 
-interface DropdownListProps {
-    label: string;
-    id: keyof Selected;
-    list: any[];
-    child?: string;
-    childsId?: (keyof Selected)[];
-    setChilds?: React.Dispatch<React.SetStateAction<any[]>>[];
-    placeholder?: string;
-    disabled?: boolean;
+interface Address {
+    detail: string;
+    province: string;
+    district: string;
+    subdistrict: string;
+    postalCode: string;
 }
 
-export default function EditProfile() {
+
+export default function Page() {
+    // navbar
     const aboutRef = useRef<HTMLDivElement>(null!);
     const partnerRef = useRef<HTMLDivElement>(null!);
     const contactRef = useRef<HTMLDivElement>(null!);
@@ -57,298 +54,715 @@ export default function EditProfile() {
         }
     };
 
-    const [charCount, setCharCount] = useState(0);
-    const [addressDetail, setAddressDetail] = useState("");
-
-    const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const value = event.target.value;
-        if (value.length <= 500) {
-            setCharCount(value.length);
-            setAddressDetail(value);
-        }
-    };
-
-    const [provinces, setProvinces] = useState<Province[]>([]);
-    const [amphures, setAmphures] = useState<Amphure[]>([]);
-    const [tambons, setTambons] = useState<Tambon[]>([]);
-    const [postalCodes, setPostalCodes] = useState<number[]>([]);
-    const [selected, setSelected] = useState<Selected>({
-        province_id: undefined,
-        amphure_id: undefined,
-        tambon_id: undefined,
-        zip_code: undefined
+    // information
+    const [isEditing, setIsEditing] = useState(false); // สร้าง state ที่เก็บค่าของการแก้ไข
+    const UserData = getUserData(); // ดึงข้อมูลของผู้ใช้จาก localStorage
+    const [userID, setUserID] = useState(UserData?._id); // สร้าง state ที่เก็บค่าของ ID ของผู้ใช้
+    const [initialUserData, setInitialUserData] = useState({
+        firstName: '',
+        lastName: '',
+        phoneNumber: ''
     });
-    const [isFormValid, setIsFormValid] = useState(false);
 
-    const [username, setUsername] = useState<string | null>(null);
-    const [email, setEmail] = useState<string | null>(null);
-    const [firstName, setFirstName] = useState<string | null>(null);
-    const [lastName, setLastName] = useState<string | null>(null);
-    const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+    // สร้าง state ที่เก็บค่าของข้อมูลผู้ใช้
+    const [username, setUsername] = useState<string | undefined>(undefined);
+    const [email, setEmail] = useState<string | undefined>(undefined);
+    const [firstName, setFirstName] = useState<string | undefined>(undefined);
+    const [lastName, setLastName] = useState<string | undefined>(undefined);
+    const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
 
-    const [originalFirstName, setOriginalFirstName] = useState<string | null>(null);
-    const [originalLastName, setOriginalLastName] = useState<string | null>(null);
-    const [originalPhone, setOriginalPhone] = useState<string | null>(null);
-
-    const [isEditing, setIsEditing] = useState(false);
-    const [userId, setUserId] = useState<string | null>(null); // Add this state to store the user id
-
-    const fetchUserData = () => {
-        const parsedUser = getUserData();
-        if (parsedUser) {
-            console.log('Parsed User:', parsedUser); // Log parsed user data
-            console.log('User ID:', parsedUser._id); // Log the user id
-            setUserId(parsedUser._id); // Update this line to store the user id
-            setUsername(parsedUser.username);
-            setEmail(parsedUser.email);
-            setFirstName(parsedUser.firstName);
-            setLastName(parsedUser.lastName);
-            setPhoneNumber(parsedUser.phoneNumber);
-
-            setOriginalFirstName(parsedUser.firstName);
-            setOriginalLastName(parsedUser.lastName);
-            setOriginalPhone(parsedUser.phoneNumber);
-        }
-    };
-
-    useEffect(() => {
-        fetch("https://raw.githubusercontent.com/kongvut/thai-province-data/master/api_province_with_amphure_tambon.json")
-            .then((response) => response.json())
-            .then((result) => {
-                setProvinces(result);
-            });
-    }, []);
-
-    useEffect(() => {
-        fetchUserData();
-    }, []);
-
-    useEffect(() => {
-        const { province_id, amphure_id, tambon_id, zip_code } = selected;
-        setIsFormValid(!!province_id && !!amphure_id && !!tambon_id && !!zip_code);
-    }, [selected]);
-
-    const isDropdownValid = (value: number | undefined) => {
-        return value !== undefined && value !== 0;
-    };
-
-    const handleDelete = () => {
-        setSelected({
-            province_id: undefined,
-            amphure_id: undefined,
-            tambon_id: undefined,
-            zip_code: undefined
-        });
-        setAmphures([]);
-        setTambons([]);
-        setPostalCodes([]);
-        setAddressDetail("");
-        setCharCount(0);
-    };
-
-    const handleEdit = () => {
-        setIsEditing(true);
-    };
-
-    const handleCancel = () => {
-        setFirstName(originalFirstName);
-        setLastName(originalLastName);
-        setPhoneNumber(originalPhone);
-        setIsEditing(false);
-    };
-
-    const handleSave = async () => {
+    // สร้าง function ที่ใช้ในการเซฟข้อมูลผู้ใช้
+    const handleSaveUserdata = async () => {
         const userData = {
             firstName,
             lastName,
             phoneNumber
         };
 
-        console.log('User Data save:', userData); // Log user data
-        console.log('User ID save:', userId); // Log user ID
-
-        if (userId) { // Ensure userId is not null
+        if (userID) {
             try {
-                const result = await updateUserProfile(userId, userData);
-                console.log('Update Result:', result); // Log the result
-
+                const result = await updateUserProfile(userID, userData);
                 const user = getUserData();
                 if (user) {
                     const updatedUser = { ...user, ...userData };
                     setUserData(updatedUser);
                 }
-
-                console.log('Local Storage User:', localStorage.getItem("user")); // Log the updated user data in localStorage
-
                 setIsEditing(false);
-                alert('Profile updated successfully');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Profile updated successfully!',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    willClose: () => {
+                        window.location.reload();
+                    }
+                });
+
             } catch (error: any) {
-                console.error('Error:', error);
-                alert(error.message || 'Failed to update profile');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Failed to update profile',
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
             }
         } else {
-            alert('User ID is missing');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'User ID is missing',
+                timer: 1500,
+                showConfirmButton: false,
+            });
         }
     };
 
-    const [addressFormsCount, setAddressFormsCount] = useState(1);
+    const handleCancelEdit = () => {
+        setFirstName(initialUserData.firstName);
+        setLastName(initialUserData.lastName);
+        setPhoneNumber(initialUserData.phoneNumber);
+        setIsEditing(false);
+    };
+
+    // ==================================================================================================
+    // address
+    const [data, setData] = useState<Province[] | null>(null);
+    const [isEditingAddress, setIsEditingAddress] = useState(false); // สร้าง state ที่เก็บค่าของการแก้ไขที่อยู่
+    const [addressFormsCount, setAddressFormsCount] = useState(0); // สร้าง state ที่เก็บค่าของจำนวนฟอร์มที่อยู่
+    const [charCount, setCharCount] = useState<number[]>(Array(addressFormsCount).fill(0)); // สร้าง state ที่เก็บค่าของจำนวนตัวอักษรที่พิมพ์ได้ในฟอร์มที่อยู่
+
+    const [results, setResults] = useState<Result[]>([]); // สร้าง state ที่เก็บค่าของผลลัพธ์ที่ได้จากการค้นหา ที่เป็น object ที่มี key ดังนี้ provinceId, amphureId, tambonId, zipCode
+    const [addresses, setAddresses] = useState<Address[]>([]); // เก็บ array ของที่อยู่ ที่เป็น object ที่มี key ดังนี้ detail, province, district, subdistrict, postalCode
+
+    // สร้าง function ที่ใช้ในการเพิ่มฟอร์มที่อยู่
+
+    const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>, index: number) => {
+        const newResults = [...results];
+        newResults[index].provinceId = e.target.value;
+        newResults[index].amphureId = null;
+        newResults[index].tambonId = null;
+        newResults[index].zipCode = null;
+        setResults(newResults);
+    };
+
+    const handleAmphureChange = (e: React.ChangeEvent<HTMLSelectElement>, index: number) => {
+        const newResults = [...results];
+        newResults[index].amphureId = e.target.value;
+        newResults[index].tambonId = null;
+        newResults[index].zipCode = null;
+        setResults(newResults);
+    };
+
+    const handleTambonChange = (e: React.ChangeEvent<HTMLSelectElement>, index: number) => {
+        const newResults = [...results];
+        newResults[index].tambonId = e.target.value;
+        const province = data?.find((province) => province.id === Number(newResults[index].provinceId));
+        const amphure = province?.amphure.find((amphure) => amphure.id === Number(newResults[index].amphureId));
+        const tambon = amphure?.tambon.find((tambon) => tambon.id === Number(e.target.value));
+        newResults[index].zipCode = tambon?.zip_code || null;
+        setResults(newResults);
+    };
+
+    const handleZipCodeChange = (e: React.ChangeEvent<HTMLSelectElement>, index: number) => {
+        const newResults = [...results];
+        newResults[index].zipCode = e.target.value;
+        setResults(newResults);
+    };
+
+    const handleAddressDetailChange = (e: React.ChangeEvent<HTMLTextAreaElement>, index: number) => {
+        const newResults = [...results];
+        newResults[index].detail = e.target.value;
+        setResults(newResults);
+
+        const newCharCount = [...charCount];
+        newCharCount[index] = e.target.value.length;
+        setCharCount(newCharCount);
+    };
+
+    const handleDeleteAddress = async (index: number) => {
+        const addressToDelete = addresses[index];
+        const isEmptyAddress = !addressToDelete.detail && !addressToDelete.province && !addressToDelete.district && !addressToDelete.subdistrict && !addressToDelete.postalCode;
+
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to delete this address?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        });
+
+        if (result.isConfirmed) {
+            const updatedAddresses = addresses.filter((_, i) => i !== index);
+            setAddresses(updatedAddresses);
+            setIsEditingAddress(false);
+
+            if (isEmptyAddress) {
+                return;
+            }
+
+            if (userID) {
+                try {
+                    const result = await updateUserAddresses(userID, updatedAddresses);
+                    const user = getUserData();
+                    if (user) {
+                        const updatedUser = { ...user, address: updatedAddresses };
+                        setUserData(updatedUser);
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Address deleted successfully!',
+                        timer: 1500,
+                        showConfirmButton: false,
+                    });
+                } catch (error: any) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message || 'Failed to delete address',
+                        timer: 1500,
+                        showConfirmButton: false,
+                    });
+                }
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'User ID is missing',
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
+            }
+        }
+    };
+
+    const handleSaveAddresses = async () => {
+        // Update addresses state with current form values
+        const updatedAddresses = addresses.map((address, index) => ({
+            ...address,
+            detail: results[index]?.detail || '',
+            province: data?.find((province) => province.id === Number(results[index]?.provinceId))?.name_en || '',
+            district: data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))?.name_en || '',
+            subdistrict: data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))?.tambon.find((tambon) => tambon.id === Number(results[index]?.tambonId))?.name_en || '',
+            postalCode: results[index]?.zipCode?.toString() || ''
+        }));
+
+        // Filter out empty addresses
+        const nonEmptyAddresses = updatedAddresses.filter(address =>
+            address.detail || address.province || address.district || address.subdistrict || address.postalCode
+        );
+
+        // Check for incomplete addresses
+        const incompleteAddress = nonEmptyAddresses.some(address =>
+            !address.detail || !address.province || !address.district || !address.subdistrict || !address.postalCode
+        );
+
+        if (incompleteAddress) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please fill out all address fields completely.',
+                timer: 1500,
+                showConfirmButton: false,
+            });
+            return;
+        }
+
+        setAddresses(nonEmptyAddresses);
+
+        if (userID) {
+            try {
+                const result = await updateUserAddresses(userID, nonEmptyAddresses);
+                const user = getUserData();
+                if (user) {
+                    const updatedUser = { ...user, address: nonEmptyAddresses };
+                    setUserData(updatedUser);
+                }
+                setIsEditingAddress(false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Addresses updated successfully!',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    willClose: () => {
+                        window.location.reload();
+                    }
+                });
+            } catch (error: any) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Failed to update addresses',
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
+            }
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'User ID is missing',
+                timer: 1500,
+                showConfirmButton: false,
+            });
+        }
+    };
 
     const handleAddAddressForm = () => {
-        setAddressFormsCount(prevCount => (prevCount < 3 ? prevCount + 1 : prevCount));
-    };
-
-    const DropdownList: React.FC<DropdownListProps> = ({ label, id, list, child, childsId = [], setChilds = [], placeholder, disabled }) => {
-        const onChangeHandle = (event: React.ChangeEvent<HTMLSelectElement>) => {
-            const value = parseInt(event.target.value);
-            setSelected((prev: Selected) => ({ ...prev, [id]: value }));
-
-            if (child) {
-                const parent = list.find((item) => item.id === value);
-                const childs = parent ? parent[child] : [];
-                childsId.forEach((childId, index) => {
-                    setSelected((prev: Selected) => ({ ...prev, [childId]: undefined }));
-                });
-                setChilds.forEach((setChild, index) => {
-                    setChild(childs);
-                });
-            } else if (id === "tambon_id") {
-                const tambon = list.find((item) => item.id === value);
-                setSelected((prev: Selected) => ({ ...prev, zip_code: tambon ? tambon.zip_code : undefined }));
-                setPostalCodes(tambon ? [tambon.zip_code] : []);
-            }
+        const newAddress: Address = {
+            detail: '',
+            province: '',
+            district: '',
+            subdistrict: '',
+            postalCode: '',
         };
 
-        return (
-            <>
-                <label htmlFor={id.toString()}>{label}</label>
-                <select
-                    id={id.toString()}
-                    value={selected[id] !== undefined ? selected[id] : ''}
-                    onChange={onChangeHandle}
-                    className={isDropdownValid(selected[id]) ? 'select-selected' : 'select-default'}
-                    disabled={disabled}
-                >
-                    <option value="" label={placeholder || "Select ..."} />
-                    {list &&
-                        list.map((item) => (
-                            <option
-                                key={item.id}
-                                value={item.id}
-                                label={item.name_en}
-                            />
-                        ))}
-                </select>
-            </>
-        );
+        setAddressFormsCount(prevCount => (prevCount < 3 ? prevCount + 1 : prevCount));
+        setAddresses(prevAddresses => [...prevAddresses, newAddress]);
+        setResults(prevResults => [...prevResults, { provinceId: null, amphureId: null, tambonId: null, zipCode: null }]);
+        setCharCount(prevCharCount => [...prevCharCount, 0]);
     };
+
+    const handleCancelEditAddress = () => {
+        const newResults: Result[] = [];
+        const newCharCount: number[] = [];
+
+        addresses.forEach(address => {
+            const province = data?.find((province: Province) => province.name_en === address.province);
+            if (province) {
+                const amphure = province.amphure.find((amphure: Amphure) => amphure.name_en === address.district);
+                if (amphure) {
+                    const tambon = amphure.tambon.find((tambon: Tambon) => tambon.name_en === address.subdistrict);
+                    if (tambon) {
+                        const zipCode = tambon.zip_code === parseInt(address.postalCode) ? tambon.zip_code : null;
+                        newResults.push({
+                            provinceId: province.id,
+                            amphureId: amphure.id,
+                            tambonId: tambon.id,
+                            zipCode: zipCode,
+                            detail: address.detail // Add this line
+                        });
+                        newCharCount.push(address.detail.length);
+                    } else {
+                        newResults.push({
+                            provinceId: province.id,
+                            amphureId: amphure.id,
+                            tambonId: null,
+                            zipCode: null,
+                            detail: address.detail // Add this line
+                        });
+                        newCharCount.push(address.detail.length);
+                    }
+                } else {
+                    newResults.push({
+                        provinceId: province.id,
+                        amphureId: null,
+                        tambonId: null,
+                        zipCode: null,
+                        detail: address.detail // Add this line
+                    });
+                    newCharCount.push(address.detail.length);
+                }
+            } else {
+                newResults.push({
+                    provinceId: null,
+                    amphureId: null,
+                    tambonId: null,
+                    zipCode: null,
+                    detail: address.detail // Add this line
+                });
+                newCharCount.push(address.detail.length);
+            }
+        });
+
+        setResults(newResults);
+        setCharCount(newCharCount);
+        setAddressFormsCount(addresses.length);
+        setIsEditingAddress(false);
+
+        console.log('results', results);
+        console.log('addresses', addresses);
+    };
+
+    // สร้าง function ที่ใช้ในการดึงข้อมูลผู้ใช้ และ ที่อยู่ของผู้ใช้
+    const fetchUserData = async () => {
+        if (userID) {
+            try {
+                const response = await getUserById(userID);
+                if (response.success && response.data) {
+                    setUsername(response.data.username);
+                    setEmail(response.data.email);
+                    setFirstName(response.data.firstName);
+                    setLastName(response.data.lastName);
+                    setPhoneNumber(response.data.phoneNumber);
+                    setAddresses(response.data.address);
+
+                    // ตั้งค่าข้อมูลเริ่มต้นของผู้ใช้
+                    setInitialUserData({
+                        firstName: response.data.firstName,
+                        lastName: response.data.lastName,
+                        phoneNumber: response.data.phoneNumber
+                    });
+
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message || 'Failed to fetch user data',
+                        timer: 1500,
+                        showConfirmButton: false,
+                    });
+                }
+            } catch (error: any) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Failed to fetch user data',
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
+            }
+        }
+    };
+
+    // ใช้ useEffect ในการดึงข้อมูลผู้ใช้ และที่อยู่ของผู้ใช้เมื่อเปิดหน้าเว็บ เมื่อเปิดหน้าเว็บ
+    useEffect(() => {
+        fetch('https://raw.githubusercontent.com/kongvut/thai-province-data/master/api_province_with_amphure_tambon.json')
+            .then(response => response.json())
+            .then(data => setData(data))
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+        fetchUserData();
+    }, []);
+
+    // สร้าง function หาค่า id ของจังหวัด อำเภอ ตำบล และรหัสไปรษณีย์ จากข้อมูลที่ได้จากการค้นหา
+    useEffect(() => {
+        if (!data) {
+            return;
+        }
+
+        const newResults: Result[] = [];
+        const newCharCount: number[] = [];
+
+        addresses.forEach(address => {
+            const province = data.find((province: Province) => province.name_en === address.province);
+            if (province) {
+                const amphure = province.amphure.find((amphure: Amphure) => amphure.name_en === address.district);
+                if (amphure) {
+                    const tambon = amphure.tambon.find((tambon: Tambon) => tambon.name_en === address.subdistrict);
+                    if (tambon) {
+                        const zipCode = tambon.zip_code === parseInt(address.postalCode) ? tambon.zip_code : null;
+                        newResults.push({
+                            provinceId: province.id,
+                            amphureId: amphure.id,
+                            tambonId: tambon.id,
+                            zipCode: zipCode,
+                            detail: address.detail // Add this line
+                        });
+                        newCharCount.push(address.detail.length);
+                    } else {
+                        newResults.push({
+                            provinceId: province.id,
+                            amphureId: amphure.id,
+                            tambonId: null,
+                            zipCode: null,
+                            detail: address.detail // Add this line
+                        });
+                        newCharCount.push(address.detail.length);
+                    }
+                } else {
+                    newResults.push({
+                        provinceId: province.id,
+                        amphureId: null,
+                        tambonId: null,
+                        zipCode: null,
+                        detail: address.detail // Add this line
+                    });
+                    newCharCount.push(address.detail.length);
+                }
+            } else {
+                newResults.push({
+                    provinceId: null,
+                    amphureId: null,
+                    tambonId: null,
+                    zipCode: null,
+                    detail: address.detail // Add this line
+                });
+                newCharCount.push(address.detail.length);
+            }
+        });
+
+        setResults(newResults);
+        setCharCount(newCharCount);
+        setAddressFormsCount(addresses.length);
+
+        console.log('results', results);
+        console.log('addresses', addresses);
+
+    }, [addresses.length, data]); // useEffect will run when addresses.length or data changes
 
     return (
         <div>
             <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
-            <div className='w-full place-content-center place-items-center h-[235px] mt-[5rem] bg-black'>
+            <div className='w-full place-content-center place-items-center h-[100px] mt-[5rem] bg-black'>
                 <h1 className='text-4xl font-semibold mb-3'>My Profile</h1>
             </div>
+
             <div className='w-full place-items-center'>
-                <div className='w-full max-w-[980px] px-4 py-20 flex flex-col gap-12'>
-                    <div className='flex justify-between border-b border-white pb-6'>
-                        <p className='text-xl font-semibold'>Information</p>
-                        <div className='place-aitems-end place-content-center'>
-                            {!isEditing ? (
-                                <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={handleEdit}>Edit</button>
-                            ) : (
-                                <div className='flex gap-2'>
-                                    <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={handleCancel}>Cancel</button>
-                                    <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={handleSave}>Save</button>
+                {data === null ? (
+                    <div></div>
+                ) : (
+                    <div className='w-full max-w-[980px] px-4 py-20 flex flex-col gap-12'>
+                        <div className='flex justify-between border-b border-white pb-2'>
+                            <p className='text-xl font-semibold'>Information</p>
+                            <div className='place-aitems-end place-content-center'>
+                                {!isEditing ? (
+                                    <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => setIsEditing(true)}>Edit</button>
+                                ) : (
+                                    <div className='flex gap-2'>
+                                        <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={handleCancelEdit}>Cancel</button>
+                                        <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={handleSaveUserdata}>Save</button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div>
+                            <form action="#information" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
+                                <label htmlFor="username">
+                                    <p>Username</p>
+                                    <input
+                                        type="text"
+                                        id="username"
+                                        value={username || ''}
+                                        readOnly disabled
+                                        className='bg-[#51536D] border-transparent' />
+                                </label>
+                                <label htmlFor="email">
+                                    <p>Email address</p>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        value={email || ''}
+                                        readOnly disabled
+                                        className='bg-[#51536D] border-transparent' />
+                                </label>
+                                <label htmlFor="fname">
+                                    <p>First Name</p>
+                                    <input
+                                        type="text"
+                                        id="fname"
+                                        pattern='[A-Za-z]'
+                                        value={firstName || ''}
+                                        readOnly={!isEditing}
+                                        disabled={!isEditing}
+                                        className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
+                                        onChange={(e) => setFirstName(e.target.value)}
+                                    />
+                                </label>
+                                <label htmlFor="lname">
+                                    <p>Last Name</p>
+                                    <input
+                                        type="text"
+                                        id="lname"
+                                        pattern='[A-Za-z]'
+                                        value={lastName || ''}
+                                        readOnly={!isEditing}
+                                        disabled={!isEditing}
+                                        className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
+                                        onChange={(e) => setLastName(e.target.value)}
+                                    />
+                                </label>
+                                <label htmlFor="phone">
+                                    <p>Phone Number</p>
+                                    <input
+                                        type="tel"
+                                        id="phone"
+                                        minLength={10}
+                                        maxLength={10}
+                                        pattern="[0-9]"
+                                        value={phoneNumber || ''}
+                                        readOnly={!isEditing}
+                                        disabled={!isEditing}
+                                        className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
+                                        onChange={(e) => setPhoneNumber(e.target.value)}
+                                    />
+                                </label>
+                            </form>
+                        </div>
+                        <div>
+                            <div className='flex justify-between'>
+                                <h1 className='text-xl font-semibold'>
+                                    Address
+                                </h1>
+                                <div className='place-aitems-end place-content-center'>
+                                    {!isEditingAddress ? (
+                                        <button
+                                            className={`bg-background border border-white font-normal text-xs py-1 px-3 ${addressFormsCount <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                            onClick={() => setIsEditingAddress(true)}
+                                            disabled={addressFormsCount <= 0}
+                                        >
+                                            Edit
+                                        </button>
+                                    ) : (
+                                        <div className="flex gap-2">
+                                            <button
+                                                className="bg-background border border-white font-normal text-xs py-1 px-3"
+                                                onClick={handleCancelEditAddress}
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                className="bg-background border border-white font-normal text-xs py-1 px-3"
+                                                onClick={handleSaveAddresses}
+                                            >
+                                                Save
+                                            </button>
+                                        </div>
+                                    )
+                                    }
                                 </div>
+                            </div>
+                            <hr className='border border-white mt-2 ' />
+
+                            {Array.from({ length: addressFormsCount }).map((_, index) => (
+                                <div key={index}>
+                                    {results[index] && (
+                                        <div>
+                                            <div className='flex justify-between my-4'>
+                                                <p>{index === 0 ? 'Address Form' : `Address Form ${index + 1}`}</p>
+                                                <div className='place-aitems-end place-content-center'>
+                                                    <button
+                                                        className={`bg-background border border-white font-normal text-xs py-1 px-3 ${!isEditingAddress ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                        onClick={() => isEditingAddress && handleDeleteAddress(index)}
+                                                        disabled={!isEditingAddress}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <form action="#address" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
+                                                <div>
+                                                    <label htmlFor="province_id" className='hidden'>
+                                                        <p>Province</p>
+                                                    </label>
+                                                    <select
+                                                        id="province_id"
+                                                        value={results[index]?.provinceId || ''}
+                                                        onChange={(e) => handleProvinceChange(e, index)}
+                                                        disabled={!isEditingAddress}
+                                                        className={!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''}
+                                                    >
+                                                        <option value="" label="Province" />
+                                                        {data?.map((province) => (
+                                                            <option key={province.id} value={province.id}>
+                                                                {province.name_en}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+
+                                                <div>
+                                                    <label htmlFor="amphure_id" className='hidden'>
+                                                        <p>District</p>
+                                                    </label>
+                                                    <select
+                                                        id="amphure_id"
+                                                        value={results[index]?.amphureId || ''}
+                                                        onChange={(e) => handleAmphureChange(e, index)}
+                                                        disabled={!isEditingAddress}
+                                                        className={!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''}
+                                                    >
+                                                        <option value="" label="District" />
+                                                        {data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.map((amphure) => (
+                                                            <option key={amphure.id} value={amphure.id}>
+                                                                {amphure.name_en}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+
+                                                <div>
+                                                    <label htmlFor="tambon_id" className='hidden'>
+                                                        <p>Subdistrict</p>
+                                                    </label>
+                                                    <select
+                                                        id="tambon_id"
+                                                        value={results[index]?.tambonId || ''}
+                                                        onChange={(e) => handleTambonChange(e, index)}
+                                                        disabled={!isEditingAddress}
+                                                        className={!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''}
+                                                    >
+                                                        <option value="" label="Subdistrict" />
+                                                        {data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))?.tambon.map((tambon) => (
+                                                            <option key={tambon.id} value={tambon.id}>
+                                                                {tambon.name_en}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+
+                                                <div>
+                                                    <label htmlFor="zip_code" className='hidden'>
+                                                        <p>Postal Code</p>
+                                                    </label>
+                                                    <select
+                                                        id="zip_code"
+                                                        value={results[index]?.zipCode || ''}
+                                                        onChange={(e) => handleZipCodeChange(e, index)}
+                                                        disabled={!isEditingAddress}
+                                                        className={!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''}
+                                                    >
+                                                        <option value="" label="Postal Code" />
+                                                        {Array.from(
+                                                            new Set(
+                                                                data?.find((province) => province.id === Number(results[index]?.provinceId))
+                                                                    ?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))
+                                                                    ?.tambon.map((tambon) => tambon.zip_code)
+                                                            )
+                                                        ).map((zip_code) => (
+                                                            <option key={zip_code} value={zip_code}>
+                                                                {zip_code}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+
+                                                <label htmlFor="address" className='col-span-2 relative'>
+                                                    <textarea
+                                                        className={`resize-none border-transparent placeholder-black ${!isEditingAddress ? 'bg-[#51536D]' : ''}`}
+                                                        placeholder='Address Detail such as House number, Apartment name, Condo, Village name '
+                                                        rows={4}
+                                                        maxLength={200}
+                                                        value={results[index]?.detail || ''}
+                                                        onChange={(e) => handleAddressDetailChange(e, index)}
+                                                        readOnly={!isEditingAddress}
+                                                        disabled={!isEditingAddress}
+                                                    ></textarea>
+                                                    <span className='absolute bottom-3 right-2 text-xs text-gray-500'>{charCount[index]}/200</span>
+                                                </label>
+                                            </form>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                            {addressFormsCount < 3 && (
+                                <button aria-hidden='true' onClick={handleAddAddressForm} className='flex justify-center items-center gap-1 h-[40px] w-full mt-5'>
+                                    <IoIosAddCircle className='text-white text-2xl' />
+                                    <p className='text-white'>Add Address</p>
+                                </button>
                             )}
                         </div>
                     </div>
-
-                    <div>
-                        <form action="#information" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
-                            <label htmlFor="username">
-                                <p>Username</p>
-                                <input
-                                    type="text"
-                                    id="username"
-                                    value={username || ''}
-                                    readOnly disabled
-                                    className='bg-[#51536D] border-transparent' />
-                            </label>
-                            <label htmlFor="email">
-                                <p>Email address</p>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    value={email || ''}
-                                    readOnly disabled
-                                    className='bg-[#51536D] border-transparent' />
-                            </label>
-                            <label htmlFor="fname">
-                                <p>First Name</p>
-                                <input
-                                    type="text"
-                                    id="fname"
-                                    pattern='[A-Za-z]'
-                                    value={firstName || ''}
-                                    readOnly={!isEditing}
-                                    disabled={!isEditing}
-                                    className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
-                                    onChange={(e) => setFirstName(e.target.value)}
-                                />
-                            </label>
-                            <label htmlFor="lname">
-                                <p>Last Name</p>
-                                <input
-                                    type="text"
-                                    id="lname"
-                                    pattern='[A-Za-z]'
-                                    value={lastName || ''}
-                                    readOnly={!isEditing}
-                                    disabled={!isEditing}
-                                    className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
-                                    onChange={(e) => setLastName(e.target.value)}
-                                />
-                            </label>
-                            <label htmlFor="phone">
-                                <p>Phone Number</p>
-                                <input
-                                    type="tel"
-                                    id="phone"
-                                    minLength={10}
-                                    maxLength={10}
-                                    pattern="[0-9]"
-                                    value={phoneNumber || ''}
-                                    readOnly={!isEditing}
-                                    disabled={!isEditing}
-                                    className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
-                                    onChange={(e) => setPhoneNumber(e.target.value)}
-                                />
-                            </label>
-                        </form>
-                    </div>
-
-                    <div className='flex justify-between'>
-                        <div className='flex justify-center items-center'>
-                            <p className='text-xl font-semibold'>Address</p>
-
-                            <button className='bg-[#07081C] hover:bg-[#07081C] hover:text-white rounded-full' onClick={handleAddAddressForm}>
-                                <IoIosAddCircle className='w-[20px] h-[20px] hover:text-[#0AACF0]' /><p className='hidden'>+</p>
-                            </button>
-                        </div>
-
-                        <div className='flex justify-center items-center gap-2'>
-                            <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => alert('Button clicked!')}>Edit</button>
-                            <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={handleDelete}>Delete</button>
-                        </div>
-                    </div>
-
-                    {Array.from({ length: addressFormsCount }).map((_, index) => (
-                        <AddressForm key={index} setIsFormValid={setIsFormValid} />
-                    ))}
-                    <button className='h-[50px] col-span-2'>Save</button>
-
-                </div>
+                )}
             </div>
             <Footer />
         </div>
