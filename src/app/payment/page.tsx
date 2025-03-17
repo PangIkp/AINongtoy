@@ -147,7 +147,6 @@ export default function Payment() {
                                 <QRCodeSection />
                             </section>
 
-
                         </section>
                     </form>
                     <div className="flex flex-col sm:flex-row justify-between gap-4">
