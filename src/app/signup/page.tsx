@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import Image from "next/image";
 import PasswordInput from "../components/PasswordInput";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Signup = () => {
   const aboutRef = useRef<HTMLDivElement>(null!);
@@ -61,7 +62,11 @@ const Signup = () => {
 
     // ตรวจสอบรหัสผ่านว่าตรงกันหรือไม่
     if (formData.password !== formData.confirmpassword) {
-      setError("Passwords do not match");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Warning',
+        text: 'Passwords do not match',
+      });
       return;
     }
 
@@ -76,7 +81,13 @@ const Signup = () => {
         newUser
       );
 
-      setSuccess(response.data.message || "Registered successfully!");
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: response.data.message || 'Registered successfully!',
+        timer: 2000,
+        showConfirmButton: false,
+      });
 
       // ✅ Redirect ไปหน้า login หลังสมัครเสร็จ
       setTimeout(() => {
@@ -87,12 +98,17 @@ const Signup = () => {
 
       // ✅ เช็คว่า API ส่ง error อะไรมาบ้าง
       if (err.response?.data?.errors) {
-        setError(err.response.data.errors.join(", ")); // รวม error message เป็นข้อความเดียว
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err.response.data.errors.join(", "), // รวม error message เป็นข้อความเดียว
+        });
       } else {
-        setError(
-          err.response?.data?.message ||
-            "Something went wrong. Please try again."
-        );
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err.response?.data?.message || "Something went wrong. Please try again.",
+        });
       }
     }
   };
@@ -211,18 +227,6 @@ const Signup = () => {
                 <button className="h-[40px]" type="submit">
                   Sign Up
                 </button>
-
-                {error && (
-                  <div className="text-red-300 text-[14px] rounded mb-4">
-                    {error}
-                  </div>
-                )}
-
-                {success && (
-                  <div className="text-green-200 text-[14px] rounded mb-4">
-                    {success}
-                  </div>
-                )}
               </form>
             </div>
           </div>
