@@ -149,7 +149,7 @@ function ConfigCard() {
                 console.log("Clicked ArtToy ID:", artToy._id);
                 handleDelete(artToy._id);
               }}
-              className="absolute top-2 right-2 bg-[#51536D] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-500 hover:text-white transition duration-200"
+              className="z-10 absolute top-2 right-2 bg-[#51536D] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-500 hover:text-white transition duration-200"
             >
               ✕
             </button>
