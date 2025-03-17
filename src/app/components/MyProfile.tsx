@@ -36,7 +36,8 @@ function MyProfile() {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#51536D',
       confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel'
+      cancelButtonText: 'Cancel',
+      reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
         handleLogout();

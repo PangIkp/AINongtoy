@@ -192,7 +192,8 @@ export default function Page() {
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonText: 'Yes, delete it!',
+            reverseButtons: true
         });
 
         if (result.isConfirmed) {
@@ -630,7 +631,7 @@ export default function Page() {
                                     }
                                 </div>
                             </div>
-                            <hr className='border border-white mt-2 ' />
+                            <hr className='border border-white mt-2 mb-10 ' />
 
                             {Array.from({ length: addressFormsCount }).map((_, index) => (
                                 <div key={index}>
@@ -659,7 +660,7 @@ export default function Page() {
                                                         value={results[index]?.provinceId || ''}
                                                         onChange={(e) => handleProvinceChange(e, index)}
                                                         disabled={!isEditingAddress}
-                                                        className={!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''}
+                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent text-[#99a0ad]' : ''} ${!results[index]?.provinceId ? 'text-[#9ca3af]' : ''}`}
                                                     >
                                                         <option value="" label="Province" />
                                                         {data?.map((province) => (
@@ -679,7 +680,7 @@ export default function Page() {
                                                         value={results[index]?.amphureId || ''}
                                                         onChange={(e) => handleAmphureChange(e, index)}
                                                         disabled={!isEditingAddress}
-                                                        className={!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''}
+                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent text-[#99a0ad]' : ''} ${!results[index]?.amphureId ? 'text-[#9ca3af]' : ''}`}
                                                     >
                                                         <option value="" label="District" />
                                                         {data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.map((amphure) => (
@@ -699,7 +700,7 @@ export default function Page() {
                                                         value={results[index]?.tambonId || ''}
                                                         onChange={(e) => handleTambonChange(e, index)}
                                                         disabled={!isEditingAddress}
-                                                        className={!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''}
+                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent text-[#99a0ad]' : ''} ${!results[index]?.tambonId ? 'text-[#9ca3af]' : ''}`}
                                                     >
                                                         <option value="" label="Subdistrict" />
                                                         {data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))?.tambon.map((tambon) => (
@@ -719,7 +720,7 @@ export default function Page() {
                                                         value={results[index]?.zipCode || ''}
                                                         onChange={(e) => handleZipCodeChange(e, index)}
                                                         disabled={!isEditingAddress}
-                                                        className={!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''}
+                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent text-[#99a0ad]' : ''} ${!results[index]?.zipCode ? 'text-[#9ca3af]' : ''}`}
                                                     >
                                                         <option value="" label="Postal Code" />
                                                         {Array.from(
@@ -738,7 +739,7 @@ export default function Page() {
 
                                                 <label htmlFor="address" className='col-span-2 relative'>
                                                     <textarea
-                                                        className={`resize-none border-transparent placeholder-black ${!isEditingAddress ? 'bg-[#51536D]' : ''}`}
+                                                        className={`resize-none border-transparent  ${!isEditingAddress ? 'bg-[#51536D]' : ''}`}
                                                         placeholder='Address Detail such as House number, Apartment name, Condo, Village name '
                                                         rows={4}
                                                         maxLength={200}
@@ -751,6 +752,9 @@ export default function Page() {
                                                 </label>
                                             </form>
                                         </div>
+                                    )}
+                                    {index < addressFormsCount - 1 && (
+                                        <hr className='my-10 opacity-50' />
                                     )}
                                 </div>
                             ))}
