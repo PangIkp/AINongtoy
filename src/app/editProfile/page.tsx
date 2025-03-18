@@ -660,7 +660,7 @@ export default function Page() {
                                                         value={results[index]?.provinceId || ''}
                                                         onChange={(e) => handleProvinceChange(e, index)}
                                                         disabled={!isEditingAddress}
-                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent text-[#99a0ad]' : ''} ${!results[index]?.provinceId ? 'text-[#9ca3af]' : ''}`}
+                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''} ${!results[index]?.provinceId ? 'text-[#9ca3af]' : ''}`}
                                                     >
                                                         <option value="" label="Province" />
                                                         {data?.map((province) => (
@@ -680,7 +680,7 @@ export default function Page() {
                                                         value={results[index]?.amphureId || ''}
                                                         onChange={(e) => handleAmphureChange(e, index)}
                                                         disabled={!isEditingAddress}
-                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent text-[#99a0ad]' : ''} ${!results[index]?.amphureId ? 'text-[#9ca3af]' : ''}`}
+                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''} ${!results[index]?.amphureId ? 'text-[#9ca3af]' : ''}`}
                                                     >
                                                         <option value="" label="District" />
                                                         {data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.map((amphure) => (
@@ -700,7 +700,7 @@ export default function Page() {
                                                         value={results[index]?.tambonId || ''}
                                                         onChange={(e) => handleTambonChange(e, index)}
                                                         disabled={!isEditingAddress}
-                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent text-[#99a0ad]' : ''} ${!results[index]?.tambonId ? 'text-[#9ca3af]' : ''}`}
+                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent ' : ''} ${!results[index]?.tambonId ? 'text-[#9ca3af]' : ''}`}
                                                     >
                                                         <option value="" label="Subdistrict" />
                                                         {data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))?.tambon.map((tambon) => (
@@ -720,7 +720,7 @@ export default function Page() {
                                                         value={results[index]?.zipCode || ''}
                                                         onChange={(e) => handleZipCodeChange(e, index)}
                                                         disabled={!isEditingAddress}
-                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent text-[#99a0ad]' : ''} ${!results[index]?.zipCode ? 'text-[#9ca3af]' : ''}`}
+                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''} ${!results[index]?.zipCode ? 'text-[#9ca3af]' : ''}`}
                                                     >
                                                         <option value="" label="Postal Code" />
                                                         {Array.from(
