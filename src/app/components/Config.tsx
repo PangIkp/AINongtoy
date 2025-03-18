@@ -5,14 +5,16 @@ import { useRouter } from "next/navigation";
 import { createArtToy, getArtToys, updateArtToy } from "@/api/arttoyAPI";
 import { getUser } from "@/api/authAPI";
 import Swal from "sweetalert2";
-
+import { set } from "mongoose";
 
 const Config = () => {
+  const [name, setName] = useState("Unnamed Art Toy");
   const [size, setSize] = useState("Small");
   const [material, setMaterial] = useState("PLA");
   const [painting, setPainting] = useState("Hand-painting");
   const [assembly, setAssembly] = useState("Fixed Pose");
   const [quantity, setQuantity] = useState(1);
+  const [fetchId, setFetchId] = useState("");
   const pricePerUnit = 500; // ปรับราคาได้ตามต้องการ
   const searchParams = useSearchParams();
   const imageUrl =
@@ -22,12 +24,6 @@ const Config = () => {
   const router = useRouter();
 
   const [isNew, setIsNew] = useState(true);
-
-  // สร้าง state สำหรับชื่อ Art Toy
-  const [artToyName, setArtToyNameLocal] = useState(() => {
-    // return localStorage.getItem("artToyName") || artToyData.name;
-    return artToyData.name;
-  });
 
   const [isEditing, setIsEditing] = useState(false);
   const price = quantity * pricePerUnit;
@@ -52,12 +48,21 @@ const Config = () => {
 
         const artToys = await getArtToys(token);
         console.log("Fetched ArtToys:", artToys);
-        const userArtToys = artToys.filter((toy: any) => toy.user === userId && toy.imageUrl === imageUrl); // Assuming art toy object has a userId and imageUrl property
+        const userArtToys = artToys.filter(
+          (toy: any) => toy.user === userId && toy.imageUrl === imageUrl
+        ); // Assuming art toy object has a userId and imageUrl property
         console.log("User ArtToys:", userArtToys);
 
         if (userArtToys.length > 0) {
           setIsNew(false);
-          setArtToyData(userArtToys[0]); // Assuming you want the first art toy of the user
+          // setArtToyData(userArtToys[0]); // Assuming you want the first art toy of the user
+          setName(userArtToys[0].name);
+          setSize(userArtToys[0].size);
+          setMaterial(userArtToys[0].material);
+          setPainting(userArtToys[0].painting);
+          setAssembly(userArtToys[0].assembly);
+          setQuantity(userArtToys[0].quantity);
+          setFetchId(userArtToys[0]._id);
         }
       } catch (error: any) {
         Swal.fire({
@@ -71,20 +76,10 @@ const Config = () => {
     };
 
     fetchArtToyData();
-
-    if (artToyData) {
-      console.log("Fetched ArtToy Data:", artToyData); // Log ดูว่าข้อมูลถูกต้องไหม
-      setSize(artToyData.size || "Small");
-      setMaterial(artToyData.material || "PLA");
-      setPainting(artToyData.painting || "Hand-painting");
-      setAssembly(artToyData.assembly || "Fixed Pose");
-      setQuantity(artToyData.quantity || 1);
-    }
   }, []);
 
-
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setArtToyNameLocal(event.target.value);
+    setName(event.target.value);
   };
 
   // ✅ กด Enter หรือคลิกนอก input เพื่อบันทึกค่าใน Zustand
@@ -96,12 +91,12 @@ const Config = () => {
     if ("key" in event && event.key !== "Enter") return; // เช็คว่าเป็น Key Event และต้องเป็น Enter เท่านั้น
 
     setIsEditing(false);
-    setArtToyData({ name: artToyName }); // ✅ อัปเดต Zustand
+    // setArtToyData({ name: artToyName }); // ✅ อัปเดต Zustand
   };
 
   const handleSave = async () => {
     const updatedArtToy = {
-      name: artToyData.name,
+      name,
       size,
       material,
       painting,
@@ -110,8 +105,6 @@ const Config = () => {
       price,
       imageUrl,
     };
-
-    setArtToyData(updatedArtToy); // อัปเดต Zustand State
 
     const token = localStorage.getItem("token");
     if (!token) {
@@ -129,14 +122,14 @@ const Config = () => {
       if (isNew) {
         response = await createArtToy(updatedArtToy, token); // เรียกใช้ฟังก์ชันที่ import มา
       } else {
-        response = await updateArtToy(artToyData._id, updatedArtToy, token); // เรียกใช้ฟังก์ชันที่ import มา
+        response = await updateArtToy(fetchId, updatedArtToy, token); // เรียกใช้ฟังก์ชันที่ import มา
       }
       console.log("API Response:", response);
       Swal.fire({
         title: "Successfully recorded!",
         text: "Your Art Toy has been saved.",
         icon: "success",
-        confirmButtonText: "OK"
+        confirmButtonText: "OK",
       });
     } catch (error: any) {
       console.error("Error:", error);
@@ -151,8 +144,8 @@ const Config = () => {
   };
 
   const handleCheckout = () => {
-    const newArtToyData = {
-      name: artToyName,
+    const artToyData = {
+      name,
       size,
       material,
       painting,
@@ -161,18 +154,10 @@ const Config = () => {
       price,
       imageUrl,
     };
+    localStorage.setItem("artToyData", JSON.stringify(artToyData));
 
-    setArtToyData(newArtToyData); // ✅ อัปเดตค่า state ก่อน
     router.push("/payment");
   };
-
-
-  // ✅ ใช้ useEffect เพื่อลงค่า localStorage เมื่อ state อัปเดต
-  useEffect(() => {
-    if (artToyData) {
-      localStorage.setItem("artToyData", JSON.stringify(artToyData));
-    }
-  }, [artToyData]);
 
   return (
     <div className="w-full h-full text-white">
@@ -189,7 +174,7 @@ const Config = () => {
               {isEditing ? (
                 <input
                   type="text"
-                  value={artToyName}
+                  value={name}
                   onChange={handleNameChange}
                   onBlur={handleBlurOrEnter}
                   onKeyDown={handleBlurOrEnter}
@@ -197,8 +182,11 @@ const Config = () => {
                   className="bg-transparent border border-gray-400 rounded px-2 py-1 w-full text-white"
                 />
               ) : (
-                <p className="font-semibold">{artToyName}</p>
+                <>
+                  <p className="font-semibold">{name}</p>
+                </>
               )}
+
               {!isEditing && (
                 <button
                   onClick={() => setIsEditing(true)}
@@ -208,7 +196,7 @@ const Config = () => {
                 </button>
               )}
             </div>
-            {/* <p className="text-sm text-gray-400">{artToyData.prompt}</p> */}
+            <p className="text-sm text-gray-400">{artToyData.prompt}</p>
           </div>
         </div>
 
@@ -220,8 +208,9 @@ const Config = () => {
             {["Small", "Medium", "Large"].map((s) => (
               <button
                 key={s}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${size === s ? "border-[#0CACF3]" : "border-gray-600"
-                  }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
+                  size === s ? "border-[#0CACF3]" : "border-gray-600"
+                }`}
                 onClick={() => setSize(s)}
               >
                 {s}
@@ -235,8 +224,9 @@ const Config = () => {
             {["PLA", "Resin", "PVC", "Metal"].map((m) => (
               <button
                 key={m}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${material === m ? "border-[#0CACF3]" : "border-gray-600"
-                  }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
+                  material === m ? "border-[#0CACF3]" : "border-gray-600"
+                }`}
                 onClick={() => setMaterial(m)}
               >
                 {m}
@@ -250,8 +240,9 @@ const Config = () => {
             {["Hand-painting", "Airbrush", "Pad Printing"].map((p) => (
               <button
                 key={p}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${painting === p ? "border-[#0CACF3]" : "border-gray-600"
-                  }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
+                  painting === p ? "border-[#0CACF3]" : "border-gray-600"
+                }`}
                 onClick={() => setPainting(p)}
               >
                 {p}
@@ -265,8 +256,9 @@ const Config = () => {
             {["Fixed Pose", "Articulated Joints", "Magnet Joints"].map((a) => (
               <button
                 key={a}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${assembly === a ? "border-[#0CACF3]" : "border-gray-600"
-                  }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
+                  assembly === a ? "border-[#0CACF3]" : "border-gray-600"
+                }`}
                 onClick={() => setAssembly(a)}
               >
                 {a}
@@ -312,7 +304,6 @@ const Config = () => {
           </div>
         </div>
       </div>
-
     </div>
   );
 };

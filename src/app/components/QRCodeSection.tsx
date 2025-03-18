@@ -8,11 +8,9 @@ const QRCodeSection: React.FC = () => {
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setUploadedImage(reader.result as string);
-            };
-            reader.readAsDataURL(file);
+            const imageUrl = URL.createObjectURL(file); // ✅ สร้าง URL blob
+            console.log("Uploaded Image URL:", imageUrl);
+            setUploadedImage(imageUrl);
         }
     };
 
