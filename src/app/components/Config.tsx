@@ -106,8 +106,6 @@ const Config = () => {
       imageUrl,
     };
 
-    // setArtToyData(updatedArtToy); // อัปเดต Zustand State
-
     const token = localStorage.getItem("token");
     if (!token) {
       Swal.fire({

@@ -1,5 +1,5 @@
 "use client";
-import { ArtToy } from "@/mainstore"; // ✅ นำเข้า interface ArtToy
+import { ArtToy } from "@/mainstore"; // นำเข้า interface ArtToy
 import React, { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -9,6 +9,7 @@ import { getUserData } from "@/utils/localStorageUtils";
 import { IoIosAddCircle } from "react-icons/io";
 import { createOrder } from "@/api/orderAPI";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 export default function Payment() {
   const aboutRef = useRef<HTMLDivElement>(null!);
@@ -27,8 +28,10 @@ export default function Payment() {
   const [selectedAddress, setSelectedAddress] = useState<any>(null);
 
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const handleAddressSelect = (addr: any) => {
+    // console.log("Selected Address Updated:", addr);
     setSelectedAddress(addr);
     handleClosePopUp();
   };
@@ -56,36 +59,67 @@ export default function Payment() {
   };
 
   const handleConfirmOrder = async () => {
-    if (!artToyData || !userData) {
-      alert("ข้อมูลไม่ครบถ้วน กรุณาตรวจสอบอีกครั้ง");
+    const token = localStorage.getItem("token");
+    if (!token) {
+      Swal.fire({
+        title: "You are not logged in.",
+        icon: "error",
+        timer: 1500,
+        showConfirmButton: false,
+      });
       return;
     }
 
+    // กำหนด orderData โดยใช้ artToyData แทน selectedItem
     const orderData = {
-      name: artToyData.name,
-      size: artToyData.size,
-      material: artToyData.material,
-      painting: artToyData.painting,
-      assembly: artToyData.assembly,
-      quantity: artToyData.quantity,
-      price: artToyData.price,
-      shipping: shippingFee,
-      total: artToyData.price + shippingFee,
-      address: selectedAddress || userData.address[0],
-      payment: paymentProof,
-      imageUrl: artToyData.imageUrl,
+      name: artToyData?.name || "Unknown Item",
+      size: artToyData?.size || "Standard",
+      material: artToyData?.material || "Plastic",
+      painting: artToyData?.painting || "No Painting",
+      assembly: artToyData?.assembly || "Pre-Assembled",
+      quantity: artToyData?.quantity || 1,
+      price: artToyData?.price || 0,
+      shipping: shippingFee || 50,
+      total:
+        (artToyData?.price || 0) * (artToyData?.quantity || 1) + shippingFee,
+      address: selectedAddress
+        ? JSON.stringify(selectedAddress)
+        : address.length > 0
+        ? JSON.stringify(address[0])
+        : "Not provided",
+      payment: "Cash on Delivery",
+      imageUrl: artToyData?.imageUrl || "default-image.jpg",
     };
 
+    console.log("Sending order data:", orderData);
+    console.log("Selected Address before order:", selectedAddress);
+
     try {
-      //   await createOrder(userData.token, orderData)
-      alert("Order completed!");
-    } catch (error) {
-      console.error("Error creating order:", error);
-      alert("Error creating order");
+      console.log("Sending order data:", orderData);
+      const response = await createOrder(token, orderData);
+
+      console.log("Order Response:", response);
+      Swal.fire({
+        title: "Order Confirmed!",
+        text: "Your order has been placed successfully.",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        router.push("/order");
+      });
+    } catch (error: any) {
+      console.error("Checkout error:", error);
+      Swal.fire({
+        title: "Error",
+        text: error.response?.data?.message || "Failed to place order.",
+        icon: "error",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     }
   };
 
-  // ✅ ดึงข้อมูลจาก localStorage เมื่อโหลดหน้า Payment
+  // ดึงข้อมูลจาก localStorage เมื่อโหลดหน้า Payment
   useEffect(() => {
     const storedData = localStorage.getItem("artToyData");
     if (storedData) {
@@ -238,8 +272,9 @@ export default function Payment() {
             <button
               className="w-full sm:w-1/2 h-[40px]"
               onClick={handleConfirmOrder}
+              disabled={loading}
             >
-              Confirm
+              {loading ? "Processing..." : "Confirm"}
             </button>
           </div>
         </div>
