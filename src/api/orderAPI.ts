@@ -32,3 +32,12 @@ export const createOrder = async (
     throw error;
   }
 };
+
+export const getOrdersByUserId = async (token: string) => {
+    const res = await axios.get(API_URL, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log("Orders Fetched:", res.data);
+    return res.data;
+  };
+  
