@@ -5,7 +5,7 @@ export interface ArtToy {
   _id: string;
   // id:string;
   name: string;
-  // prompt: string;
+  prompt: string;
   size: string;
   material: string;
   painting: string;
@@ -51,7 +51,7 @@ export const useMainStore = create<MainStore>()(
         quantity: 1,
         price: 0,
         imageUrl: "",
-        // shipingCost: 0,
+        shipingFee: 0,
       },
 
       setArtToyData: (data) =>

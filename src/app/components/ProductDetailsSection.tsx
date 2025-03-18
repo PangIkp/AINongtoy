@@ -8,7 +8,7 @@ interface ProductDetailsProps {
   assembly: string;
   quantity: number;
   price: number;
-  shipingCost: number;
+  shippingFee: number;
 }
 
 const ProductDetailsSection: React.FC<ProductDetailsProps> = ({
@@ -19,9 +19,9 @@ const ProductDetailsSection: React.FC<ProductDetailsProps> = ({
   assembly,
   quantity,
   price,
-  shipingCost,
+  shippingFee,
 }) => {
-  return (
+  return (  
     <div className="w-full h-full bg-[#202133] border border-[#202133] rounded-xl p-8">
       <div className="w-full h-full grid sm:grid-rows-1 sm:grid-cols-2 gap-5 grid-rows-2 grid-cols-1">
         <img
@@ -49,12 +49,12 @@ const ProductDetailsSection: React.FC<ProductDetailsProps> = ({
 
             <div className="flex justify-between">
               <h2 className="text-[14px] font-medium">Shipping Fee</h2>
-              <p className="text-[14px] font-medium">{shipingCost} ฿</p>
+              <p className="text-[14px] font-medium">{shippingFee} ฿</p>
             </div>
 
             <div className="flex justify-between">
               <h2 className="text-[16px] font-semibold">Total Price</h2>
-              <p className="text-[16px] font-semibold">{(price + shipingCost).toLocaleString()} ฿</p>
+              <p className="text-[16px] font-semibold">{(price + shippingFee).toLocaleString()} ฿</p>
             </div>
           </div>
         </div>

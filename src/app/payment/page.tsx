@@ -7,13 +7,15 @@ import ProductDetailsSection from "../components/ProductDetailsSection";
 import QRCodeSection from "../components/QRCodeSection";
 import { getUserData } from "@/utils/localStorageUtils";
 import { IoIosAddCircle } from "react-icons/io";
+import { createOrder } from "@/api/orderAPI";
 
 export default function Payment() {
     const aboutRef = useRef<HTMLDivElement>(null!);
     const partnerRef = useRef<HTMLDivElement>(null!);
     const contactRef = useRef<HTMLDivElement>(null!);
     const [artToyData, setArtToyData] = useState<ArtToy | null>(null);
-    const [shippingCost, setShippingCost] = useState(50);
+    const [shippingFee, setShippingCost] = useState(50);
+    const [paymentProof, setPaymentProof] = useState<File | null>(null);
     const userData = getUserData();
     const fname = userData?.firstName;
     const lname = userData?.lastName;
@@ -45,6 +47,41 @@ export default function Payment() {
             ref.current.scrollIntoView({ behavior: "smooth" });
         }
     };
+
+    const handleConfirmOrder = async () => {
+        if (!artToyData || !userData) {
+            alert("ข้อมูลไม่ครบถ้วน กรุณาตรวจสอบอีกครั้ง");
+            return;
+        }
+    
+        const orderData = {
+            name: artToyData.name,
+            size: artToyData.size,
+            material: artToyData.material,
+            painting: artToyData.painting,
+            assembly: artToyData.assembly,
+            quantity: artToyData.quantity,
+            price: artToyData.price,
+            shipping: shippingFee,
+            total: artToyData.price + shippingFee,
+            address: selectedAddress || userData.address[0], 
+            payment: paymentProof, 
+            imageUrl: artToyData.imageUrl,
+        };
+    
+        try {
+            // await createOrder(userData.token, orderData); // ✅ ส่ง token + orderData ครบ
+            alert("Order completed!");
+        } catch (error) {
+            console.error("Error creating order:", error);
+            alert("Error creating order");
+        }
+    };
+    
+    <button className="w-full sm:w-1/2 h-[40px]" onClick={handleConfirmOrder}>
+        Confirm
+    </button>
+    
 
     // ✅ ดึงข้อมูลจาก localStorage เมื่อโหลดหน้า Payment
     useEffect(() => {
@@ -84,7 +121,7 @@ export default function Payment() {
 
                     {/* ตรวจสอบว่ามีข้อมูลหรือไม่ก่อนแสดงผล */}
                     {artToyData ? (
-                        <ProductDetailsSection {...artToyData} shipingCost={shippingCost} />
+                        <ProductDetailsSection {...artToyData} shippingFee={shippingFee} />
                     ) : (
                         <p>Loading...</p>
                     )}
@@ -125,7 +162,7 @@ export default function Payment() {
                                     </h2>
                                     <div className="flex flex-col gap-2">
                                         <div
-                                            className={`flex items-center border ${shippingCost === 50
+                                            className={`flex items-center border ${shippingFee === 50
                                                 ? "border-[#0578AB]"
                                                 : "border-[#828399]"
                                                 } rounded-lg gap-2 px-2 py-4 hover:bg-[#0578AB] cursor-pointer`}
@@ -136,7 +173,7 @@ export default function Payment() {
                                                 name="shipping"
                                                 value="standard"
                                                 id="standard"
-                                                checked={shippingCost === 50}
+                                                checked={shippingFee === 50}
                                                 onChange={() => handleShippingChange(50)}
                                                 className="w-5 h-5 border-2 border-[#828399] rounded-full checked:bg-[#0578AB] checked:border-[#0578AB] cursor-pointer"
                                             />
@@ -151,7 +188,7 @@ export default function Payment() {
 
                                         {/* EMS Delivery */}
                                         <div
-                                            className={`flex items-center border ${shippingCost === 70
+                                            className={`flex items-center border ${shippingFee === 70
                                                 ? "border-[#0578AB]"
                                                 : "border-[#828399]"
                                                 } rounded-lg gap-2 px-2 py-4 hover:bg-[#0578AB] cursor-pointer`}
@@ -162,7 +199,7 @@ export default function Payment() {
                                                 name="shipping"
                                                 value="ems"
                                                 id="ems"
-                                                checked={shippingCost === 70}
+                                                checked={shippingFee === 70}
                                                 onChange={() => handleShippingChange(70)}
                                                 className="w-5 h-5 border-2 border-[#828399] rounded-full checked:bg-[#0578AB] checked:border-[#0578AB] cursor-pointer"
                                             />
@@ -189,11 +226,13 @@ export default function Payment() {
                         <button className="w-full sm:w-1/2 bg-[#51536D] h-[40px]">
                             Cancel
                         </button>
-                        <button className="w-full sm:w-1/2 h-[40px]">Confirm</button>
+                        <button className="w-full sm:w-1/2 h-[40px]" onClick={handleConfirmOrder}>Confirm</button>
                     </div>
                 </div>
             </main>
             <Footer />
+
+
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                     <div className=" bg-[#202133] border border-[#202133] rounded-xl p-4">
