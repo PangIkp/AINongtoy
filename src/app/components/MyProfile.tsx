@@ -33,7 +33,7 @@ function MyProfile() {
       text: 'Are you sure you want to log out?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
+      confirmButtonColor: '#d33',
       cancelButtonColor: '#51536D',
       confirmButtonText: 'Confirm',
       cancelButtonText: 'Cancel',
