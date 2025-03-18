@@ -17,8 +17,7 @@ export default function Payment() {
   const contactRef = useRef<HTMLDivElement>(null!);
   const [artToyData, setArtToyData] = useState<ArtToy | null>(null);
   const [shippingFee, setShippingCost] = useState(50);
-  const [paymentProof, setPaymentProof] = useState<File | null>(null);
-  const userData = getUserData();
+  const [paymentImage, setPaymentImage] = useState<string | null>(null);  const userData = getUserData();
   const fname = userData?.firstName;
   const lname = userData?.lastName;
   const phone = userData?.phoneNumber;
@@ -87,7 +86,7 @@ export default function Payment() {
         : address.length > 0
         ? JSON.stringify(address[0])
         : "Not provided",
-      payment: "Cash on Delivery",
+      payment: paymentImage || "No payment proof uploaded", 
       imageUrl: artToyData?.imageUrl || "default-image.jpg",
     };
 
@@ -257,7 +256,9 @@ export default function Payment() {
                 </div>
               </section>
               <section className="w-full h-full">
-                <QRCodeSection />
+                {/* <QRCodeSection onImageUpload={(url) => console.log("Uploaded Image URL:", url)} /> */}
+                <QRCodeSection/>
+
               </section>
             </section>
           </form>
