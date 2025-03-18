@@ -1,57 +1,62 @@
-import React from 'react';
+import React from "react";
+import { useRouter } from "next/navigation";
 
-// กำหนดโครงสร้างของข้อมูลที่ใช้ในคอมโพเนนต์ OrderItem
-interface OrderItemProps {
-    imageUrl: string;
-    title: string;
-    description: string;
-    quantity: number;
-    price: string;
-    status: string;
+interface OrderItem {
+  name: string;
+  size: string;
+  quantity: number;
+  price: number;
+  imageUrl: string;
+  status: string;
 }
 
-// กำหนดโครงสร้างของข้อมูลที่ใช้ในคอมโพเนนต์ OrderItemGrid
-interface OrderItemGridProps {
-    items: OrderItemProps[];
+interface OrderItemListProps {
+  orders: OrderItem[];
 }
 
-// คอมโพเนนต์ OrderItem สำหรับแสดงข้อมูลของสินค้าแต่ละรายการ
-const OrderItem: React.FC<OrderItemProps> = ({ imageUrl, title, description, quantity, price, status }) => {
-    return (
-        <div className='w-full h-full flex justify-between p-7 bg-[#202133] border border-[#202133] rounded-xl'>
-            <div className='w-full h-full flex gap-7'>
-                {/* แสดงรูปภาพของสินค้า */}
-                <img className='min-w-32 w-[15%] object-contain rounded-lg' src={imageUrl} alt={title} />
-                <div className='flex flex-col justify-center gap-2'>
-                    {/* แสดงชื่อสินค้า */}
-                    <p className='font-semibold'>{title}</p>
-                    {/* แสดงคำอธิบายสินค้า */}
-                    <p className='text-sm text-[#B3B0B0]'>{description}</p>
-                    {/* แสดงจำนวนสินค้า */}
-                    <p className='text-sm text-[#B3B0B0]'>Quantity: {quantity}</p>
-                    {/* แสดงราคาสินค้า */}
-                    <p className='text-xl font-semibold'>{price}</p>
-                </div>
-            </div>
-            {/* แสดงสถานะของสินค้า */}
-            <div className='text-[#B3FFB2]'>
-                <p>{status}</p>
-            </div>
-        </div>
-    );
+const statusColors: { [key: string]: string } = {
+  Pending: "text-yellow-400",
+  Processing: "text-blue-400",
+  Shipped: "text-purple-400",
+  Delivered: "text-green-400",
 };
 
-// คอมโพเนนต์ OrderItemGrid สำหรับแสดงรายการสินค้าทั้งหมด
-const OrderItemGrid: React.FC<OrderItemGridProps> = ({ items }) => {
-    return (
-        <section className='flex flex-col gap-5 min-h-[calc(5*14rem+4*1.1rem)]'>
-            {/* วนลูปแสดง OrderItem สำหรับแต่ละรายการในอาร์เรย์ items */}
-            {items.map((item, index) => (
-                <OrderItem key={index} {...item} />
-            ))}
-        </section>
-    );
+const OrderItemList: React.FC<OrderItemListProps> = ({ orders }) => {
+  const router = useRouter();
+
+  const handleClick = (order: OrderItem) => {
+    localStorage.setItem("selectedOrder", JSON.stringify(order)); // ✅ เก็บข้อมูลใน Local Storage
+    router.push("/order_detail"); // ✅ ไปที่หน้า order_detail โดยไม่ต้องมี id
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      {orders.length > 0 ? (
+        orders.map((order, index) => (
+          <div
+            key={index}
+            className="w-full h-full flex justify-between p-7 bg-[#202133] border border-[#202133] rounded-xl cursor-pointer hover:bg-[#292a40] transition-all"
+            onClick={() => handleClick(order)}
+          >
+            <div className="w-full h-full flex gap-7">
+              <img className="min-w-32 w-[15%] object-contain rounded-lg" src={order.imageUrl} alt={order.name} />
+              <div className="flex flex-col justify-center gap-2">
+                <p className="font-semibold text-white">{order.name}</p>
+                <p className="text-sm text-[#B3B0B0]">Size: {order.size}</p>
+                <p className="text-sm text-[#B3B0B0]">Quantity: {order.quantity}</p>
+                <p className="text-sm font-semibold text-white">{order.price.toLocaleString()} ฿</p>
+              </div>
+            </div>
+            <div className={`${statusColors[order.status] || "text-white"}`}>
+              <p className="text-[13px] font-medium mt-3">{order.status}</p>
+            </div>
+          </div>
+        ))
+      ) : (
+        <p className="text-white text-center">No orders found.</p>
+      )}
+    </div>
+  );
 };
 
-// ส่งออกคอมโพเนนต์ OrderItemGrid เพื่อให้สามารถนำไปใช้ในส่วนอื่นของแอปพลิเคชันได้
-export default OrderItemGrid;
+export default OrderItemList;

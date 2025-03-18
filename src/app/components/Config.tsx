@@ -286,7 +286,7 @@ const Config = () => {
             </div>
 
             <p className="font-semibold">
-              Total price : {price.toLocaleString()} Baht
+              Total price : {price.toLocaleString()} ฿
             </p>
           </div>
 
