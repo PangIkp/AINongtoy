@@ -7,7 +7,6 @@ import { getUser } from "@/api/authAPI";
 import Swal from "sweetalert2";
 import { set } from "mongoose";
 
-
 const Config = () => {
   const [name, setName] = useState("Unnamed Art Toy");
   const [size, setSize] = useState("Small");
@@ -49,7 +48,9 @@ const Config = () => {
 
         const artToys = await getArtToys(token);
         console.log("Fetched ArtToys:", artToys);
-        const userArtToys = artToys.filter((toy: any) => toy.user === userId && toy.imageUrl === imageUrl); // Assuming art toy object has a userId and imageUrl property
+        const userArtToys = artToys.filter(
+          (toy: any) => toy.user === userId && toy.imageUrl === imageUrl
+        ); // Assuming art toy object has a userId and imageUrl property
         console.log("User ArtToys:", userArtToys);
 
         if (userArtToys.length > 0) {
@@ -76,7 +77,6 @@ const Config = () => {
 
     fetchArtToyData();
   }, []);
-
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -131,7 +131,7 @@ const Config = () => {
         title: "Successfully recorded!",
         text: "Your Art Toy has been saved.",
         icon: "success",
-        confirmButtonText: "OK"
+        confirmButtonText: "OK",
       });
     } catch (error: any) {
       console.error("Error:", error);
@@ -144,15 +144,22 @@ const Config = () => {
       });
     }
   };
-  
+
   const handleCheckout = () => {
-    const artToyData = { name, size, material, painting, assembly, quantity, price, imageUrl };
+    const artToyData = {
+      name,
+      size,
+      material,
+      painting,
+      assembly,
+      quantity,
+      price,
+      imageUrl,
+    };
     localStorage.setItem("artToyData", JSON.stringify(artToyData));
-  
+
     router.push("/payment");
   };
-  
-  
 
   return (
     <div className="w-full h-full text-white">
@@ -178,7 +185,7 @@ const Config = () => {
                 />
               ) : (
                 <>
-                <p className="font-semibold">{name}</p>
+                  <p className="font-semibold">{name}</p>
                 </>
               )}
 
@@ -203,8 +210,9 @@ const Config = () => {
             {["Small", "Medium", "Large"].map((s) => (
               <button
                 key={s}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${size === s ? "border-[#0CACF3]" : "border-gray-600"
-                  }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
+                  size === s ? "border-[#0CACF3]" : "border-gray-600"
+                }`}
                 onClick={() => setSize(s)}
               >
                 {s}
@@ -218,8 +226,9 @@ const Config = () => {
             {["PLA", "Resin", "PVC", "Metal"].map((m) => (
               <button
                 key={m}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${material === m ? "border-[#0CACF3]" : "border-gray-600"
-                  }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
+                  material === m ? "border-[#0CACF3]" : "border-gray-600"
+                }`}
                 onClick={() => setMaterial(m)}
               >
                 {m}
@@ -233,8 +242,9 @@ const Config = () => {
             {["Hand-painting", "Airbrush", "Pad Printing"].map((p) => (
               <button
                 key={p}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${painting === p ? "border-[#0CACF3]" : "border-gray-600"
-                  }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
+                  painting === p ? "border-[#0CACF3]" : "border-gray-600"
+                }`}
                 onClick={() => setPainting(p)}
               >
                 {p}
@@ -248,8 +258,9 @@ const Config = () => {
             {["Fixed Pose", "Articulated Joints", "Magnet Joints"].map((a) => (
               <button
                 key={a}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${assembly === a ? "border-[#0CACF3]" : "border-gray-600"
-                  }`}
+                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
+                  assembly === a ? "border-[#0CACF3]" : "border-gray-600"
+                }`}
                 onClick={() => setAssembly(a)}
               >
                 {a}
@@ -295,7 +306,6 @@ const Config = () => {
           </div>
         </div>
       </div>
-
     </div>
   );
 };

@@ -46,7 +46,7 @@ export default function Material() {
         </div>
 
         <div className="mt-10 mb-10">
-        <Config/>
+          <Config />
         </div>
       </div>
 
@@ -77,7 +77,7 @@ export default function Material() {
           </div>
         </div>
       )}
-      
+
       <Footer />
     </div>
   );
