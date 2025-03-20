@@ -40,4 +40,27 @@ export const getOrdersByUserId = async (token: string) => {
     console.log("Orders Fetched:", res.data);
     return res.data;
   };
-  
+
+// ดึงคำสั่งซื้อโดยใช้ `orderId`
+export const getOrderById = async (id: string, token: string) => {
+  try {
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // ส่ง token สำหรับการตรวจสอบสิทธิ์
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to fetch Order");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching Order by ID:", error);
+    throw error;
+  }
+};

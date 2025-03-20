@@ -45,7 +45,7 @@ function ConfigCard() {
         }
         let data: ArtToy[] = await response.json(); // แปลง JSON เป็น array ของ ArtToy
 
-        // ✅ ตรวจสอบว่า arttoy ตัวไหนไม่มี `_id` (ยังไม่ถูก save)
+        // ตรวจสอบว่า arttoy ตัวไหนไม่มี `_id` (ยังไม่ถูก save)
         data = data.map((toy) =>
           toy._id
             ? toy // ถ้ามี _id ให้ใช้ค่าที่ได้จาก API

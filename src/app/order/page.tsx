@@ -42,7 +42,7 @@ export default function Order() {
 
       try {
         const data = await getOrdersByUserId(token);
-        setOrders(data.data || []); // ✅ ตรวจสอบให้แน่ใจว่า orders เป็น array
+        setOrders(data.data || []); // ตรวจสอบให้แน่ใจว่า orders เป็น array
       } catch (error) {
         console.error("Error fetching orders:", error);
       }

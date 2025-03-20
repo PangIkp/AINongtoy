@@ -1,17 +1,31 @@
 "use client";
 import React, { useState, useRef } from 'react';
 
-const QRCodeSection: React.FC = () => {
+interface QRCodeSectionProps {
+    setPaymentImage: React.Dispatch<React.SetStateAction<string | null>>;
+}
+
+const QRCodeSection: React.FC<QRCodeSectionProps> = ({ setPaymentImage }) => {
     const [uploadedImage, setUploadedImage] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            const imageUrl = URL.createObjectURL(file); // ✅ สร้าง URL blob
-            console.log("Uploaded Image URL:", imageUrl);
-            setUploadedImage(imageUrl);
+            const reader = new FileReader();
+            reader.onload = () => {
+                const base64String = reader.result as string;
+                console.log("Base64 String:", base64String);
+                setUploadedImage(base64String);
+                setPaymentImage(base64String);
+            };
+            reader.readAsDataURL(file);
         }
+            // if (file) {
+            //     const imageUrl = URL.createObjectURL(file); 
+            //     console.log("Uploaded Image URL:", imageUrl);
+            //     setUploadedImage(imageUrl);
+            // }
     };
 
     const handleImageClick = () => {

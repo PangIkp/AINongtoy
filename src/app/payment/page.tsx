@@ -69,7 +69,13 @@ export default function Payment() {
       return;
     }
 
-    // กำหนด orderData โดยใช้ artToyData แทน selectedItem
+    // ดึงข้อมูลผู้ใช้จาก localStorage
+    const userData = JSON.parse(localStorage.getItem("user") || "{}");
+
+    // ตรวจสอบว่า user มี phoneNumber หรือไม่
+    const phoneNumber = userData.phoneNumber || "Not provided";
+
+    // กำหนด orderData
     const orderData = {
       name: artToyData?.name || "Unknown Item",
       size: artToyData?.size || "Standard",
@@ -79,25 +85,34 @@ export default function Payment() {
       quantity: artToyData?.quantity || 1,
       price: artToyData?.price || 0,
       shipping: shippingFee || 50,
-      total:
-        (artToyData?.price || 0) * (artToyData?.quantity || 1) + shippingFee,
+      total: (artToyData?.price || 0) * (artToyData?.quantity || 1) + shippingFee,
+      phoneNumber,
       address: selectedAddress
-        ? JSON.stringify(selectedAddress)
+        ? JSON.stringify({
+            detail: selectedAddress.detail,
+            province: selectedAddress.province,
+            district: selectedAddress.district,
+            subdistrict: selectedAddress.subdistrict,
+            postalCode: selectedAddress.postalCode,
+          })
         : address.length > 0
-          ? JSON.stringify(address[0])
+          ? JSON.stringify({
+              detail: address[0].detail,
+              province: address[0].province,
+              district: address[0].district,
+              subdistrict: address[0].subdistrict,
+              postalCode: address[0].postalCode,
+            })
           : "Not provided",
       payment: paymentImage || "No payment proof uploaded",
       imageUrl: artToyData?.imageUrl || "default-image.jpg",
     };
 
     console.log("Sending order data:", orderData);
-    console.log("Selected Address before order:", selectedAddress);
 
     try {
-      console.log("Sending order data:", orderData);
       const response = await createOrder(token, orderData);
 
-      console.log("Order Response:", response);
       Swal.fire({
         title: "Order Confirmed!",
         text: "Your order has been placed successfully.",
@@ -116,7 +131,8 @@ export default function Payment() {
         showConfirmButton: false,
       });
     }
-  };
+};
+
 
   // ดึงข้อมูลจาก localStorage เมื่อโหลดหน้า Payment
   useEffect(() => {
@@ -255,7 +271,7 @@ export default function Payment() {
               </section>
               <section className="w-full h-full">
                 {/* <QRCodeSection onImageUpload={(url) => console.log("Uploaded Image URL:", url)} /> */}
-                <QRCodeSection />
+                <QRCodeSection setPaymentImage={setPaymentImage}/>
 
               </section>
             </section>
