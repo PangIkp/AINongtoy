@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createArtToy, getArtToys, updateArtToy } from "@/api/arttoyAPI";
 import { getUser } from "@/api/authAPI";
 import Swal from "sweetalert2";
-import { set } from "mongoose";
+import { Loader } from "lucide-react"; // เพิ่มการ import Loader
 
 const Config = () => {
   const [name, setName] = useState("Unnamed Art Toy");
@@ -15,6 +15,7 @@ const Config = () => {
   const [assembly, setAssembly] = useState("Fixed Pose");
   const [quantity, setQuantity] = useState(1);
   const [fetchId, setFetchId] = useState("");
+  const [isLoading, setIsLoading] = useState(true); // เพิ่ม state สำหรับ loader
   const pricePerUnit = 500; // ปรับราคาได้ตามต้องการ
   const searchParams = useSearchParams();
   const imageUrl =
@@ -37,11 +38,13 @@ const Config = () => {
         timer: 1500,
         showConfirmButton: false,
       });
+      setIsLoading(false); // ปิด loader หากไม่มี token
       return;
     }
 
     const fetchArtToyData = async () => {
       try {
+        setIsLoading(true); // เปิด loader ก่อนเริ่มโหลดข้อมูล
         const user = await getUser(token);
         console.log("User Data:", user);
         const userId = user.data._id; // Assuming user object has an id property
@@ -55,7 +58,6 @@ const Config = () => {
 
         if (userArtToys.length > 0) {
           setIsNew(false);
-          // setArtToyData(userArtToys[0]); // Assuming you want the first art toy of the user
           setName(userArtToys[0].name);
           setSize(userArtToys[0].size);
           setMaterial(userArtToys[0].material);
@@ -72,6 +74,8 @@ const Config = () => {
           timer: 1500,
           showConfirmButton: false,
         });
+      } finally {
+        setIsLoading(false); // ปิด loader หลังโหลดข้อมูลเสร็จ
       }
     };
 
@@ -82,16 +86,14 @@ const Config = () => {
     setName(event.target.value);
   };
 
-  // ✅ กด Enter หรือคลิกนอก input เพื่อบันทึกค่าใน Zustand
   const handleBlurOrEnter = (
     event:
       | React.FocusEvent<HTMLInputElement>
       | React.KeyboardEvent<HTMLInputElement>
   ) => {
-    if ("key" in event && event.key !== "Enter") return; // เช็คว่าเป็น Key Event และต้องเป็น Enter เท่านั้น
+    if ("key" in event && event.key !== "Enter") return;
 
     setIsEditing(false);
-    // setArtToyData({ name: artToyName }); // ✅ อัปเดต Zustand
   };
 
   const handleSave = async () => {
@@ -120,9 +122,9 @@ const Config = () => {
     try {
       let response;
       if (isNew) {
-        response = await createArtToy(updatedArtToy, token); // เรียกใช้ฟังก์ชันที่ import มา
+        response = await createArtToy(updatedArtToy, token);
       } else {
-        response = await updateArtToy(fetchId, updatedArtToy, token); // เรียกใช้ฟังก์ชันที่ import มา
+        response = await updateArtToy(fetchId, updatedArtToy, token);
       }
       console.log("API Response:", response);
       Swal.fire({
@@ -161,149 +163,151 @@ const Config = () => {
 
   return (
     <div className="w-full h-full text-white">
-      <div className="md:block lg:flex gap-10">
-        {/* Left - Image */}
-        <div className="md:w-full lg:w-1/2">
-          <img
-            src={imageUrl}
-            alt="Selected Art Toy"
-            className="rounded-lg w-full"
-          />
-          <div className="mt-8 mb-6 p-2 w-full rounded-lg border border-gray-500">
-            <div className="flex justify-between">
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={name}
-                  onChange={handleNameChange}
-                  onBlur={handleBlurOrEnter}
-                  onKeyDown={handleBlurOrEnter}
-                  autoFocus
-                  className="bg-transparent border border-gray-400 rounded px-2 py-1 w-full text-white"
-                />
-              ) : (
-                <>
-                  <p className="font-semibold">{name}</p>
-                </>
-              )}
+      {isLoading ? ( // แสดง loader ระหว่างโหลดข้อมูล
+        <div className="flex justify-center items-center h-[500px]">
+          <Loader className="animate-spin text-[#0CACF3]" size={50} />
+        </div>
+      ) : (
+        <div className="md:block lg:flex gap-10">
+          {/* Left - Image */}
+          <div className="md:w-full lg:w-1/2">
+            <img
+              src={imageUrl}
+              alt="Selected Art Toy"
+              className="rounded-lg w-full"
+            />
+            <div className="mt-8 mb-6 p-2 w-full rounded-lg border border-gray-500">
+              <div className="flex justify-between">
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={handleNameChange}
+                    onBlur={handleBlurOrEnter}
+                    onKeyDown={handleBlurOrEnter}
+                    autoFocus
+                    className="bg-transparent border border-gray-400 rounded px-2 py-1 w-full text-white"
+                  />
+                ) : (
+                  <>
+                    <p className="font-semibold">{name}</p>
+                  </>
+                )}
 
-              {!isEditing && (
+                {!isEditing && (
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="text-[13px] p-0 bg-transparent hover:bg-transparent font-medium text-gray-400 hover:underline"
+                  >
+                    Edit
+                  </button>
+                )}
+              </div>
+              <p className="text-sm text-gray-400">{artToyData.prompt}</p>
+            </div>
+          </div>
+
+          {/* Right - Configurations */}
+          <div className="w-full">
+            {/* Size */}
+            <h3 className="font-semibold mb-1">Size</h3>
+            <div className="flex justify-between gap-2">
+              {["Small", "Medium", "Large"].map((s) => (
                 <button
-                  onClick={() => setIsEditing(true)}
-                  className="text-[13px] p-0 bg-transparent hover:bg-transparent font-medium text-gray-400 hover:underline"
+                  key={s}
+                  className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${size === s ? "border-[#0CACF3]" : "border-gray-600"
+                    }`}
+                  onClick={() => setSize(s)}
                 >
-                  Edit
+                  {s}
                 </button>
-              )}
-            </div>
-            <p className="text-sm text-gray-400">{artToyData.prompt}</p>
-          </div>
-        </div>
-
-        {/* Right - Configurations */}
-        <div className="w-full">
-          {/* Size */}
-          <h3 className="font-semibold mb-1">Size</h3>
-          <div className="flex justify-between gap-2">
-            {["Small", "Medium", "Large"].map((s) => (
-              <button
-                key={s}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
-                  size === s ? "border-[#0CACF3]" : "border-gray-600"
-                }`}
-                onClick={() => setSize(s)}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-
-          {/* Material */}
-          <h3 className="font-semibold mt-4 mb-1">Material</h3>
-          <div className="flex justify-between gap-2">
-            {["PLA", "Resin", "PVC", "Metal"].map((m) => (
-              <button
-                key={m}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
-                  material === m ? "border-[#0CACF3]" : "border-gray-600"
-                }`}
-                onClick={() => setMaterial(m)}
-              >
-                {m}
-              </button>
-            ))}
-          </div>
-
-          {/* Painting */}
-          <h3 className="font-semibold mt-4 mb-1">Painting</h3>
-          <div className="flex justify-between gap-2">
-            {["Hand-painting", "Airbrush", "Pad Printing"].map((p) => (
-              <button
-                key={p}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
-                  painting === p ? "border-[#0CACF3]" : "border-gray-600"
-                }`}
-                onClick={() => setPainting(p)}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-
-          {/* Assembly */}
-          <h3 className="font-semibold mt-4 mb-1">Assembly</h3>
-          <div className="flex justify-between gap-2">
-            {["Fixed Pose", "Articulated Joints", "Magnet Joints"].map((a) => (
-              <button
-                key={a}
-                className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${
-                  assembly === a ? "border-[#0CACF3]" : "border-gray-600"
-                }`}
-                onClick={() => setAssembly(a)}
-              >
-                {a}
-              </button>
-            ))}
-          </div>
-
-          {/* Quantity */}
-          <h3 className="font-semibold mt-4 mb-1">Quantity</h3>
-          <div className="flex items-center justify-between">
-            <div className="space-x-4">
-              <button
-                className="px-3 py-1 bg-transparent hover:bg-transparent border border-gray-700 rounded-lg"
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              >
-                -
-              </button>
-              <span className="">{quantity}</span>
-              <button
-                className="px-3 py-1 bg-transparent hover:bg-transparent border border-gray-600  rounded-lg"
-                onClick={() => setQuantity((q) => q + 1)}
-              >
-                +
-              </button>
+              ))}
             </div>
 
-            <p className="font-semibold">
-              Total price : {price.toLocaleString()} Baht
-            </p>
-          </div>
+            {/* Material */}
+            <h3 className="font-semibold mt-4 mb-1">Material</h3>
+            <div className="flex justify-between gap-2">
+              {["PLA", "Resin", "PVC", "Metal"].map((m) => (
+                <button
+                  key={m}
+                  className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${material === m ? "border-[#0CACF3]" : "border-gray-600"
+                    }`}
+                  onClick={() => setMaterial(m)}
+                >
+                  {m}
+                </button>
+              ))}
+            </div>
 
-          {/* Buttons */}
-          <div className="flex justify-between mt-4 gap-4">
-            <button
-              className="w-full py-2 bg-[#51536D] hover:bg-[#3E4058] rounded-lg"
-              onClick={handleSave}
-            >
-              Save
-            </button>
-            <button className="w-full" onClick={handleCheckout}>
-              Checkout
-            </button>
+            {/* Painting */}
+            <h3 className="font-semibold mt-4 mb-1">Painting</h3>
+            <div className="flex justify-between gap-2">
+              {["Hand-painting", "Airbrush", "Pad Printing"].map((p) => (
+                <button
+                  key={p}
+                  className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${painting === p ? "border-[#0CACF3]" : "border-gray-600"
+                    }`}
+                  onClick={() => setPainting(p)}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+
+            {/* Assembly */}
+            <h3 className="font-semibold mt-4 mb-1">Assembly</h3>
+            <div className="flex justify-between gap-2">
+              {["Fixed Pose", "Articulated Joints", "Magnet Joints"].map((a) => (
+                <button
+                  key={a}
+                  className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${assembly === a ? "border-[#0CACF3]" : "border-gray-600"
+                    }`}
+                  onClick={() => setAssembly(a)}
+                >
+                  {a}
+                </button>
+              ))}
+            </div>
+
+            {/* Quantity */}
+            <h3 className="font-semibold mt-4 mb-1">Quantity</h3>
+            <div className="flex items-center justify-between">
+              <div className="space-x-4">
+                <button
+                  className="px-3 py-1 bg-transparent hover:bg-transparent border border-gray-700 rounded-lg"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                >
+                  -
+                </button>
+                <span className="">{quantity}</span>
+                <button
+                  className="px-3 py-1 bg-transparent hover:bg-transparent border border-gray-600  rounded-lg"
+                  onClick={() => setQuantity((q) => q + 1)}
+                >
+                  +
+                </button>
+              </div>
+
+              <p className="font-semibold">
+                Total price : {price.toLocaleString()} Baht
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex justify-between mt-4 gap-4">
+              <button
+                className="w-full py-2 bg-[#51536D] hover:bg-[#3E4058] rounded-lg"
+                onClick={handleSave}
+              >
+                Save
+              </button>
+              <button className="w-full" onClick={handleCheckout}>
+                Checkout
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

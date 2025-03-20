@@ -20,8 +20,8 @@ function MyProfile() {
     await fetch("/api/logout", { method: "POST" });
 
     // ลบข้อมูลที่เก็บไว้ใน localStorage และ sessionStorage
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
+    localStorage.clear();
+    sessionStorage.clear();
 
     // รีเฟรชไปที่หน้า Login
     window.location.href = "/login";
