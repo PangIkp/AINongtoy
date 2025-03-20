@@ -23,7 +23,7 @@ export default function Arttoy() {
 
   // ✅ Update prompt when Search or Filter changes
   useEffect(() => {
-    const prompt = `art toy${searchInput} ${selectedFilters.join(", ")}`.trim()
+    const prompt = `${searchInput} ${selectedFilters.join(", ")} art toy`.trim();
     setFinalPrompt(prompt);
     setArtToyData({prompt: prompt});
     setLoadedImages(0); // Reset loading state when new images are fetched
