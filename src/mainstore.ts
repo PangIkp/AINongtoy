@@ -5,7 +5,7 @@ export interface ArtToy {
   _id: string;
   // id:string;
   name: string;
-  prompt: string;
+  prompt?: string;
   size: string;
   material: string;
   painting: string;
@@ -14,7 +14,7 @@ export interface ArtToy {
   price: number;
   imageUrl: string;
   // shipingCost: number;
-} 
+}
 
 interface MainStore {
   favorites: { [key: string]: boolean };
@@ -41,7 +41,7 @@ export const useMainStore = create<MainStore>()(
         })),
 
       artToyData: {
-        _id:"",
+        _id: "",
         name: "Unnamed Art Toy",
         prompt: "art toy",
         size: "",
@@ -58,7 +58,7 @@ export const useMainStore = create<MainStore>()(
         set((state) => ({
           artToyData: {
             ...state.artToyData,
-            ...data, 
+            ...data,
           },
         })),
 

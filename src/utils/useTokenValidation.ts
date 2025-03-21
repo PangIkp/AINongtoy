@@ -1,18 +1,19 @@
 import { useEffect } from "react";
 import { checkTokenValidity } from "../api/authAPI";
 import { getUserData } from "./localStorageUtils";
+import Swal from "sweetalert2";
 
 export const useTokenValidation = () => {
   useEffect(() => {
-    const excludedPaths = ["/", "/login", "/arttoy"]; // เส้นทางที่ไม่ต้องการให้ทำงาน
+    const excludedPaths = ["/login", "/arttoy"]; // ปรับ excludedPaths ไม่รวม "/"
     const currentPath = window.location.pathname;
-
-    if (excludedPaths.includes(currentPath)) {
-      return;
-    }
 
     const token = localStorage.getItem("token"); // ดึง token จาก localStorage
     const parsedUser = getUserData(); // ดึงข้อมูลผู้ใช้
+
+    if (excludedPaths.includes(currentPath) && (!token || !parsedUser)) {
+      return;
+    }
 
     const validateToken = async () => {
       if (!token || !parsedUser) {
@@ -36,15 +37,39 @@ export const useTokenValidation = () => {
     };
 
     const handleLogout = async () => {
-      // เรียก API logout
-      await fetch("/api/logout", { method: "POST" });
+      let isConfirmed = false;
 
-      // ลบข้อมูลที่เก็บไว้ใน localStorage และ sessionStorage
-      localStorage.clear();
-      sessionStorage.clear();
+      // Show Swal confirmation dialog with a 5-second timer
+      const result = await Swal.fire({
+        title: "Session Expired",
+        text: "Your session has expired. Please log in again.",
+        icon: "warning",
+        allowOutsideClick: false, // คือคลิกข้างนอกไม่สามารถปิดได้
+        allowEscapeKey: false, // ไม่สามารถปิดด้วยปุ่ม ESC ได้
+        timer: 5000, // ตั้งเวลา 5 วินาที
+        didOpen: () => {
+          Swal.showLoading(); // แสดง loading ระหว่างรอ
+        },
+        willClose: () => {
+          if (!isConfirmed) {
+            isConfirmed = true; // ตั้งค่าเป็นจริงเมื่อเวลาหมด
+          }
+        },
+      });
 
-      // รีเฟรชไปที่หน้า Login
-      window.location.href = "/login";
+      if (result.isConfirmed || isConfirmed) {
+        // If the user confirms or the timer expires, proceed with logout
+        await fetch("/api/logout", { method: "POST" });
+
+        // Clear localStorage and sessionStorage
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // Redirect to the login page
+        window.location.href = "/login";
+      } else {
+        console.log("User canceled the logout process.");
+      }
     };
 
     validateToken(); // เรียก validateToken ครั้งแรก

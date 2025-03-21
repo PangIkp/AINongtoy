@@ -69,7 +69,6 @@ export default function Payment() {
       return;
     }
 
-    // กำหนด orderData โดยใช้ artToyData แทน selectedItem
     const orderData = {
       name: artToyData?.name || "Unknown Item",
       size: artToyData?.size || "Standard",
@@ -90,20 +89,20 @@ export default function Payment() {
       imageUrl: artToyData?.imageUrl || "default-image.jpg",
     };
 
-    console.log("Sending order data:", orderData);
-    console.log("Selected Address before order:", selectedAddress);
-
     try {
-      console.log("Sending order data:", orderData);
       const response = await createOrder(token, orderData);
 
-      console.log("Order Response:", response);
       Swal.fire({
         title: "Order Confirmed!",
         text: "Your order has been placed successfully.",
         icon: "success",
         confirmButtonText: "OK",
       }).then(() => {
+        // Clear artToyData from state and localStorage
+        setArtToyData(null);
+        localStorage.removeItem("artToyData");
+
+        // Redirect to the order page
         router.push("/order");
       });
     } catch (error: any) {
@@ -126,10 +125,15 @@ export default function Payment() {
         const parsedData = JSON.parse(storedData);
         if (typeof parsedData === "object" && parsedData !== null) {
           setArtToyData(parsedData);
+        } else {
+          router.push("/profile"); // Redirect to /profile if data is invalid
         }
       } catch (error) {
         console.error("Error parsing artToyData from localStorage:", error);
+        router.push("/profile"); // Redirect to /profile if parsing fails
       }
+    } else {
+      router.push("/profile"); // Redirect to /profile if no data found
     }
   }, []);
 
@@ -201,8 +205,8 @@ export default function Payment() {
                   <div className="flex flex-col gap-2">
                     <div
                       className={`flex items-center border ${shippingFee === 50
-                          ? "border-[#0578AB]"
-                          : "border-[#828399]"
+                        ? "border-[#0578AB]"
+                        : "border-[#828399]"
                         } rounded-lg gap-2 px-2 py-4 hover:bg-[#0578AB] cursor-pointer`}
                       onClick={() => handleShippingChange(50)}
                     >
@@ -227,8 +231,8 @@ export default function Payment() {
                     {/* EMS Delivery */}
                     <div
                       className={`flex items-center border ${shippingFee === 70
-                          ? "border-[#0578AB]"
-                          : "border-[#828399]"
+                        ? "border-[#0578AB]"
+                        : "border-[#828399]"
                         } rounded-lg gap-2 px-2 py-4 hover:bg-[#0578AB] cursor-pointer`}
                       onClick={() => handleShippingChange(70)}
                     >

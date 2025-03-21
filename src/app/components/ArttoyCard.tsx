@@ -8,6 +8,7 @@ import {
   getAllFavorites,
   deleteFavorite,
 } from "@/api/favoriteAPI";
+import Swal from "sweetalert2";
 
 interface ArtToyCardProps {
   imageUrls: string[];
@@ -61,7 +62,21 @@ export default function ArtToyCard({
   const handleFavoriteClick = async (imageUrl: string) => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("You need to login first!");
+      Swal.fire({
+        title: "You need to login first!",
+        text: "Do you want to go to the login page?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: '#0CACF3',
+        cancelButtonColor: '#51536D',
+        confirmButtonText: "Yes, take me there!",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push("/login"); // Redirect to login page
+        }
+      });
       return;
     }
 
@@ -91,7 +106,21 @@ export default function ArtToyCard({
   const handleDeleteFavorite = async (favoriteId: string) => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("You are not logged in.");
+      Swal.fire({
+        title: "You need to login first!",
+        text: "Do you want to go to the login page?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: '#0CACF3',
+        cancelButtonColor: '#51536D',
+        confirmButtonText: "Yes, take me there!",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push("/login"); // Redirect to login page
+        }
+      });
       return;
     }
 

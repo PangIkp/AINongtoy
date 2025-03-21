@@ -180,6 +180,7 @@ const Config = () => {
               <div className="flex justify-between">
                 {isEditing ? (
                   <input
+                    aria-hidden="true"
                     type="text"
                     value={name}
                     onChange={handleNameChange}

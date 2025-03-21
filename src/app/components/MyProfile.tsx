@@ -46,10 +46,10 @@ function MyProfile() {
   };
 
   return (
-    <section className="px-4 flex justify-between">
+    <section className="px-4 flex justify-between sm:flex-row flex-col items-center gap-y-7">
       <div className="flex gap-5">
         <img
-          className="w-[14%] object-contain"
+          className="w-[60px] h-[60px] object-contain"
           src="/Images/AINongtoy/Profile.png"
           alt="profile"
         />
