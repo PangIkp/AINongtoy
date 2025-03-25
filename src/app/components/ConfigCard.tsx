@@ -2,17 +2,18 @@
 import { useRouter } from "next/navigation";
 import { useMainStore } from "@/mainstore";
 import React, { useState, useEffect, useCallback } from "react";
+import { Loader } from "lucide-react"; // เพิ่มการ import Loader
 import { ArtToy } from "@/mainstore"; // ถ้า ArtToy มี type ให้ใช้
 import useHydration from "../../../useHydration";
 import { deleteArtToy } from "@/api/arttoyAPI";
 import { getArtToyById } from "@/api/arttoyAPI";
 import Swal from "sweetalert2";
 
-
 function ConfigCard() {
   const isHydrated = useHydration();
   const router = useRouter();
   const [artToys, setArtToys] = useState<ArtToy[]>([]); // ใช้ state เก็บข้อมูลจาก database
+  const [isLoading, setIsLoading] = useState<boolean>(true); // เพิ่ม state สำหรับ loader
   const [isClient, setIsClient] = useState(false);
   const [forceFetchData, setForceFetchData] = useState(false);
   const { artToyData, setArtToyData, saveArtToy } = useMainStore();
@@ -22,15 +23,17 @@ function ConfigCard() {
 
     const fetchArtToys = async () => {
       try {
+        setIsLoading(true); // เปิด loader ก่อนเริ่มโหลดข้อมูล
         const token = localStorage.getItem("token");
         if (!token) {
           Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'You are not logged in.',
+            icon: "error",
+            title: "Error",
+            text: "You are not logged in.",
             timer: 1500,
             showConfirmButton: false,
           });
+          setIsLoading(false); // ปิด loader หากไม่มี token
           return;
         }
         const response = await fetch("http://localhost:3001/api/v1/arttoy", {
@@ -48,7 +51,7 @@ function ConfigCard() {
         // ตรวจสอบว่า arttoy ตัวไหนไม่มี `_id` (ยังไม่ถูก save)
         data = data.map((toy) =>
           toy._id
-            ? toy // ถ้ามี _id ให้ใช้ค่าที่ได้จาก API
+            ? toy
             : {
               _id: "default-arttoy",
               name: "Default ArtToy",
@@ -66,31 +69,32 @@ function ConfigCard() {
       } catch (error: any) {
         console.error("Error fetching ArtToys:", error);
         Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.message || 'Failed to fetch ArtToys',
+          icon: "error",
+          title: "Error",
+          text: error.message || "Failed to fetch ArtToys",
           timer: 1500,
           showConfirmButton: false,
         });
+      } finally {
+        setIsLoading(false); // ปิด loader หลังโหลดข้อมูลเสร็จ
       }
     };
 
     fetchArtToys();
   }, [forceFetchData]);
 
-
   const handleEdit = useCallback(
     async (artToy: ArtToy) => {
       if (!isClient) return;
 
-      console.log("Selected ArtToy:", artToy); // Log ค่า artToy เพื่อตรวจสอบ
+      console.log("Selected ArtToy:", artToy);
 
       if (!artToy._id) {
         console.error("ArtToy object is missing '_id' property:", artToy);
         Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Invalid ArtToy data',
+          icon: "error",
+          title: "Error",
+          text: "Invalid ArtToy data",
           timer: 1500,
           showConfirmButton: false,
         });
@@ -101,23 +105,23 @@ function ConfigCard() {
         const token = localStorage.getItem("token");
         if (!token) {
           Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'You are not logged in.',
+            icon: "error",
+            title: "Error",
+            text: "You are not logged in.",
             timer: 1500,
             showConfirmButton: false,
           });
           return;
         }
 
-        const artToyData = await getArtToyById(artToy._id, token); // ใช้ _id แทน id
+        const artToyData = await getArtToyById(artToy._id, token);
         console.log("Fetched ArtToy Data:", artToyData);
 
         if (!artToyData) {
           Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to fetch ArtToy details',
+            icon: "error",
+            title: "Error",
+            text: "Failed to fetch ArtToy details",
             timer: 1500,
             showConfirmButton: false,
           });
@@ -134,9 +138,9 @@ function ConfigCard() {
       } catch (error: any) {
         console.error("Error fetching ArtToy details:", error);
         Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.message || 'Failed to load ArtToy details',
+          icon: "error",
+          title: "Error",
+          text: error.message || "Failed to load ArtToy details",
           timer: 1500,
           showConfirmButton: false,
         });
@@ -145,14 +149,13 @@ function ConfigCard() {
     [router, isClient, setArtToyData]
   );
 
-
   const handleDelete = async (id: any) => {
     const token = localStorage.getItem("token");
     if (!token) {
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'You are not logged in.',
+        icon: "error",
+        title: "Error",
+        text: "You are not logged in.",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -161,9 +164,9 @@ function ConfigCard() {
 
     if (!artToyData) {
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Invalid ArtToy data',
+        icon: "error",
+        title: "Error",
+        text: "Invalid ArtToy data",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -171,24 +174,23 @@ function ConfigCard() {
     }
 
     try {
-      const response = await deleteArtToy(id, token); // เรียก API ลบ
+      const response = await deleteArtToy(id, token);
       console.log("API Response:", response);
 
       Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'ArtToy deleted successfully',
+        icon: "success",
+        title: "Success",
+        text: "ArtToy deleted successfully",
         timer: 1500,
         showConfirmButton: false,
       });
-      setForceFetchData(!forceFetchData); // อัปเดต state เพื่อดึงข้อมูลใหม่
-      // setArtToys((prev) => prev.filter((item) => item !== artToyData)); // อัปเดต state
+      setForceFetchData(!forceFetchData);
     } catch (error: any) {
       console.error("Error:", error);
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: error.message || 'Failed to delete ArtToy',
+        icon: "error",
+        title: "Error",
+        text: error.message || "Failed to delete ArtToy",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -196,15 +198,18 @@ function ConfigCard() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {artToys.length > 0 ? (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
+      {isLoading ? ( // แสดง loader ระหว่างโหลดข้อมูล
+        <div className="flex justify-center items-center col-span-3 min-h-[470px]">
+          <Loader className="animate-spin text-[#0CACF3]" size={50} />
+        </div>
+      ) : artToys.length > 0 ? (
         artToys.map((artToy, index) => (
           <div
             key={index}
             className="relative bg-[#202133] shadow-lg rounded-lg p-4 cursor-pointer"
             onClick={() => handleEdit(artToy)}
           >
-            {/* ปุ่มลบ */}
             <button
               onClick={(e) => {
                 e.stopPropagation();

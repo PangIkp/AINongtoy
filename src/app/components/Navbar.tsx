@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { getUserData } from '../../utils/localStorageUtils';
+import { useTokenValidation } from "../../utils/useTokenValidation";
 
 interface NavbarProps {
   scrollToSection: (ref: React.RefObject<HTMLDivElement | null>) => void;
@@ -54,6 +55,8 @@ export default function Navbar({
       router.push("/", { scroll: false }); // กลับไปหน้า Home โดยไม่ Scroll เอง
     }
   };
+
+  useTokenValidation();
 
   return (
     <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-8 lg:px-20 py-6 bg-[#010312] text-white drop-shadow-lg z-50">

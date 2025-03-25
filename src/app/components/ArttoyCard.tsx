@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Heart } from "lucide-react";
+import { Heart, Loader } from "lucide-react"; // เพิ่ม Loader icon
 import { useMainStore } from "@/mainstore";
 import {
   createFavorite,
   getAllFavorites,
   deleteFavorite,
 } from "@/api/favoriteAPI";
+import Swal from "sweetalert2";
 
 interface ArtToyCardProps {
   imageUrls: string[];
@@ -21,10 +22,9 @@ export default function ArtToyCard({
   isLoading,
 }: ArtToyCardProps) {
   const router = useRouter();
-  const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>(
-    {}
-  );
+  const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
   const [favorites, setFavorites] = useState<{ [key: string]: string }>({});
+  const [loadingFavorites, setLoadingFavorites] = useState<{ [key: string]: boolean }>({}); // สถานะ loader
 
   // ฟังก์ชันเมื่อรูปโหลดเสร็จ
   const handleImageLoad = (imageUrl: string) => {
@@ -37,7 +37,6 @@ export default function ArtToyCard({
       onImageLoad();
     }
   };
-
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -63,31 +62,65 @@ export default function ArtToyCard({
   const handleFavoriteClick = async (imageUrl: string) => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("You need to login first!");
+      Swal.fire({
+        title: "You need to login first!",
+        text: "Do you want to go to the login page?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: '#0CACF3',
+        cancelButtonColor: '#51536D',
+        confirmButtonText: "Yes, take me there!",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push("/login"); // Redirect to login page
+        }
+      });
       return;
     }
 
-    if (favorites[imageUrl]) {
-      // ถ้าเป็น Favorite อยู่แล้ว → ให้ลบ
-      handleDeleteFavorite(favorites[imageUrl]); // ส่ง `_id` ของ Favorite ไม่ใช่ `imageUrl`
-    } else {
-      try {
+    if (loadingFavorites[imageUrl]) return; // ป้องกันการคลิ้กรัวๆ
+
+    setLoadingFavorites((prev) => ({ ...prev, [imageUrl]: true })); // เริ่ม loader
+
+    try {
+      if (favorites[imageUrl]) {
+        // ถ้าเป็น Favorite อยู่แล้ว → ให้ลบ
+        await handleDeleteFavorite(favorites[imageUrl]);
+      } else {
         const favoriteData = await createFavorite(token, imageUrl);
         setFavorites((prev) => ({
           ...prev,
           [imageUrl]: favoriteData._id, // บันทึก `_id` ที่ได้จาก API
         }));
         console.log("✅ Favorite added successfully!");
-      } catch (error) {
-        console.error("❌ Error adding favorite:", error);
       }
+    } catch (error) {
+      console.error("❌ Error handling favorite:", error);
+    } finally {
+      setLoadingFavorites((prev) => ({ ...prev, [imageUrl]: false })); // ปิด loader
     }
   };
 
   const handleDeleteFavorite = async (favoriteId: string) => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("You are not logged in.");
+      Swal.fire({
+        title: "You need to login first!",
+        text: "Do you want to go to the login page?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: '#0CACF3',
+        cancelButtonColor: '#51536D',
+        confirmButtonText: "Yes, take me there!",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push("/login"); // Redirect to login page
+        }
+      });
       return;
     }
 
@@ -122,23 +155,26 @@ export default function ArtToyCard({
                   e.stopPropagation(); // ป้องกันการเปิดหน้าใหม่เมื่อกดหัวใจ
                   handleFavoriteClick(imageUrl); // เรียก API บันทึก Favorite
                 }}
+                disabled={loadingFavorites[imageUrl]} // ปิดการคลิกขณะโหลด
               >
-                <Heart
-                  size={24}
-                  className={`transition-all ${
-                    favorites[imageUrl]
+                {loadingFavorites[imageUrl] ? (
+                  <Loader className="animate-spin text-[#0CACF3]" size={24} /> // แสดง loader
+                ) : (
+                  <Heart
+                    size={24}
+                    className={`transition-all ${favorites[imageUrl]
                       ? "fill-red-500 stroke-red-500"
                       : "fill-gray-300 stroke-gray-500"
-                  }`}
-                />
+                      }`}
+                  />
+                )}
               </button>
             )}
 
             {/* รูปภาพ */}
             <div
-              className={`flex justify-center cursor-pointer transition-opacity duration-500 ${
-                isLoading ? "opacity-0 invisible" : "opacity-100 visible"
-              }`}
+              className={`flex justify-center cursor-pointer transition-opacity duration-500 ${isLoading ? "opacity-0 invisible" : "opacity-100 visible"
+                }`}
               onClick={() => {
                 router.push(`/material?image=${encodeURIComponent(imageUrl)}`);
               }}
