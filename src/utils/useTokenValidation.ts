@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 
 export const useTokenValidation = () => {
   useEffect(() => {
-    const excludedPaths = ["/", "/login", "/arttoy"]; // ปรับ excludedPaths ไม่รวม "/"
+    const excludedPaths = ["/", "/login", "/arttoy", "/signup"]; // เพิ่ม "/signup" เข้าไปใน excludedPaths
     const currentPath = window.location.pathname;
 
     const token = localStorage.getItem("token"); // ดึง token จาก localStorage

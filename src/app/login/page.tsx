@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import Image from "next/image";
 import { login } from "@/api/authAPI";
 import PasswordInput from "../components/PasswordInput";
 import Swal from "sweetalert2";
@@ -150,14 +149,7 @@ const Login = () => {
       />
       <div className="w-full h-[90vh] mt-[5rem]">
         <div className="relative w-full h-full flex items-center justify-center">
-
-          <Image
-            src="/Images/AINongtoy/mainbg.png"
-            alt="mainbg"
-            fill
-            className="object-cover"
-            priority
-          />
+          <img src="/Images/AINongtoy/mainbg.png" alt="" className="w-full h-full object-cover" />
           <div className="absolute max-w-[375px] w-full p-4">
             <div>
               <h1 className="text-4xl font-semibold mb-3">Welcome back</h1>
