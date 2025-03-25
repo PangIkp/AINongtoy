@@ -64,3 +64,30 @@ export const getOrderById = async (id: string, token: string) => {
     throw error;
   }
 };
+
+
+// for admin
+export const getAllOrdersForAdmin = async (token: string) => {
+  try {
+    console.log("Fetching all orders for admin...");
+    const response = await fetch("http://localhost:3001/api/v1/order/admin/orders", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // ส่ง token สำหรับการตรวจสอบสิทธิ์
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to fetch all orders for admin");
+    }
+
+    const data = await response.json();
+    console.log("All Orders for Admin:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching all orders for admin:", error);
+    throw error;
+  }
+};

@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { getUserData } from '../../utils/localStorageUtils';
 import { useTokenValidation } from "../../utils/useTokenValidation";
@@ -63,7 +62,7 @@ export default function Navbar({
       {/* Logo */}
       <a href="/">
         <p className="hidden">a</p>
-        <Image
+        <img
           src="/Images/AINongtoy/Logo.png"
           alt="Logo"
           width={200}
