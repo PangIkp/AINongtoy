@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import MyProfile from "../components/MyProfile";
@@ -9,6 +9,8 @@ export default function Configuration() {
   const aboutRef = useRef<HTMLDivElement>(null);
   const partnerRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
+
+  const [configCount, setConfigCount] = useState<number>(0); // เก็บจำนวนข้อมูลจาก ConfigCard
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
@@ -29,7 +31,14 @@ export default function Configuration() {
       </div>
       <div className="w-full place-items-center">
         <div className="w-full max-w-[1024px] py-20 flex flex-col gap-12">
-          <MyProfile />
+          {/* ส่งจำนวน configCount ไปยัง MyProfile */}
+          <MyProfile
+            followMessage={
+              configCount > 0
+                ? `You have configured ${configCount} models.`
+                : "You have not configured any models yet."
+            }
+          />
 
           <section className="flex gap-10 px-4 font-semibold">
             <a className="hover:text-[#0AACF0] transition-all" href="/profile">
@@ -43,7 +52,8 @@ export default function Configuration() {
             </a>
           </section>
 
-          <ConfigCard />
+          {/* อัปเดตจำนวน configCount จาก ConfigCard */}
+          <ConfigCard onConfigCountChange={setConfigCount} />
         </div>
       </div>
       <Footer />

@@ -44,7 +44,13 @@ export default function Order() {
             </div>
             <div className='w-full place-items-center'>
                 <div className='w-full max-w-[1024px] px-4 py-20 flex flex-col gap-12'>
-                    <MyProfile />
+                    <MyProfile
+                        followMessage={
+                            totalItems > 0
+                                ? `You have ${totalItems} orders in your list.`
+                                : "You have no orders yet."
+                        }
+                    />
                     <section className='flex gap-10 font-semibold'>
                         <a className='hover:text-[#0AACF0] transition-all' href="/profile">Favorite</a>
                         <a className='hover:text-[#0AACF0] transition-all' href="/configuration">Art Toy Config</a>
