@@ -5,14 +5,14 @@ import Swal from "sweetalert2";
 
 export const useTokenValidation = () => {
   useEffect(() => {
-    const excludedPaths = ["/", "/login", "/arttoy"]; // ปรับ excludedPaths ไม่รวม "/"
+    const excludedPaths = ["/", "/login", "/arttoy", "/signup", "/forgotpassword"]; // เพิ่ม "/signup" เข้าไปใน excludedPaths
     const currentPath = window.location.pathname;
 
     const token = localStorage.getItem("token"); // ดึง token จาก localStorage
     const parsedUser = getUserData(); // ดึงข้อมูลผู้ใช้
 
     // ตรวจสอบว่าผู้ใช้เข้าไปที่หน้า /login และมี token กับข้อมูลผู้ใช้
-    if (currentPath === "/login" && (token || parsedUser)) {
+    if (currentPath === "/login" && (token && parsedUser)) {
       window.location.href = "/"; // เปลี่ยนเส้นทางไปหน้า /
       return;
     }

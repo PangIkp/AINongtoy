@@ -187,7 +187,7 @@ export default function Navbar({
       {/* Login Button */}
       {!isLoggedIn ? (
         <Link href="/login" className="hidden lg:block">
-          <button className="bg-[#0AACF0] hover:bg-[#0578AB] text-white font-extrabold px-6 py-1 rounded-[5px] text-[15px] transition-all">
+          <button className="bg-[#0AACF0] hover:bg-[#0578AB] text-white font-extrabold px-6 py-1 rounded-[5px] text-[15px] transition-all flex items-center justify-center h-[40px]">
             Login
           </button>
         </Link>
@@ -195,12 +195,12 @@ export default function Navbar({
         // ถ้าล็อกอินแล้วจะแสดงรูปภาพแทนปุ่ม Login
         <Link
           href="/profile"
-          className="items-center space-x-2 hidden lg:flex border border-[#51536D] rounded-[10px] p-1 px-2"
+          className="items-center space-x-2 hidden lg:flex border border-[#51536D] rounded-[10px] p-1 px-2 h-[40px]"
         >
           <img
             src="/Images/AINongtoy/User.png"
             alt="Profile"
-            className="w-7 rounded-full"
+            className="w-7 h-7 rounded-full"
           />
           <span className="text-[13px] font-medium">{firstName}</span>
         </Link>

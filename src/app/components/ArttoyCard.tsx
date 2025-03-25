@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Heart, Loader } from "lucide-react"; // เพิ่ม Loader icon
-import { useMainStore } from "@/mainstore";
 import {
   createFavorite,
   getAllFavorites,
@@ -14,12 +13,14 @@ interface ArtToyCardProps {
   imageUrls: string[];
   onImageLoad?: () => void;
   isLoading: boolean;
+  onFavoriteDeleted?: () => void; // เพิ่ม callback
 }
 
 export default function ArtToyCard({
   imageUrls,
   onImageLoad,
   isLoading,
+  onFavoriteDeleted, // รับ callback
 }: ArtToyCardProps) {
   const router = useRouter();
   const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
@@ -136,6 +137,7 @@ export default function ArtToyCard({
         return updatedFavorites;
       });
       console.log("✅ Favorite deleted successfully!");
+      if (onFavoriteDeleted) onFavoriteDeleted(); // เรียก callback เมื่อสำเร็จ
     } catch (error) {
       console.error("❌ Failed to remove favorite", error);
       alert("Failed to remove favorite");

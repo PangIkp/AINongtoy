@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { Loader } from "lucide-react"; // เพิ่มการ import Loader
+import { Loader } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ArtToyCard from "../components/ArttoyCard";
@@ -16,7 +16,8 @@ export default function Profile() {
 
   const [favorites, setFavorites] = useState<any>([]);
   const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // เพิ่ม state สำหรับ loader
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [updateTrigger, setUpdateTrigger] = useState<boolean>(false); // ตัวกระตุ้นการอัปเดต
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
@@ -38,23 +39,23 @@ export default function Profile() {
       try {
         if (!token) {
           console.warn("No token found, skipping API call.");
-          setIsLoading(false); // ปิด loader หากไม่มี token
+          setIsLoading(false);
           return;
         }
-        setIsLoading(true); // เปิด loader ก่อนเริ่มโหลดข้อมูล
+        setIsLoading(true);
         const favoriteData = await getAllFavorites(token);
         setFavorites(favoriteData || []);
       } catch (error) {
         console.error("Failed to fetch favorites:", error);
       } finally {
-        setIsLoading(false); // ปิด loader หลังโหลดข้อมูลเสร็จ
+        setIsLoading(false);
       }
     };
 
     if (token) {
       fetchFavorites();
     }
-  }, [token]);
+  }, [token, updateTrigger]); // อัปเดตเมื่อ token หรือ updateTrigger เปลี่ยนแปลง
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -64,6 +65,10 @@ export default function Profile() {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  const handleFavoriteDeleted = () => {
+    setUpdateTrigger((prev) => !prev); // เปลี่ยนค่า trigger เพื่อกระตุ้น useEffect
   };
 
   return (
@@ -79,7 +84,13 @@ export default function Profile() {
       </div>
       <div className="w-full place-items-center min-h-[700px]">
         <div className="w-full max-w-[1024px] py-20 flex flex-col gap-12">
-          <MyProfile />
+          <MyProfile
+            followMessage={
+              favorites.length > 0
+                ? `You have ${favorites.length} models to follow`
+                : "You have no models to follow"
+            }
+          />
 
           <section className="flex gap-10 px-4 font-semibold">
             <a className="text-[#0AACF0] underline" href="/profile">
@@ -96,12 +107,16 @@ export default function Profile() {
             </a>
           </section>
 
-          {isLoading ? ( // แสดง loader ระหว่างโหลดข้อมูล
+          {isLoading ? (
             <div className="flex justify-center items-center h-[360px]">
               <Loader className="animate-spin text-[#0CACF3]" size={50} />
             </div>
           ) : (
-            <ArtToyCard imageUrls={currentImages} isLoading={isLoading} />
+            <ArtToyCard
+              imageUrls={currentImages}
+              isLoading={isLoading}
+              onFavoriteDeleted={handleFavoriteDeleted} // ส่ง callback ไปยัง ArtToyCard
+            />
           )}
 
           {totalPages > 1 && (

@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import Image from "next/image";
 import PasswordInput from "../components/PasswordInput";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -123,13 +122,7 @@ const Signup = () => {
       />
       <div className="w-full sm:h-[90vh] h-[925px] mt-[5rem]">
         <div className="relative w-full h-full flex items-center justify-center">
-          <Image
-            src="/Images/AINongtoy/mainbg.png"
-            alt="mainbg"
-            fill
-            className="object-cover"
-            priority
-          />
+          <img src="/Images/AINongtoy/mainbg.png" alt="" className="w-full h-full object-cover" />
           <div className="absolute max-w-[600px] w-full p-5 sm:p-20 ">
             <div>
               <h1 className="text-4xl font-semibold mb-3">Create an account</h1>

@@ -9,7 +9,11 @@ import { deleteArtToy } from "@/api/arttoyAPI";
 import { getArtToyById } from "@/api/arttoyAPI";
 import Swal from "sweetalert2";
 
-function ConfigCard() {
+interface ConfigCardProps {
+  onConfigCountChange: (count: number) => void; // Callback สำหรับส่งจำนวนข้อมูล
+}
+
+function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
   const isHydrated = useHydration();
   const router = useRouter();
   const [artToys, setArtToys] = useState<ArtToy[]>([]); // ใช้ state เก็บข้อมูลจาก database
@@ -66,6 +70,9 @@ function ConfigCard() {
         );
 
         setArtToys(data);
+
+        // ส่งจำนวนข้อมูลกลับไปยัง Configuration
+        onConfigCountChange(data.length);
       } catch (error: any) {
         console.error("Error fetching ArtToys:", error);
         Swal.fire({
@@ -81,7 +88,7 @@ function ConfigCard() {
     };
 
     fetchArtToys();
-  }, [forceFetchData]);
+  }, [forceFetchData, onConfigCountChange]);
 
   const handleEdit = useCallback(
     async (artToy: ArtToy) => {
