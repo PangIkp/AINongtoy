@@ -198,13 +198,7 @@ export default function Contact() {
 
                 {/* ฝั่งขวา (Image) */}
                 <div className="w-full max-xl:hidden flex items-end">
-                    <Image
-                        className="h-auto object-cover mb-[1vw]"
-                        src="/Images/AINongtoy/Contact.png"
-                        alt="contact"
-                        width={500}
-                        height={500}
-                    />
+                    <img src="/Images/AINongtoy/Contact.png" alt="contact" className=" h-auto object-cover mb-[1vw]" />
                 </div>
             </div>
         </div>

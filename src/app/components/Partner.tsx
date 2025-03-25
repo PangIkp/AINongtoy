@@ -38,13 +38,7 @@ export default function Partner() {
         </div>
 
         <div className="flex justify-center lg:justify-end w-full lg:w-1/3">
-          <Image
-            className="w-full h-full"
-            src="/Images/AINongtoy/KTP.png"
-            alt="contact"
-            width={500}
-            height={500}
-          />
+          <img src="/Images/AINongtoy/KTP.png" alt="partner" className="w-full h-full" />
         </div>
       </div>
     </div>

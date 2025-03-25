@@ -198,7 +198,7 @@ const Login = () => {
 
                     Remember&nbsp;me
                   </label>
-                  <a href="#" className="text-[#0AACF0]">
+                  <a href="/forgotpassword" className="text-[#0AACF0]">
                     Forgot password ?
                   </a>
                 </div>

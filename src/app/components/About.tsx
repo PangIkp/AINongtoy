@@ -20,13 +20,7 @@ export default function About() {
         </div>
 
         <div className="flex justify-center lg:justify-end w-full lg:w-2/3">
-          <Image
-            className="w-full h-full"
-            src="/Images/AINongtoy/Aboutus.png"
-            alt="contact"
-            width={500}
-            height={500}
-          />
+          <img src="/Images/AINongtoy/Aboutus.png" alt="contact" className="w-full h-full" />
         </div>
       </div>
     </div>
