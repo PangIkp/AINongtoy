@@ -6,12 +6,16 @@ import Image from "next/image";
 import { login } from "@/api/authAPI";
 import PasswordInput from "../components/PasswordInput";
 import Swal from "sweetalert2";
+import Cookies from "js-cookie"; // เพิ่มการ import js-cookie
+import CryptoJS from "crypto-js"; // เพิ่มการ import crypto-js
+
+const SECRET_KEY = "yoo5PAkafiWAnVhr1Ug30anOtcqU12nZgQBkl0w65KsYBzH7"; // ใช้ key สำหรับเข้ารหัสข้อมูล Cookies
 
 interface LoginResponse {
   token: string;
   username: string;
   firstName: string;
-  lastName: string
+  lastName: string;
 }
 
 const Login = () => {
@@ -24,7 +28,7 @@ const Login = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [firstName, setFirstName] = useState<string | null>(null); // State สำหรับ firstName
   const [lastName, setLastName] = useState<string | null>(null);
-
+  const [rememberMe, setRememberMe] = useState(false); // State สำหรับ "Remember me"
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
@@ -39,6 +43,21 @@ const Login = () => {
     }
     if (storedLastName) {
       setLastName(storedLastName);
+    }
+
+    // โหลดข้อมูลจาก Cookies และถอดรหัส
+    const encryptedUsername = Cookies.get("username");
+    const encryptedPassword = Cookies.get("password");
+
+    if (encryptedUsername) {
+      const decryptedUsername = CryptoJS.AES.decrypt(encryptedUsername, SECRET_KEY).toString(CryptoJS.enc.Utf8);
+      setUsername(decryptedUsername);
+      setRememberMe(true); // ตั้งค่า Remember me เป็น true หากมีข้อมูลใน Cookies
+    }
+
+    if (encryptedPassword) {
+      const decryptedPassword = CryptoJS.AES.decrypt(encryptedPassword, SECRET_KEY).toString(CryptoJS.enc.Utf8);
+      setPassword(decryptedPassword);
     }
   }, []);
 
@@ -70,6 +89,25 @@ const Login = () => {
         setLastName(data.lastName);   // อัปเดตค่า lastName ใน state
         setIsLoggedIn(true);
       }
+
+      // หากเลือก "Remember me" ให้เข้ารหัสและบันทึกข้อมูลลงใน Cookies
+      if (rememberMe) {
+        const encryptedUsername = CryptoJS.AES.encrypt(username, SECRET_KEY).toString();
+        const encryptedPassword = CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
+
+        Cookies.set("username", encryptedUsername, { expires: 30 });
+        Cookies.set("password", encryptedPassword, { expires: 30 });
+      } else {
+        // หากไม่ได้เลือก "Remember me" ให้ลบ Cookies
+        Cookies.remove("username");
+        Cookies.remove("password");
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: "Login Successful",
+        text: "Your credentials have been saved.",
+      });
 
     } catch (error: any) {
       console.error("Login error:", error.message);
@@ -156,11 +194,16 @@ const Login = () => {
                     htmlFor="remember"
                     className="flex items-center gap-2 cursor-pointer"
                   >
-                    <input
-                      className="scale-125 accent-black focus:ring-black"
-                      type="checkbox"
-                      id="remember"
-                    />
+                    <div>
+                      <input
+                        className="scale-125 accent-black focus:ring-black"
+                        type="checkbox"
+                        id="remember"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                      />
+                    </div>
+
                     Remember&nbsp;me
                   </label>
                   <a href="#" className="text-[#0AACF0]">
