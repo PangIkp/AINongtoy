@@ -3,65 +3,216 @@
 @tailwind utilities;
 
 :root {
-    --background: #ffffff;
-    --foreground: #171717;
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
 @media (prefers-color-scheme: dark) {
-    :root {
-        --background: #070922;
-        --foreground: #ededed;
-    }
+  :root {
+    --background: #070922;
+    --foreground: #ededed;
+  }
 }
 
 body {
-    color: var(--foreground);
-    background: var(--background);
-    font-family: var(--font-poppins), sans-serif;
-    min-height: 1000px;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-poppins), sans-serif;
+  /* min-height: 1000px; */
 }
 
 input,
 select,
 textarea {
-    @apply w-full px-4 py-2 border border-gray-300 text-[14px] text-black font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-[#0AACF0] mt-1;
+  @apply w-full px-4 py-2 border border-gray-300 text-[14px] text-black font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-[#0AACF0] mt-1;
 }
 
 button {
-    @apply bg-[#0CACF3] text-white hover:bg-[#0578AB] font-bold px-2 rounded-md transition-all;
+  @apply bg-[#0CACF3] text-white hover:bg-[#0578AB] font-bold px-2 rounded-md transition-all;
 }
 
 .upload-btn {
-    position: relative;
-    display: inline-block;
-    background: #00B4D8;
-    color: white;
-    font-weight: bold;
-    padding: 0.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  display: inline-block;
+  background: #00b4d8;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .upload-btn:hover {
-    background: #0578AB;
+  background: #0578ab;
 }
 
 .upload-btn input[type="file"] {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 
 .select-default {
-    color: #9F9F9F;
+  color: #9f9f9f;
 }
 
 .select-selected {
-    color: black;
+  color: black;
+}
+
+/* table for admin */
+
+.custom-table {
+  background-color: #212121 !important; /* ตั้งพื้นหลังให้เป็นสีดำ */
+  color: #fff !important; /* ตั้งข้อความทั้งหมดให้เป็นสีขาว */
+
+  /* ลบเส้นโค้ง (border-radius) จากตาราง */
+  border-radius: 0 !important;
+
+  /* ลบขอบ (border) ของตาราง */
+  border: none !important;
+}
+
+.custom-table .ant-table-cell {
+  /* ลบเส้นโค้งจากเซลล์ */
+  border-radius: 0 !important;
+}
+
+.custom-table .ant-table-row {
+  /* ลบเส้นโค้งจากแถว */
+  border-radius: 0 !important;
+}
+
+.custom-table th {
+  color: #b8b8b8 !important;
+  border-color: #5b5b5b !important;
+}
+.custom-table td {
+  color: #fff !important; /* ตั้งข้อความในเซลล์ให้เป็นสีขาว */
+  border-color: #5b5b5b !important;
+}
+
+.custom-table .ant-table-thead > tr > th {
+  background-color: #212121 !important; /* ตั้งสีพื้นหลังหัวตาราง */
+}
+
+.custom-table .ant-table-tbody {
+  background-color: #212121 !important;
+}
+
+.custom-hover-row:hover td {
+  background-color: #2f2f2f !important;
+  cursor: pointer;
+}
+
+.custom-table .ant-pagination-item a {
+  color: white !important;
+}
+
+.custom-table .ant-pagination .ant-pagination-item-active {
+  background-color: transparent !important;
+  border: none !important;
+  font-weight: medium !important;
+}
+
+.custom-table .ant-pagination-prev .ant-pagination-item-link,
+.custom-table .ant-pagination-next .ant-pagination-item-link {
+  color: white !important;
+}
+
+.custom-table .ant-table-row:hover {
+  background-color: #444 !important; /* หรือสีที่ต้องการ */
+}
+
+:where(.css-dev-only-do-not-override-1a3rktk).ant-table-wrapper
+  .ant-table-tbody
+  .ant-table-row
+  > .ant-table-cell-row-hover {
+  background: #444 !important;
+}
+
+/* เปลี่ยนพื้นหลังของเมนูหลัก */
+:where(.css-dev-only-do-not-override-1a3rktk).ant-dropdown .ant-dropdown-menu {
+  background-color: #2f2f2f !important; /* สีพื้นหลังของเมนู */
+  border-radius: 8px !important; /* เพิ่มการมุมมนถ้าต้องการ */
+  box-shadow: none !important; /* เอาเงาออก */
+}
+
+:where(.css-dev-only-do-not-override-1a3rktk).ant-dropdown
+  .ant-dropdown-menu
+  .ant-dropdown-menu-item {
+  color: #f0f0f0 !important; /* สีข้อความที่ต้องการ */
+}
+
+/* เปลี่ยนสีของเมนูเมื่อ hover */
+:where(.css-dev-only-do-not-override-1a3rktk).ant-dropdown
+  .ant-dropdown-menu
+  .ant-dropdown-menu-item:hover {
+  background-color: #444 !important; /* สีที่ต้องการเมื่อ hover */
+  color: #fff !important; /* เปลี่ยนสีข้อความเมื่อ hover */
+}
+
+/* เปลี่ยนสีเมื่อเมนู active */
+:where(.css-dev-only-do-not-override-1a3rktk).ant-dropdown
+  .ant-dropdown-menu
+  .ant-dropdown-menu-item-active {
+  background-color: #0578ab !important; /* สีที่ต้องการเมื่อ active */
+  color: #fff !important; /* เปลี่ยนสีข้อความเมื่อ active */
+}
+
+/* จัดการให้ไอคอนและข้อความอยู่ในแถวเดียวกัน */
+.custom-menu .ant-dropdown-menu-item .menu-item-content {
+  display: flex;
+  align-items: center; /* จัดแนวไอคอนและข้อความให้ตรงกลาง */
+}
+
+.custom-menu .ant-dropdown-menu-item .menu-item-content span {
+  margin-left: 8px; /* เพิ่มระยะห่างระหว่างไอคอนและข้อความ */
+}
+
+/* เพิ่มความเฉพาะเจาะจงเพื่อให้ CSS ของเราไม่ถูกทับ */
+.custom-menu .ant-dropdown-menu-item-danger:hover {
+  background-color: red !important; /* เปลี่ยนพื้นหลังเป็นสีแดง */
+}
+
+.custom-menu .ant-dropdown-menu-item-danger:hover span {
+  color: white !important; /* เปลี่ยนข้อความเป็นสีขาว */
+}
+
+/* ถ้าอยากให้ข้อความของ Delete เป็นสีแดงเริ่มต้น */
+.custom-menu .ant-dropdown-menu-item-danger span {
+  color: #eb5b5b !important;
+}
+
+:where(.css-dev-only-do-not-override-1a3rktk).ant-dropdown
+  .ant-dropdown-menu
+  .ant-dropdown-menu-item-danger:hover {
+  background-color: #eb5b5b !important; /* เปลี่ยนพื้นหลังเป็นสีแดงเมื่อ hover */
+  color: white !important; /* เปลี่ยนข้อความเป็นสีขาวเมื่อ hover */
+}
+
+:where(.css-dev-only-do-not-override-1a3rktk).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1a3rktk).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  position: static; /* นำ position absolute ออก */
+  width: 1px;
+  height: 1.6em;
+  background-color: #f0f0f0;
+  transition: background-color 0.2s;
+  content: "";
 }
