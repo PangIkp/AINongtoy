@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { IoIosAddCircle } from "react-icons/io";
+import { Loader } from "lucide-react"; // Import Loader
 import { updateUserProfile, updateUserAddresses, getUserById } from '../../api/userAPI';
 import { getUserData, setUserData } from '../../utils/localStorageUtils';
 import Swal from "sweetalert2";
@@ -427,12 +428,17 @@ export default function Page() {
                     timer: 1500,
                     showConfirmButton: false,
                 });
+            } finally {
+                setIsLoading(false); // Set loading to false after data is fetched
             }
         }
     };
 
+    const [isLoading, setIsLoading] = useState(true); // State to track loading status
+
     // ใช้ useEffect ในการดึงข้อมูลผู้ใช้ และที่อยู่ของผู้ใช้เมื่อเปิดหน้าเว็บ เมื่อเปิดหน้าเว็บ
     useEffect(() => {
+        setIsLoading(true); // Set loading to true when component mounts
         fetch('https://raw.githubusercontent.com/kongvut/thai-province-data/master/api_province_with_amphure_tambon.json')
             .then(response => response.json())
             .then(data => setData(data))
@@ -511,264 +517,268 @@ export default function Page() {
 
     return (
         <div>
-            <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
-            <div className='w-full place-content-center place-items-center h-[100px] mt-[5rem] bg-black'>
-                <h1 className='text-4xl font-semibold mb-3'>My Profile</h1>
-            </div>
+            {isLoading ? ( // Show loader while loading
+                <div className="flex justify-center items-center h-screen">
+                    <Loader className="animate-spin text-[#0CACF3]" size={50} />
+                </div>
+            ) : (
+                <>
 
-            <div className='w-full place-items-center'>
-                {data === null ? (
-                    <div></div>
-                ) : (
-                    <div className='w-full max-w-[980px] px-4 py-20 flex flex-col gap-12'>
-                        <div className='flex justify-between border-b border-white pb-2'>
-                            <p className='text-xl font-semibold'>Information</p>
-                            <div className='place-aitems-end place-content-center'>
-                                {!isEditing ? (
-                                    <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => setIsEditing(true)}>Edit</button>
-                                ) : (
-                                    <div className='flex gap-2'>
-                                        <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={handleCancelEdit}>Cancel</button>
-                                        <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={handleSaveUserdata}>Save</button>
+                    <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
+                    <div className='w-full place-content-center place-items-center h-[100px] mt-[5rem] bg-black'>
+                        <h1 className='text-4xl font-semibold mb-3'>My Profile</h1>
+                    </div>
+
+                    <div className='w-full place-items-center'>
+                        <div className='w-full max-w-[980px] px-4 py-20 flex flex-col gap-12'>
+                            <div className='flex justify-between border-b border-white pb-2'>
+                                <p className='text-xl font-semibold'>Information</p>
+                                <div className='place-aitems-end place-content-center'>
+                                    {!isEditing ? (
+                                        <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => setIsEditing(true)}>Edit</button>
+                                    ) : (
+                                        <div className='flex gap-2'>
+                                            <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={handleCancelEdit}>Cancel</button>
+                                            <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={handleSaveUserdata}>Save</button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div>
+                                <form action="#information" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
+                                    <label htmlFor="username">
+                                        <p>Username</p>
+                                        <input
+                                            type="text"
+                                            id="username"
+                                            value={username || ''}
+                                            readOnly disabled
+                                            className='bg-[#51536D] border-transparent' />
+                                    </label>
+                                    <label htmlFor="email">
+                                        <p>Email address</p>
+                                        <input
+                                            type="email"
+                                            id="email"
+                                            value={email || ''}
+                                            readOnly disabled
+                                            className='bg-[#51536D] border-transparent' />
+                                    </label>
+                                    <label htmlFor="fname">
+                                        <p>First Name</p>
+                                        <input
+                                            type="text"
+                                            id="fname"
+                                            pattern='[A-Za-z]'
+                                            value={firstName || ''}
+                                            readOnly={!isEditing}
+                                            disabled={!isEditing}
+                                            className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
+                                            onChange={(e) => setFirstName(e.target.value)}
+                                        />
+                                    </label>
+                                    <label htmlFor="lname">
+                                        <p>Last Name</p>
+                                        <input
+                                            type="text"
+                                            id="lname"
+                                            pattern='[A-Za-z]'
+                                            value={lastName || ''}
+                                            readOnly={!isEditing}
+                                            disabled={!isEditing}
+                                            className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
+                                            onChange={(e) => setLastName(e.target.value)}
+                                        />
+                                    </label>
+                                    <label htmlFor="phone">
+                                        <p>Phone Number</p>
+                                        <input
+                                            type="tel"
+                                            id="phone"
+                                            minLength={10}
+                                            maxLength={10}
+                                            pattern="[0-9]"
+                                            value={phoneNumber || ''}
+                                            readOnly={!isEditing}
+                                            disabled={!isEditing}
+                                            className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
+                                            onChange={(e) => setPhoneNumber(e.target.value)}
+                                        />
+                                    </label>
+                                </form>
+                            </div>
+                            <div>
+                                <div className='flex justify-between'>
+                                    <h1 className='text-xl font-semibold'>
+                                        Address
+                                    </h1>
+                                    <div className='place-aitems-end place-content-center'>
+                                        {!isEditingAddress ? (
+                                            <button
+                                                className={`bg-background border border-white font-normal text-xs py-1 px-3 ${addressFormsCount <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                onClick={() => setIsEditingAddress(true)}
+                                                disabled={addressFormsCount <= 0}
+                                            >
+                                                Edit
+                                            </button>
+                                        ) : (
+                                            <div className="flex gap-2">
+                                                <button
+                                                    className="bg-background border border-white font-normal text-xs py-1 px-3"
+                                                    onClick={handleCancelEditAddress}
+                                                >
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    className="bg-background border border-white font-normal text-xs py-1 px-3"
+                                                    onClick={handleSaveAddresses}
+                                                >
+                                                    Save
+                                                </button>
+                                            </div>
+                                        )
+                                        }
                                     </div>
+                                </div>
+                                <hr className='border border-white mt-2 mb-10 ' />
+
+                                {Array.from({ length: addressFormsCount }).map((_, index) => (
+                                    <div key={index}>
+                                        {results[index] && (
+                                            <div>
+                                                <div className='flex justify-between my-4'>
+                                                    <p>{index === 0 ? 'Address Form' : `Address Form ${index + 1}`}</p>
+                                                    <div className='place-aitems-end place-content-center'>
+                                                        <button
+                                                            className={`bg-background border border-white font-normal text-xs py-1 px-3 ${!isEditingAddress ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                            onClick={() => isEditingAddress && handleDeleteAddress(index)}
+                                                            disabled={!isEditingAddress}
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <form action="#address" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
+                                                    <div>
+                                                        <label htmlFor="province_id" className='hidden'>
+                                                            <p>Province</p>
+                                                        </label>
+                                                        <select
+                                                            id="province_id"
+                                                            value={results[index]?.provinceId || ''}
+                                                            onChange={(e) => handleProvinceChange(e, index)}
+                                                            disabled={!isEditingAddress}
+                                                            className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''} ${!results[index]?.provinceId ? 'text-[#9ca3af]' : ''}`}
+                                                        >
+                                                            <option value="" label="Province" />
+                                                            {data?.map((province) => (
+                                                                <option key={province.id} value={province.id}>
+                                                                    {province.name_en}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+
+                                                    <div>
+                                                        <label htmlFor="amphure_id" className='hidden'>
+                                                            <p>District</p>
+                                                        </label>
+                                                        <select
+                                                            id="amphure_id"
+                                                            value={results[index]?.amphureId || ''}
+                                                            onChange={(e) => handleAmphureChange(e, index)}
+                                                            disabled={!isEditingAddress}
+                                                            className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''} ${!results[index]?.amphureId ? 'text-[#9ca3af]' : ''}`}
+                                                        >
+                                                            <option value="" label="District" />
+                                                            {data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.map((amphure) => (
+                                                                <option key={amphure.id} value={amphure.id}>
+                                                                    {amphure.name_en}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+
+                                                    <div>
+                                                        <label htmlFor="tambon_id" className='hidden'>
+                                                            <p>Subdistrict</p>
+                                                        </label>
+                                                        <select
+                                                            id="tambon_id"
+                                                            value={results[index]?.tambonId || ''}
+                                                            onChange={(e) => handleTambonChange(e, index)}
+                                                            disabled={!isEditingAddress}
+                                                            className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent ' : ''} ${!results[index]?.tambonId ? 'text-[#9ca3af]' : ''}`}
+                                                        >
+                                                            <option value="" label="Subdistrict" />
+                                                            {data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))?.tambon.map((tambon) => (
+                                                                <option key={tambon.id} value={tambon.id}>
+                                                                    {tambon.name_en}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+
+                                                    <div>
+                                                        <label htmlFor="zip_code" className='hidden'>
+                                                            <p>Postal Code</p>
+                                                        </label>
+                                                        <select
+                                                            id="zip_code"
+                                                            value={results[index]?.zipCode || ''}
+                                                            onChange={(e) => handleZipCodeChange(e, index)}
+                                                            disabled={!isEditingAddress}
+                                                            className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''} ${!results[index]?.zipCode ? 'text-[#9ca3af]' : ''}`}
+                                                        >
+                                                            <option value="" label="Postal Code" />
+                                                            {Array.from(
+                                                                new Set(
+                                                                    data?.find((province) => province.id === Number(results[index]?.provinceId))
+                                                                        ?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))
+                                                                        ?.tambon.map((tambon) => tambon.zip_code)
+                                                                )
+                                                            ).map((zip_code) => (
+                                                                <option key={zip_code} value={zip_code}>
+                                                                    {zip_code}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+
+                                                    <label htmlFor="address" className='col-span-2 relative'>
+                                                        <textarea
+                                                            className={`resize-none border-transparent  ${!isEditingAddress ? 'bg-[#51536D]' : ''}`}
+                                                            placeholder='Address Detail such as House number, Apartment name, Condo, Village name '
+                                                            rows={4}
+                                                            maxLength={200}
+                                                            value={results[index]?.detail || ''}
+                                                            onChange={(e) => handleAddressDetailChange(e, index)}
+                                                            readOnly={!isEditingAddress}
+                                                            disabled={!isEditingAddress}
+                                                        ></textarea>
+                                                        <span className='absolute bottom-3 right-2 text-xs text-gray-500'>{charCount[index]}/200</span>
+                                                    </label>
+                                                </form>
+                                            </div>
+                                        )}
+                                        {index < addressFormsCount - 1 && (
+                                            <hr className='my-10 opacity-50' />
+                                        )}
+                                    </div>
+                                ))}
+                                {addressFormsCount < 3 && (
+                                    <button aria-hidden='true' onClick={handleAddAddressForm} className='flex justify-center items-center gap-1 h-[40px] w-full mt-5'>
+                                        <IoIosAddCircle className='text-white text-2xl' />
+                                        <p className='text-white'>Add Address</p>
+                                    </button>
                                 )}
                             </div>
                         </div>
-
-                        <div>
-                            <form action="#information" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
-                                <label htmlFor="username">
-                                    <p>Username</p>
-                                    <input
-                                        type="text"
-                                        id="username"
-                                        value={username || ''}
-                                        readOnly disabled
-                                        className='bg-[#51536D] border-transparent' />
-                                </label>
-                                <label htmlFor="email">
-                                    <p>Email address</p>
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        value={email || ''}
-                                        readOnly disabled
-                                        className='bg-[#51536D] border-transparent' />
-                                </label>
-                                <label htmlFor="fname">
-                                    <p>First Name</p>
-                                    <input
-                                        type="text"
-                                        id="fname"
-                                        pattern='[A-Za-z]'
-                                        value={firstName || ''}
-                                        readOnly={!isEditing}
-                                        disabled={!isEditing}
-                                        className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
-                                        onChange={(e) => setFirstName(e.target.value)}
-                                    />
-                                </label>
-                                <label htmlFor="lname">
-                                    <p>Last Name</p>
-                                    <input
-                                        type="text"
-                                        id="lname"
-                                        pattern='[A-Za-z]'
-                                        value={lastName || ''}
-                                        readOnly={!isEditing}
-                                        disabled={!isEditing}
-                                        className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
-                                        onChange={(e) => setLastName(e.target.value)}
-                                    />
-                                </label>
-                                <label htmlFor="phone">
-                                    <p>Phone Number</p>
-                                    <input
-                                        type="tel"
-                                        id="phone"
-                                        minLength={10}
-                                        maxLength={10}
-                                        pattern="[0-9]"
-                                        value={phoneNumber || ''}
-                                        readOnly={!isEditing}
-                                        disabled={!isEditing}
-                                        className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
-                                        onChange={(e) => setPhoneNumber(e.target.value)}
-                                    />
-                                </label>
-                            </form>
-                        </div>
-                        <div>
-                            <div className='flex justify-between'>
-                                <h1 className='text-xl font-semibold'>
-                                    Address
-                                </h1>
-                                <div className='place-aitems-end place-content-center'>
-                                    {!isEditingAddress ? (
-                                        <button
-                                            className={`bg-background border border-white font-normal text-xs py-1 px-3 ${addressFormsCount <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                            onClick={() => setIsEditingAddress(true)}
-                                            disabled={addressFormsCount <= 0}
-                                        >
-                                            Edit
-                                        </button>
-                                    ) : (
-                                        <div className="flex gap-2">
-                                            <button
-                                                className="bg-background border border-white font-normal text-xs py-1 px-3"
-                                                onClick={handleCancelEditAddress}
-                                            >
-                                                Cancel
-                                            </button>
-                                            <button
-                                                className="bg-background border border-white font-normal text-xs py-1 px-3"
-                                                onClick={handleSaveAddresses}
-                                            >
-                                                Save
-                                            </button>
-                                        </div>
-                                    )
-                                    }
-                                </div>
-                            </div>
-                            <hr className='border border-white mt-2 mb-10 ' />
-
-                            {Array.from({ length: addressFormsCount }).map((_, index) => (
-                                <div key={index}>
-                                    {results[index] && (
-                                        <div>
-                                            <div className='flex justify-between my-4'>
-                                                <p>{index === 0 ? 'Address Form' : `Address Form ${index + 1}`}</p>
-                                                <div className='place-aitems-end place-content-center'>
-                                                    <button
-                                                        className={`bg-background border border-white font-normal text-xs py-1 px-3 ${!isEditingAddress ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                                        onClick={() => isEditingAddress && handleDeleteAddress(index)}
-                                                        disabled={!isEditingAddress}
-                                                    >
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            <form action="#address" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
-                                                <div>
-                                                    <label htmlFor="province_id" className='hidden'>
-                                                        <p>Province</p>
-                                                    </label>
-                                                    <select
-                                                        id="province_id"
-                                                        value={results[index]?.provinceId || ''}
-                                                        onChange={(e) => handleProvinceChange(e, index)}
-                                                        disabled={!isEditingAddress}
-                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''} ${!results[index]?.provinceId ? 'text-[#9ca3af]' : ''}`}
-                                                    >
-                                                        <option value="" label="Province" />
-                                                        {data?.map((province) => (
-                                                            <option key={province.id} value={province.id}>
-                                                                {province.name_en}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-
-                                                <div>
-                                                    <label htmlFor="amphure_id" className='hidden'>
-                                                        <p>District</p>
-                                                    </label>
-                                                    <select
-                                                        id="amphure_id"
-                                                        value={results[index]?.amphureId || ''}
-                                                        onChange={(e) => handleAmphureChange(e, index)}
-                                                        disabled={!isEditingAddress}
-                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''} ${!results[index]?.amphureId ? 'text-[#9ca3af]' : ''}`}
-                                                    >
-                                                        <option value="" label="District" />
-                                                        {data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.map((amphure) => (
-                                                            <option key={amphure.id} value={amphure.id}>
-                                                                {amphure.name_en}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-
-                                                <div>
-                                                    <label htmlFor="tambon_id" className='hidden'>
-                                                        <p>Subdistrict</p>
-                                                    </label>
-                                                    <select
-                                                        id="tambon_id"
-                                                        value={results[index]?.tambonId || ''}
-                                                        onChange={(e) => handleTambonChange(e, index)}
-                                                        disabled={!isEditingAddress}
-                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent ' : ''} ${!results[index]?.tambonId ? 'text-[#9ca3af]' : ''}`}
-                                                    >
-                                                        <option value="" label="Subdistrict" />
-                                                        {data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))?.tambon.map((tambon) => (
-                                                            <option key={tambon.id} value={tambon.id}>
-                                                                {tambon.name_en}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-
-                                                <div>
-                                                    <label htmlFor="zip_code" className='hidden'>
-                                                        <p>Postal Code</p>
-                                                    </label>
-                                                    <select
-                                                        id="zip_code"
-                                                        value={results[index]?.zipCode || ''}
-                                                        onChange={(e) => handleZipCodeChange(e, index)}
-                                                        disabled={!isEditingAddress}
-                                                        className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''} ${!results[index]?.zipCode ? 'text-[#9ca3af]' : ''}`}
-                                                    >
-                                                        <option value="" label="Postal Code" />
-                                                        {Array.from(
-                                                            new Set(
-                                                                data?.find((province) => province.id === Number(results[index]?.provinceId))
-                                                                    ?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))
-                                                                    ?.tambon.map((tambon) => tambon.zip_code)
-                                                            )
-                                                        ).map((zip_code) => (
-                                                            <option key={zip_code} value={zip_code}>
-                                                                {zip_code}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-
-                                                <label htmlFor="address" className='col-span-2 relative'>
-                                                    <textarea
-                                                        className={`resize-none border-transparent  ${!isEditingAddress ? 'bg-[#51536D]' : ''}`}
-                                                        placeholder='Address Detail such as House number, Apartment name, Condo, Village name '
-                                                        rows={4}
-                                                        maxLength={200}
-                                                        value={results[index]?.detail || ''}
-                                                        onChange={(e) => handleAddressDetailChange(e, index)}
-                                                        readOnly={!isEditingAddress}
-                                                        disabled={!isEditingAddress}
-                                                    ></textarea>
-                                                    <span className='absolute bottom-3 right-2 text-xs text-gray-500'>{charCount[index]}/200</span>
-                                                </label>
-                                            </form>
-                                        </div>
-                                    )}
-                                    {index < addressFormsCount - 1 && (
-                                        <hr className='my-10 opacity-50' />
-                                    )}
-                                </div>
-                            ))}
-                            {addressFormsCount < 3 && (
-                                <button aria-hidden='true' onClick={handleAddAddressForm} className='flex justify-center items-center gap-1 h-[40px] w-full mt-5'>
-                                    <IoIosAddCircle className='text-white text-2xl' />
-                                    <p className='text-white'>Add Address</p>
-                                </button>
-                            )}
-                        </div>
                     </div>
-                )}
-            </div>
-            <Footer />
+                    <Footer />
+                </>)}
         </div>
     );
 }

@@ -1,6 +1,6 @@
 "use client";
-import { useRef } from "react";
-import Image from "next/image";
+import { useRef, useState, useEffect } from "react";
+import { Loader } from "lucide-react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ImageSlider from "./components/ImageSlider";
@@ -14,11 +14,29 @@ export default function Home() {
   const partnerRef = useRef<HTMLDivElement>(null!);
   const contactRef = useRef<HTMLDivElement>(null!);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader className="animate-spin text-[#0CACF3]" size={50} />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -37,7 +55,6 @@ export default function Home() {
         <div ref={aboutRef}><About /></div>
         <div><Service /></div>
         <div ref={partnerRef}><Partner /></div>
-
       </div>
 
       <div ref={contactRef}><Contact /></div>

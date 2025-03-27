@@ -102,12 +102,6 @@ const Login = () => {
         Cookies.remove("password");
       }
 
-      Swal.fire({
-        icon: "success",
-        title: "Login Successful",
-        text: "Your credentials have been saved.",
-      });
-
     } catch (error: any) {
       console.error("Login error:", error.message);
       setPasswordError("Invalid username or password");
@@ -119,15 +113,12 @@ const Login = () => {
     }
   };
 
-
   useEffect(() => {
     // หากผู้ใช้ล็อกอินสำเร็จ ให้ไปหน้า Home
     if (isLoggedIn) {
       window.location.href = "/"; // ✅ Redirect ไปหน้า Home
     }
   }, [isLoggedIn]);
-
-
 
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);

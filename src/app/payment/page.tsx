@@ -10,6 +10,7 @@ import { IoIosAddCircle } from "react-icons/io";
 import { createOrder } from "@/api/orderAPI";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import { Loader } from "lucide-react"; // Import Loader
 
 export default function Payment() {
   const aboutRef = useRef<HTMLDivElement>(null!);
@@ -81,20 +82,20 @@ export default function Payment() {
       total: (artToyData?.price || 0) * (artToyData?.quantity || 1) + shippingFee,
       address: selectedAddress
         ? JSON.stringify({
-            detail: selectedAddress.detail,
-            province: selectedAddress.province,
-            district: selectedAddress.district,
-            subdistrict: selectedAddress.subdistrict,
-            postalCode: selectedAddress.postalCode,
-          })
+          detail: selectedAddress.detail,
+          province: selectedAddress.province,
+          district: selectedAddress.district,
+          subdistrict: selectedAddress.subdistrict,
+          postalCode: selectedAddress.postalCode,
+        })
         : address.length > 0
           ? JSON.stringify({
-              detail: address[0].detail,
-              province: address[0].province,
-              district: address[0].district,
-              subdistrict: address[0].subdistrict,
-              postalCode: address[0].postalCode,
-            })
+            detail: address[0].detail,
+            province: address[0].province,
+            district: address[0].district,
+            subdistrict: address[0].subdistrict,
+            postalCode: address[0].postalCode,
+          })
           : "Not provided",
       payment: paymentImage || "No payment proof uploaded",
       imageUrl: artToyData?.imageUrl || "default-image.jpg",
@@ -126,7 +127,7 @@ export default function Payment() {
         showConfirmButton: false,
       });
     }
-};
+  };
 
 
   // ดึงข้อมูลจาก localStorage เมื่อโหลดหน้า Payment
@@ -165,134 +166,133 @@ export default function Payment() {
         contactRef={contactRef}
       />
       <main className="w-full my-[5rem] place-items-center">
-        <div className="max-w-[1080px] w-full h-full pt-24 flex flex-col gap-7 p-3">
-          <header>
-            <h1 className="text-4xl font-semibold mb-4">Payment</h1>
-            <p className="font-thin">Review your order</p>
-          </header>
-
-          {/* ตรวจสอบว่ามีข้อมูลหรือไม่ก่อนแสดงผล */}
-          {artToyData ? (
+        {(!artToyData || loading) ? ( // Show loader if data is loading
+          <div className="flex justify-center items-center h-screen">
+            <Loader className="animate-spin text-[#0CACF3]" size={50} />
+          </div>
+        ) : (
+          <div className="max-w-[1080px] w-full h-full pt-24 flex flex-col gap-7 p-3">
+            <header>
+              <h1 className="text-4xl font-semibold mb-4">Payment</h1>
+              <p className="font-thin">Review your order</p>
+            </header>
             <ProductDetailsSection {...artToyData} shippingFee={shippingFee} />
-          ) : (
-            <p>Loading...</p>
-          )}
-
-          <form action="">
-            <section className="w-full h-full grid lg:grid-cols-2 lg:gird-rows-1 gird-rows-2 grid-cols-1 gap-4">
-              <section className="w-full h-full flex flex-col gap-3">
-                <div className="bg-[#202133] border border-[#202133] rounded-xl p-4">
-                  <h2 className="mb-1 text-[16px] font-semibold">Address</h2>
-                  {address && address.length > 0 ? (
-                    <div
-                      className="w-full h-30 py-2 bg-[#202133] border border-[#828399] rounded-lg place-items-start font-thin text-xs leading-5 cursor-pointer hover:bg-[#0578AB] px-2"
-                      onClick={handleOpenPopUp}
-                    >
-                      <p>
-                        <strong className="text-[14px]">
-                          {fname} {lname}
-                        </strong>
-                      </p>
-                      <p className="text-left text-[14px]">
-                        {selectedAddress
-                          ? `${selectedAddress.detail} ${selectedAddress.subdistrict} ${selectedAddress.district} ${selectedAddress.province} ${selectedAddress.postalCode}`
-                          : `${address[0].detail} ${address[0].subdistrict} ${address[0].district} ${address[0].province} ${address[0].postalCode}`}
-                      </p>
-                      <p className="text-[14px]">{phone}</p>
-                    </div>
-                  ) : (
-                    <a
-                      className="w-full h-[40px] gap-1 py-2 border border-[#828399] rounded-lg flex justify-center items-center leading-5 cursor-pointer hover:bg-[#0578AB] px-2"
-                      href="/editProfile"
-                    >
-                      <IoIosAddCircle className="text-white text-xl" />
-                      <p className="text-white">Add Address</p>
-                    </a>
-                  )}
-                </div>
-                <div className="bg-[#202133] border border-[#202133] rounded-xl p-4">
-                  <h2 className="mb-1 text-[16px] font-semibold">
-                    Shipping Option
-                  </h2>
-                  <div className="flex flex-col gap-2">
-                    <div
-                      className={`flex items-center border ${shippingFee === 50
-                        ? "border-[#0578AB]"
-                        : "border-[#828399]"
-                        } rounded-lg gap-2 px-2 py-4 hover:bg-[#0578AB] cursor-pointer`}
-                      onClick={() => handleShippingChange(50)}
-                    >
-                      <input
-                        type="radio"
-                        name="shipping"
-                        value="standard"
-                        id="standard"
-                        checked={shippingFee === 50}
-                        onChange={() => handleShippingChange(50)}
-                        className="w-5 h-5 border-2 border-[#828399] rounded-full checked:bg-[#0578AB] checked:border-[#0578AB] cursor-pointer"
-                      />
-                      <label
-                        className="w-full text-[14px] flex justify-between cursor-pointer"
-                        htmlFor="standard"
+            <form action="">
+              <section className="w-full h-full grid lg:grid-cols-2 lg:gird-rows-1 gird-rows-2 grid-cols-1 gap-4">
+                <section className="w-full h-full flex flex-col gap-3">
+                  <div className="bg-[#202133] border border-[#202133] rounded-xl p-4">
+                    <h2 className="mb-1 text-[16px] font-semibold">Address</h2>
+                    {address && address.length > 0 ? (
+                      <div
+                        className="w-full h-30 py-2 bg-[#202133] border border-[#828399] rounded-lg place-items-start font-thin text-xs leading-5 cursor-pointer hover:bg-[#0578AB] px-2"
+                        onClick={handleOpenPopUp}
                       >
-                        <p>Standard Delivery (Delivery time 3 - 7 days)</p>
-                        <p>50 ฿</p>
-                      </label>
-                    </div>
-
-                    {/* EMS Delivery */}
-                    <div
-                      className={`flex items-center border ${shippingFee === 70
-                        ? "border-[#0578AB]"
-                        : "border-[#828399]"
-                        } rounded-lg gap-2 px-2 py-4 hover:bg-[#0578AB] cursor-pointer`}
-                      onClick={() => handleShippingChange(70)}
-                    >
-                      <input
-                        type="radio"
-                        name="shipping"
-                        value="ems"
-                        id="ems"
-                        checked={shippingFee === 70}
-                        onChange={() => handleShippingChange(70)}
-                        className="w-5 h-5 border-2 border-[#828399] rounded-full checked:bg-[#0578AB] checked:border-[#0578AB] cursor-pointer"
-                      />
-
-                      <label
-                        className="w-full text-[14px] flex justify-between cursor-pointer"
-                        htmlFor="ems"
+                        <p>
+                          <strong className="text-[14px]">
+                            {fname} {lname}
+                          </strong>
+                        </p>
+                        <p className="text-left text-[14px]">
+                          {selectedAddress
+                            ? `${selectedAddress.detail} ${selectedAddress.subdistrict} ${selectedAddress.district} ${selectedAddress.province} ${selectedAddress.postalCode}`
+                            : `${address[0].detail} ${address[0].subdistrict} ${address[0].district} ${address[0].province} ${address[0].postalCode}`}
+                        </p>
+                        <p className="text-[14px]">{phone}</p>
+                      </div>
+                    ) : (
+                      <a
+                        className="w-full h-[40px] gap-1 py-2 border border-[#828399] rounded-lg flex justify-center items-center leading-5 cursor-pointer hover:bg-[#0578AB] px-2"
+                        href="/editProfile"
                       >
-                        <p>EMS Delivery ( Delivery time 1 - 2 days )</p>
-                        <p>70 ฿</p>
-                      </label>
+                        <IoIosAddCircle className="text-white text-xl" />
+                        <p className="text-white">Add Address</p>
+                      </a>
+                    )}
+                  </div>
+                  <div className="bg-[#202133] border border-[#202133] rounded-xl p-4">
+                    <h2 className="mb-1 text-[16px] font-semibold">
+                      Shipping Option
+                    </h2>
+                    <div className="flex flex-col gap-2">
+                      <div
+                        className={`flex items-center border ${shippingFee === 50
+                          ? "border-[#0578AB]"
+                          : "border-[#828399]"
+                          } rounded-lg gap-2 px-2 py-4 hover:bg-[#0578AB] cursor-pointer`}
+                        onClick={() => handleShippingChange(50)}
+                      >
+                        <input
+                          type="radio"
+                          name="shipping"
+                          value="standard"
+                          id="standard"
+                          checked={shippingFee === 50}
+                          onChange={() => handleShippingChange(50)}
+                          className="w-5 h-5 border-2 border-[#828399] rounded-full checked:bg-[#0578AB] checked:border-[#0578AB] cursor-pointer"
+                        />
+                        <label
+                          className="w-full text-[14px] flex justify-between cursor-pointer"
+                          htmlFor="standard"
+                        >
+                          <p>Standard Delivery (Delivery time 3 - 7 days)</p>
+                          <p>50 ฿</p>
+                        </label>
+                      </div>
+
+                      {/* EMS Delivery */}
+                      <div
+                        className={`flex items-center border ${shippingFee === 70
+                          ? "border-[#0578AB]"
+                          : "border-[#828399]"
+                          } rounded-lg gap-2 px-2 py-4 hover:bg-[#0578AB] cursor-pointer`}
+                        onClick={() => handleShippingChange(70)}
+                      >
+                        <input
+                          type="radio"
+                          name="shipping"
+                          value="ems"
+                          id="ems"
+                          checked={shippingFee === 70}
+                          onChange={() => handleShippingChange(70)}
+                          className="w-5 h-5 border-2 border-[#828399] rounded-full checked:bg-[#0578AB] checked:border-[#0578AB] cursor-pointer"
+                        />
+
+                        <label
+                          className="w-full text-[14px] flex justify-between cursor-pointer"
+                          htmlFor="ems"
+                        >
+                          <p>EMS Delivery ( Delivery time 1 - 2 days )</p>
+                          <p>70 ฿</p>
+                        </label>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </section>
-              <section className="w-full h-full">
-                {/* <QRCodeSection onImageUpload={(url) => console.log("Uploaded Image URL:", url)} /> */}
-                <QRCodeSection setPaymentImage={setPaymentImage}/>
+                </section>
+                <section className="w-full h-full">
+                  {/* <QRCodeSection onImageUpload={(url) => console.log("Uploaded Image URL:", url)} /> */}
+                  <QRCodeSection setPaymentImage={setPaymentImage} />
 
+                </section>
               </section>
-            </section>
-          </form>
-          <div className="flex flex-col sm:flex-row justify-between gap-4">
-            <button
-              className="w-full sm:w-1/2 bg-[#51536D] h-[40px]"
-              onClick={CancelButton}
-            >
-              Cancel
-            </button>
+            </form>
+            <div className="flex flex-col sm:flex-row justify-between gap-4">
+              <button
+                className="w-full sm:w-1/2 bg-[#51536D] h-[40px]"
+                onClick={CancelButton}
+              >
+                Cancel
+              </button>
 
-            <button
-              className="w-full sm:w-1/2 h-[40px]"
-              onClick={handleConfirmOrder}
-              disabled={loading}
-            >
-              {loading ? "Processing..." : "Confirm"}
-            </button>
+              <button
+                className="w-full sm:w-1/2 h-[40px]"
+                onClick={handleConfirmOrder}
+                disabled={loading}
+              >
+                {loading ? "Processing..." : "Confirm"}
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </main>
       <Footer />
 
