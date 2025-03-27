@@ -14,9 +14,10 @@ const OrderModal: React.FC<OrderModalProps> = ({ isVisible, order, onClose }) =>
   return (
     <Modal
       title="Order Details"
-      visible={isVisible}
+      open={isVisible} 
       onCancel={onClose}
       footer={null}
+      style={{ maxHeight: "60vh", overflowY: "auto" }}
     >
       <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #ddd" }}>
         <tbody>

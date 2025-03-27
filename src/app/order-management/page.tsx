@@ -6,7 +6,7 @@ import {
   deleteOrderByAdmin,
   updateOrderByAdmin,
 } from "@/api/orderAPI";
-import { Table, Dropdown, Menu, Input, Form, Select, Modal } from "antd";
+import { Table, Dropdown, Menu, Input, Form, Select } from "antd";
 import { Ellipsis, Eye, Edit, Trash } from "lucide-react";
 import { ColumnType } from "antd/es/table";
 import { Button } from "antd";
@@ -96,7 +96,8 @@ export default function OrderManagement() {
                 <Select.Option value="Processing">Processing</Select.Option>
                 <Select.Option value="Shipped">Shipped</Select.Option>
                 <Select.Option value="Delivered">Delivered</Select.Option>
-                <Select.Option value="Delivered">Cancelled</Select.Option>
+                <Select.Option value="Cancelled">Cancelled</Select.Option>{" "}
+                {/* Fixed the duplicate value */}
               </Select>
             ) : dataIndex === "paymentStatus" ? (
               <Select>
@@ -222,32 +223,45 @@ export default function OrderManagement() {
           </div>
         ) : (
           <Dropdown
-            overlay={
-              <Menu className="custom-menu">
-                <Menu.Item key="view" onClick={() => handleViewOrder(record)}>
-                  <div className="menu-item-content">
-                    <Eye size={16} />
-                    <span>View</span>
-                  </div>
-                </Menu.Item>
-                <Menu.Item key="edit" onClick={() => handleEdit(record)}>
-                  <div className="menu-item-content">
-                    <Edit size={16} />
-                    <span>Edit</span>
-                  </div>
-                </Menu.Item>
-                <Menu.Item
-                  key="delete"
-                  danger
-                  onClick={() => handleDelete(record._id)}
-                >
-                  <div className="menu-item-content">
-                    <Trash size={16} />
-                    <span>Delete</span>
-                  </div>
-                </Menu.Item>
-              </Menu>
-            }
+            menu={{
+              className: "custom-menu",
+              items: [
+                {
+                  key: "view",
+                  label: (
+                    <div className="menu-item-content">
+                      <Eye size={16} />
+                      <span className="ml-2">View</span>{" "}
+                      {/* Add a margin-left to create space between the icon and text */}
+                    </div>
+                  ),
+                  onClick: () => handleViewOrder(record),
+                },
+                {
+                  key: "edit",
+                  label: (
+                    <div className="menu-item-content">
+                      <Edit size={16} />
+                      <span className="ml-2">Edit</span>{" "}
+                      {/* Add a margin-left to create space between the icon and text */}
+                    </div>
+                  ),
+                  onClick: () => handleEdit(record),
+                },
+                {
+                  key: "delete",
+                  label: (
+                    <div className="menu-item-content">
+                      <Trash size={16} />
+                      <span className="ml-2">Delete</span>{" "}
+                      {/* Add a margin-left to create space between the icon and text */}
+                    </div>
+                  ),
+                  danger: true,
+                  onClick: () => handleDelete(record._id),
+                },
+              ],
+            }}
           >
             <Ellipsis className="cursor-pointer" />
           </Dropdown>
@@ -313,10 +327,10 @@ export default function OrderManagement() {
         </Form>
       </div>
 
-      <OrderModal 
-        isVisible={isModalVisible} 
-        order={selectedOrder} 
-        onClose={handleCloseModal} 
+      <OrderModal
+        isVisible={isModalVisible}
+        order={selectedOrder}
+        onClose={handleCloseModal}
       />
     </div>
   );
