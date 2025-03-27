@@ -1,14 +1,31 @@
 "use client";
 import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
-import { getAllOrdersForAdmin } from "@/api/orderAPI";
-import { Table, Dropdown, Menu } from "antd";
+import {
+  getAllOrdersForAdmin,
+  deleteOrderByAdmin,
+  updateOrderByAdmin,
+} from "@/api/orderAPI";
+import { Table, Dropdown, Menu, Input, Form, Select, Modal } from "antd";
 import { Ellipsis, Eye, Edit, Trash } from "lucide-react";
+import { ColumnType } from "antd/es/table";
+import { Button } from "antd";
+import dayjs from "dayjs";
+import OrderModal from "../components/OrderModal";
 
 export default function OrderManagement() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [orders, setOrders] = useState<any[]>([]);
   const [token, setToken] = useState<string | null>(null);
+  const [editOrder, setEditOrder] = useState<any | null>(null);
+  const [editingKey, setEditingKey] = useState<string | null>(null);
+  const isEditing = (record: any) => record && record._id === editingKey;
+  const [form] = Form.useForm();
+  const [searchText, setSearchText] = useState("");
+
+  interface EditableColumnType extends ColumnType<any> {
+    editable?: boolean;
+  }
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -27,54 +44,246 @@ export default function OrderManagement() {
         console.error("Error fetching admin orders:", error);
       }
     };
-
     if (token) {
       fetchAdminOrders();
     }
   }, [token]);
 
-  const menu = (
-    <Menu className="custom-menu">
-      <Menu.Item key="view">
-        <div className="menu-item-content">
-          <Eye size={16} />
-          <span>View</span>
-        </div>
-      </Menu.Item>
-      <Menu.Item key="edit">
-        <div className="menu-item-content">
-          <Edit size={16} />
-          <span>Edit</span>
-        </div>
-      </Menu.Item>
-      <Menu.Item key="delete" danger>
-        <div className="menu-item-content">
-          <Trash size={16} />
-          <span>Delete</span>
-        </div>
-      </Menu.Item>
-    </Menu>
+  const handleDelete = async (id: string) => {
+    if (!token) return;
+    try {
+      await deleteOrderByAdmin(token, id);
+      setOrders((prevOrders) => prevOrders.filter((order) => order._id !== id));
+    } catch (error) {
+      console.error("Error deleting order:", error);
+    }
+  };
+
+  const filteredOrders = orders.filter((order) =>
+    order._id.toLowerCase().includes(searchText.toLowerCase())
   );
-  
-  const columns = [
-    { title: "Order ID", dataIndex: "_id", key: "_id" },
-    { title: "Created At", dataIndex: "createdAt", key: "createdAt" },
-    { title: "Customer", dataIndex: "user", key: "user" },
-    { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Qty", dataIndex: "quantity", key: "quantity" },
-    { title: "Total", dataIndex: "total", key: "total" },
-    { title: "Payment", key: "payment", render: () => "Unpaid" },
-    { title: "Status", dataIndex: "status", key: "status" },
+
+  const handleEdit = (order: any) => {
+    setEditOrder(order);
+    setEditingKey(order._id); // ตั้งค่า `_id` ของแถวที่กำลังแก้ไข
+    form.setFieldsValue(order); // กำหนดค่าลงในฟอร์ม
+  };
+
+  const EditableCell: React.FC<any> = ({
+    editable,
+    children,
+    dataIndex,
+    record,
+    ...restProps
+  }) => {
+    const editing = isEditing(record);
+    return (
+      <td {...restProps}>
+        {editable && editing ? (
+          <Form.Item
+            name={dataIndex}
+            style={{ margin: 0 }}
+            rules={[
+              {
+                required: true,
+                message: `Please enter ${dataIndex}`,
+              },
+            ]}
+          >
+            {dataIndex === "status" ? (
+              <Select>
+                <Select.Option value="Pending">Pending</Select.Option>
+                <Select.Option value="Processing">Processing</Select.Option>
+                <Select.Option value="Shipped">Shipped</Select.Option>
+                <Select.Option value="Delivered">Delivered</Select.Option>
+                <Select.Option value="Delivered">Cancelled</Select.Option>
+              </Select>
+            ) : dataIndex === "paymentStatus" ? (
+              <Select>
+                <Select.Option value="Unpaid">Unpaid</Select.Option>
+                <Select.Option value="Paid">Paid</Select.Option>
+                <Select.Option value="Refunded">Refunded</Select.Option>
+              </Select>
+            ) : (
+              <Input />
+            )}
+          </Form.Item>
+        ) : (
+          children
+        )}
+      </td>
+    );
+  };
+
+  const handleSave = async (values: any) => {
+    if (!token) return;
+
+    try {
+      const updatedOrder = { ...editOrder, ...values }; // รวมค่าที่แก้ไขเข้ากับข้อมูลเก่า
+      await updateOrderByAdmin(token, updatedOrder._id, values);
+
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === updatedOrder._id ? updatedOrder : order
+        )
+      );
+
+      setEditOrder(null);
+      setEditingKey(null); // ออกจากโหมดแก้ไข
+    } catch (error) {
+      console.error("Error updating order:", error);
+    }
+  };
+
+  const columns: EditableColumnType[] = [
+    {
+      title: "Order ID",
+      dataIndex: "_id",
+      key: "_id",
+    },
+    {
+      title: <div className="flex items-center gap-2">Created At</div>,
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text: string) => dayjs(text).format("DD/MM/YYYY HH:mm"),
+      sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
+    },
+    {
+      title: "Customer",
+      dataIndex: "user",
+      key: "user",
+    },
+    {
+      title: <div className="flex items-center gap-2">Name</div>,
+      dataIndex: "name",
+      key: "name",
+      editable: true,
+      sorter: (a, b) => a.name.localeCompare(b.name),
+    },
+    {
+      title: "Qty",
+      dataIndex: "quantity",
+      key: "quantity",
+      editable: true,
+      sorter: (a, b) => a.quantity - b.quantity,
+    },
+    {
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+      editable: true,
+      sorter: (a, b) => a.total - b.total,
+    },
+    {
+      title: "Confirmation",
+      dataIndex: "paymentStatus",
+      key: "paymentStatus",
+      editable: true,
+      sorter: (a, b) => a.paymentStatus.localeCompare(b.paymentStatus),
+    },
+
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      editable: true,
+      sorter: (a, b) => a.status.localeCompare(b.status),
+    },
     {
       title: "Actions",
       key: "actions",
-      render: () => (
-        <Dropdown overlay={menu}>
-          <Ellipsis className="cursor-pointer" />
-        </Dropdown>
-      ),
+      render: (_: any, record: any) => {
+        const editing = isEditing(record);
+        return editing ? (
+          <div className="flex gap-2">
+            <Button
+              style={{
+                color: "#B5E89D",
+                backgroundColor: "transparent",
+                borderColor: "transparent",
+              }}
+              onClick={() => form.submit()}
+            >
+              Save
+            </Button>
+            <Button
+              style={{
+                color: "#FFA4A4",
+              }}
+              type="link"
+              danger
+              onClick={() => {
+                setEditOrder(null);
+                setEditingKey(null);
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
+        ) : (
+          <Dropdown
+            overlay={
+              <Menu className="custom-menu">
+                <Menu.Item key="view" onClick={() => handleViewOrder(record)}>
+                  <div className="menu-item-content">
+                    <Eye size={16} />
+                    <span>View</span>
+                  </div>
+                </Menu.Item>
+                <Menu.Item key="edit" onClick={() => handleEdit(record)}>
+                  <div className="menu-item-content">
+                    <Edit size={16} />
+                    <span>Edit</span>
+                  </div>
+                </Menu.Item>
+                <Menu.Item
+                  key="delete"
+                  danger
+                  onClick={() => handleDelete(record._id)}
+                >
+                  <div className="menu-item-content">
+                    <Trash size={16} />
+                    <span>Delete</span>
+                  </div>
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            <Ellipsis className="cursor-pointer" />
+          </Dropdown>
+        );
+      },
     },
   ];
+
+  const mergedColumns: ColumnType<any>[] = columns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record: any) => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title as string, // Ensure title is of type string
+        key: col.key,
+      }),
+    };
+  });
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+
+  const handleViewOrder = (order: any) => {
+    setSelectedOrder(order);
+    setIsModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setSelectedOrder(null);
+  };
 
   return (
     <div className="text-white bg-[#212121] h-screen overflow-hidden">
@@ -85,15 +294,30 @@ export default function OrderManagement() {
         }`}
       >
         <h1 className="text-3xl font-bold mb-4">Orders</h1>
-        <Table
-          columns={columns}
-          dataSource={orders}
-          rowKey="_id"
-          pagination={{ pageSize: 10 }}
-          className="custom-table"
-          rowClassName={() => "custom-hover-row"} // เพิ่ม class ให้แถว
+        <Input.Search
+          placeholder="Search Order ID"
+          allowClear
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ width: 300, marginBottom: 16 }}
         />
+        <Form form={form} component={false} onFinish={handleSave}>
+          <Table
+            components={{ body: { cell: EditableCell } }}
+            columns={mergedColumns}
+            dataSource={filteredOrders}
+            rowKey="_id"
+            pagination={{ pageSize: 10 }}
+            className="custom-table"
+            rowClassName={() => "custom-hover-row"}
+          />
+        </Form>
       </div>
+
+      <OrderModal 
+        isVisible={isModalVisible} 
+        order={selectedOrder} 
+        onClose={handleCloseModal} 
+      />
     </div>
   );
 }

@@ -227,3 +227,25 @@ button {
 :where(.css-dev-only-do-not-override-1a3rktk).ant-table-wrapper .ant-table-tbody > tr.ant-table-placeholder {
     background: transparent !important;
 }
+
+:where(.css-dev-only-do-not-override-1a3rktk).ant-table-wrapper td.ant-table-column-sort {
+    background: transparent !important;
+}
+
+/* ตั้งค่าขนาดของ icon ของการเรียงลำดับ */
+:where(.css-dev-only-do-not-override-1a3rktk).ant-table-wrapper .ant-table-column-sorter {
+    margin-inline-start: 1px;
+    color: #B8B8B8 !important;
+    font-size: 0;
+    transition: color 0.3s;
+}
+
+/* ตั้งค่าขนาดของ icon ของการเรียงลำดับ */
+:where(.css-dev-only-do-not-override-1a3rktk).ant-table-wrapper .ant-table-column-sorter-up.active, :where(.css-dev-only-do-not-override-1a3rktk).ant-table-wrapper .ant-table-column-sorter-down.active {
+    color: white;
+}
+
+/* ขนาดของไอคอนเรียงลำดับ */
+:where(.css-dev-only-do-not-override-1a3rktk).ant-table-wrapper .ant-table-column-sorter-up, :where(.css-dev-only-do-not-override-1a3rktk).ant-table-wrapper .ant-table-column-sorter-down {
+    font-size: 9px;
+}

@@ -91,3 +91,52 @@ export const getAllOrdersForAdmin = async (token: string) => {
     throw error;
   }
 };
+
+export const deleteOrderByAdmin = async (token: string, id: string) => {
+  try {
+    console.log(`Deleting order with ID: ${id}...`);
+    const response = await fetch(`http://localhost:3001/api/v1/order/admin/orders/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to delete order");
+    }
+
+    console.log("Order deleted successfully");
+    return true;
+  } catch (error) {
+    console.error("Error deleting order:", error);
+    throw error;
+  }
+};
+
+export const updateOrderByAdmin = async (token: string, id: string, updateData: object) => {
+  try {
+    console.log(`Updating order with ID: ${id}...`);
+    const response = await fetch(`http://localhost:3001/api/v1/order/admin/orders/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updateData), // ส่งข้อมูลที่ต้องการอัปเดตใน body
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to update order");
+    }
+
+    console.log("Order updated successfully");
+    return true;
+  } catch (error) {
+    console.error("Error updating order:", error);
+    throw error;
+  }
+};
