@@ -3,6 +3,10 @@ import React, { useState, useRef } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Swal from "sweetalert2";
+import { checkUserExists, updateUserProfile } from "../../api/userAPI"; // Import ฟังก์ชันใหม่
+import PasswordInput from "../components/PasswordInput"; // Import PasswordInput component
+import emailjs from "emailjs-com"; // Import EmailJS
+import { Loader } from "lucide-react"; // เพิ่มการ import Loader
 
 const ForgotPassword = () => {
     const aboutRef = useRef<HTMLDivElement>(null!);
@@ -19,17 +23,99 @@ const ForgotPassword = () => {
     const [otp, setOtp] = useState("");
     const [generatedOtp, setGeneratedOtp] = useState("");
     const [isOtpVerified, setIsOtpVerified] = useState(false);
+    const [userId, setUserId] = useState<string | null>(null); // เก็บ _id ของผู้ใช้
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [isSendingOtp, setIsSendingOtp] = useState(false); // สถานะสำหรับแสดง Loader
+    const [isEmailSent, setIsEmailSent] = useState(false); // ตรวจสอบว่าอีเมลถูกส่งแล้วหรือไม่
 
-    const sendOtp = () => {
+    const isValidEmail = (email: string) => {
+        const emailRegex = /^[a-zA-Z][^\s@]*@[a-zA-Z]{2,}(\.[a-zA-Z]{2,}){1,2}$/;
+        return emailRegex.test(email);
+    };
+
+    const isValidPassword = (password: string) => {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
+        return passwordRegex.test(password);
+    };
+
+    const sendEmail = async (email: string, otp: string) => {
+        if (!email) {
+            console.error("Recipient email is empty.");
+            Swal.fire("Error", "Recipient email is empty. Please provide a valid email.", "error");
+            return;
+        }
+
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleDateString("th-TH", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
+        const formattedTime = currentDate.toLocaleTimeString("th-TH");
+
+        const templateParams = {
+            to_email: email, // Ensure this matches the variable in your EmailJS template
+            otp: otp,
+            date: formattedDate,
+            time: formattedTime,
+        };
+
+        try {
+            await emailjs.send(
+                "service_0n3cshx", // Replace with your EmailJS Service ID
+                "template_ch0n7mf", // Replace with your EmailJS Template ID
+                templateParams,
+                "e319Tvcr3ubaWTQj6" // Replace with your EmailJS User ID
+            );
+            Swal.fire("Success", "OTP sent to your email", "success");
+        } catch (error) {
+            console.error("Error sending email:", error);
+            Swal.fire("Error", "Failed to send OTP. Please try again later.", "error");
+        }
+    };
+
+    const sendOtp = async () => {
         if (!email) {
             Swal.fire("Error", "Please enter your email", "error");
             return;
         }
-        const generated = Math.floor(100000 + Math.random() * 900000).toString();
-        setGeneratedOtp(generated);
-        Swal.fire("OTP Sent", `Your OTP is: ${generated}`, "success"); // Replace this with actual email sending logic
+
+        if (!isValidEmail(email)) {
+            Swal.fire("Error", "Invalid email format", "error");
+            return;
+        }
+
+        setIsSendingOtp(true);
+
+        try {
+            // ตรวจสอบว่าอีเมลมีอยู่ในระบบหรือไม่
+            const { exists } = await checkUserExists({ email });
+
+            if (!exists.email.exists) {
+                Swal.fire("Error", "Invalid email. Please check and try again.", "error");
+                return;
+            }
+
+            setUserId(exists.email._id);
+
+            // สร้าง OTP
+            const generated = Math.floor(100000 + Math.random() * 900000).toString();
+            setGeneratedOtp(generated);
+
+            // ส่ง OTP ผ่าน EmailJS
+            await sendEmail(email, generated);
+            console.log("OTP sent to email:", generated);
+
+            // หากส่ง OTP สำเร็จ ให้เปลี่ยนสถานะ
+            setIsEmailSent(true);
+            Swal.fire("Success", "OTP sent to your email", "success");
+        } catch (error) {
+            console.error("Error checking email existence or sending OTP:", error);
+            Swal.fire("Error", "Failed to send OTP. Please try again later.", "error");
+        } finally {
+            setIsSendingOtp(false); // หยุดแสดง Loader
+        }
     };
 
     const verifyOtp = () => {
@@ -39,24 +125,70 @@ const ForgotPassword = () => {
         }
         if (otp === generatedOtp) {
             setIsOtpVerified(true);
+            setGeneratedOtp(""); // ลบ OTP ทิ้งหลังจากยืนยันสำเร็จ
             Swal.fire("Success", "OTP verified successfully", "success");
         } else {
             Swal.fire("Error", "Invalid OTP", "error");
         }
     };
 
-    const resetPassword = () => {
+    const resetPassword = async () => {
+        if (!userId) {
+            Swal.fire("Error", "User not found. Please try again.", "error");
+            window.location.href = "/login";
+            return;
+        }
+
         if (!newPassword || !confirmPassword) {
             Swal.fire("Error", "Please fill in all fields", "error");
             return;
         }
+
+        if (!isValidPassword(newPassword)) {
+            Swal.fire(
+                "Error",
+                "Password must be at least 6 characters, including uppercase, lowercase, and a number.",
+                "error"
+            );
+            return;
+        }
+
         if (newPassword !== confirmPassword) {
             Swal.fire("Error", "Passwords do not match", "error");
             return;
         }
-        Swal.fire("Success", "Password reset successfully", "success");
-        window.location.href = "/login";
-        // Add logic to update the password in the backend
+
+        try {
+            // ใช้ API updateUserProfile เพื่ออัปเดตรหัสผ่าน
+            await updateUserProfile(userId, { password: newPassword });
+            Swal.fire("Success", "Password reset successfully", "success");
+            window.location.href = "/login";
+        } catch (error) {
+            console.error("Error resetting password:", error);
+            Swal.fire("Error", "Failed to reset password. Please try again later.", "error");
+        }
+    };
+
+    const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        const value = e.target.value;
+        if (!/^\d*$/.test(value)) return; // อนุญาตเฉพาะตัวเลข
+
+        const newOtp = otp.split("");
+        newOtp[index] = value;
+        setOtp(newOtp.join(""));
+
+        // ย้ายไปยังช่องถัดไปถ้ากรอกครบ
+        if (value && index < 5) {
+            const nextInput = document.querySelectorAll<HTMLInputElement>("input[type='text']")[index + 1];
+            nextInput?.focus();
+        }
+    };
+
+    const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+        if (e.key === "Backspace" && !otp[index] && index > 0) {
+            const prevInput = document.querySelectorAll<HTMLInputElement>("input[type='text']")[index - 1];
+            prevInput?.focus();
+        }
     };
 
     return (
@@ -70,63 +202,113 @@ const ForgotPassword = () => {
                             <h1 className="text-4xl font-semibold mb-3">Forgot Password</h1>
                             {!isOtpVerified ? (
                                 <>
-                                    <p className="font-extralight">Enter your email to receive an OTP</p>
-                                    <form className="flex flex-col justify-between gap-4 w-full h-[70%] pt-5">
-                                        <div className="flex items-center justify-between gap-4">
-                                            <input
-                                                className="block"
-                                                type="email"
-                                                placeholder="Email"
-                                                maxLength={100}
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                            />
-                                            <button type="button" className="h-10 w-32 text-sm" onClick={sendOtp}>
-                                                Send OTP
-                                            </button>
-                                        </div>
+                                    <p className="font-extralight">
+                                        {isEmailSent
+                                            ? "Enter the OTP sent to your email"
+                                            : "Enter your email to receive OTP"}
+                                    </p>
+                                    {!isEmailSent ? (
+                                        // แสดงส่วนกรอกอีเมลและปุ่มส่ง OTP
+                                        <>
+                                            <form className="flex flex-col justify-between gap-4 w-full h-[70%] pt-5">
+                                                <input
+                                                    className="block mb-2"
+                                                    type="email"
+                                                    placeholder="Email"
+                                                    maxLength={100}
+                                                    value={email}
+                                                    onChange={(e) => setEmail(e.target.value)}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="h-10 w-full text-sm flex items-center justify-center gap-2"
+                                                    onClick={() => {
+                                                        sendOtp();
+                                                    }}
+                                                >
+                                                    {isSendingOtp ? <Loader className="animate-spin text-[#0CACF3]" size={20} /> : "Send OTP"}
+                                                </button>
+                                            </form>
 
-                                        <input
-                                            className="block"
-                                            type="text"
-                                            placeholder="Enter OTP"
-                                            maxLength={6}
-                                            value={otp}
-                                            onChange={(e) => setOtp(e.target.value)}
-                                        />
-                                        <button type="button" className="h-[40px]" onClick={verifyOtp}>
-                                            Verify OTP
-                                        </button>
-                                    </form>
+                                            <div>
+                                                {email && !isValidEmail(email) ? (
+                                                    <p className="text-yellow-500 text-sm mt-4">Invalid email format. Please enter a valid email.</p>
+                                                ) : (
+                                                    <p className="text-transparent text-sm mt-4">Invalid email format. Please enter a valid email.</p>
+                                                )}
+                                            </div>
+
+                                        </>
+                                    ) : (
+                                        // แสดงส่วนกรอก OTP และปุ่ม Verify
+                                        <>
+                                            <form className="flex flex-col justify-between gap-4 w-full h-[70%] pt-5">
+                                                <div className="flex justify-around gap-2 mb-2">
+                                                    <label htmlFor="otp" className="hidden">a</label>
+                                                    {Array.from({ length: 6 }).map((_, index) => (
+                                                        <input
+                                                            id="otp"
+                                                            key={index}
+                                                            type="text"
+                                                            maxLength={1}
+                                                            className="w-10 h-10 text-center border border-gray-300 rounded p-0 m-0 text-2xl"
+                                                            value={otp[index] || ""}
+                                                            onChange={(e) => handleOtpChange(e, index)}
+                                                            onKeyDown={(e) => handleOtpKeyDown(e, index)}
+                                                        />
+                                                    ))}
+                                                </div>
+                                                <button type="button" className="h-[40px]" onClick={verifyOtp}>
+                                                    Verify OTP
+                                                </button>
+                                            </form>
+                                        </>
+                                    )}
                                 </>
                             ) : (
                                 <>
                                     <p className="font-extralight">Enter your new password</p>
                                     <form className="flex flex-col justify-between gap-4 w-full h-[70%] pt-5">
-                                        <input
-                                            className="block"
-                                            type="password"
-                                            placeholder="New Password"
-                                            maxLength={100}
+                                        <PasswordInput
+                                            id="newPassword"
+                                            name="newPassword"
+                                            label="New Password"
+                                            placeholder="Min length is 6 chars."
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)}
+                                            required={true} // กำหนดให้ฟิลด์นี้จำเป็นต้องกรอก
                                         />
-                                        <input
-                                            className="block"
-                                            type="password"
-                                            placeholder="Confirm New Password"
-                                            maxLength={100}
+                                        <PasswordInput
+                                            id="confirmPassword"
+                                            name="confirmPassword"
+                                            label="Confirm Password"
+                                            placeholder="Min length is 6 chars."
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
+                                            required={true} // กำหนดให้ฟิลด์นี้จำเป็นต้องกรอก
                                         />
                                         <button
                                             type="button"
-                                            className="h-[40px]"
+                                            className="h-[40px] mt-2"
                                             onClick={resetPassword}
                                         >
                                             Reset Password
                                         </button>
                                     </form>
+
+                                    <div>
+                                        {newPassword && confirmPassword && newPassword !== confirmPassword ? (
+                                            <p className="text-yellow-500 text-sm mt-4 h-[60px]">Passwords do not match.</p>
+                                        ) : newPassword && !isValidPassword(newPassword) ? (
+                                            <p className="text-yellow-500 text-sm mt-4 h-[60px]">
+                                                Password must be at least 6 characters with uppercase, lowercase, and a number.
+                                            </p>
+                                        ) : (
+                                            <p className="text-transparent text-sm mt-4 h-[60px]">
+                                                Password must be at least 6 characters with uppercase, lowercase, and a number.
+                                            </p>
+                                        )}
+                                    </div>
                                 </>
                             )}
                         </div>

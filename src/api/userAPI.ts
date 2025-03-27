@@ -41,3 +41,16 @@ export const getUserById = async (userId: string) => {
         throw new Error(error.response?.data?.error || 'Failed to fetch user data');
     }
 };
+
+export const checkUserExists = async (data: { email?: string; username?: string; phoneNumber?: string }) => {
+    try {
+        console.log('Checking if user exists with data:', data); // Log request details
+        const response = await axios.post(`${API_URL}/check-exists`, data);
+        console.log('API Response:', response.data); // Log response data
+        return response.data;
+    } catch (error: any) {
+        console.error('API Error Data:', error.response?.data); // Log error response data
+        console.error('Fetch Error:', error); // Log full error
+        throw new Error(error.response?.data?.error || 'Failed to check user existence');
+    }
+};
