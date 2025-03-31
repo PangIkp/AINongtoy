@@ -7,8 +7,10 @@ import PasswordInput from "../components/PasswordInput";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie"; // เพิ่มการ import js-cookie
 import CryptoJS from "crypto-js"; // เพิ่มการ import crypto-js
+import dotenv from "dotenv";
+dotenv.config(); // โหลด environment variables
 
-const SECRET_KEY = "yoo5PAkafiWAnVhr1Ug30anOtcqU12nZgQBkl0w65KsYBzH7"; // ใช้ key สำหรับเข้ารหัสข้อมูล Cookies
+const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY || ""; // ดึงค่าจาก environment variable
 
 interface LoginResponse {
   token: string;

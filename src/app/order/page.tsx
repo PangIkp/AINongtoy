@@ -17,7 +17,7 @@ export default function Order() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const totalItems = orders.length; 
+  const totalItems = orders.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   // คำนวณช่วง index ของคำสั่งซื้อที่จะแสดงในหน้าปัจจุบัน
@@ -76,7 +76,13 @@ export default function Order() {
       </div>
       <div className="w-full place-items-center">
         <div className="w-full max-w-[1024px] px-4 py-20 flex flex-col gap-12">
-          <MyProfile />
+          <MyProfile
+            followMessage={
+              orders.length > 0
+                ? `You have ${orders.length} models to follow`
+                : "You have no models to follow"
+            }
+          />
           <section className="flex gap-10 font-semibold">
             <a className="hover:text-[#0AACF0] transition-all" href="/profile">
               Favorite

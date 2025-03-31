@@ -517,18 +517,17 @@ export default function Page() {
 
     return (
         <div>
+            <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
+
             {isLoading ? ( // Show loader while loading
                 <div className="flex justify-center items-center h-screen">
                     <Loader className="animate-spin text-[#0CACF3]" size={50} />
                 </div>
             ) : (
                 <>
-
-                    <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
                     <div className='w-full place-content-center place-items-center h-[100px] mt-[5rem] bg-black'>
                         <h1 className='text-4xl font-semibold mb-3'>My Profile</h1>
                     </div>
-
                     <div className='w-full place-items-center'>
                         <div className='w-full max-w-[980px] px-4 py-20 flex flex-col gap-12'>
                             <div className='flex justify-between border-b border-white pb-2'>
