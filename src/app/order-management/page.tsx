@@ -143,7 +143,7 @@ export default function OrderManagement() {
       key: "_id",
     },
     {
-      title: <div className="flex items-center gap-2">Created At</div>,
+      title: <div className="flex items-center gap-2">Created at</div>,
       dataIndex: "createdAt",
       key: "createdAt",
       render: (text: string) => dayjs(text).format("DD/MM/YYYY HH:mm"),

@@ -11,6 +11,8 @@ import {
   ResponsiveContainer,
   Cell,
   Legend,
+  PieChart,
+  Pie,
 } from "recharts";
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
@@ -23,6 +25,7 @@ export default function Dashboard() {
   const [totalAmount, setTotalAmount] = useState(0);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [refunds, setRefunds] = useState(0);
+  const [selectedChart, setSelectedChart] = useState("Material");
 
   // ดึง Token จาก Local Storage
   useEffect(() => {
@@ -81,16 +84,15 @@ export default function Dashboard() {
   const chartLineData = orders.reduce((acc: any[], order: any) => {
     const date = new Date(order.createdAt).toLocaleDateString(); // เก็บวันที่ในรูปแบบที่ง่ายต่อการแสดง
     const existingEntry = acc.find((entry) => entry.date === date);
-  
+
     if (existingEntry) {
       existingEntry.totalOrders += 1; // เพิ่มจำนวนคำสั่งซื้อในวันนั้น
     } else {
       acc.push({ date, totalOrders: 1 }); // ถ้ายังไม่มีข้อมูลในวันนั้น ให้เริ่มนับคำสั่งซื้อที่ 1
     }
-  
+
     return acc;
   }, []);
-  
 
   const chartData = [
     { name: "Paid", value: paidCount },
@@ -103,6 +105,71 @@ export default function Dashboard() {
     return colors[index % colors.length]; // วนรอบสี
   };
 
+  // กราฟแผนภูมิวงกลม
+  const COLORS = ["#A3E4FF", "#0AACF0", "#37438F", "#0578AB"];
+
+  const materialData = orders.reduce((acc: any[], order: any) => {
+    if (order.material) {
+      // ตรวจสอบว่า materials มีค่า
+      const existingMaterial = acc.find((item) => item.name === order.material);
+
+      if (existingMaterial) {
+        existingMaterial.value += 1; // นับจำนวนครั้งที่เจอวัสดุ
+      } else {
+        acc.push({ name: order.material, value: 1 });
+      }
+    }
+    return acc;
+  }, []);
+
+  const assemblyData = orders.reduce((acc: any[], order: any) => {
+    if (order.assembly) {
+      const existingAssembly = acc.find((item) => item.name === order.assembly);
+
+      if (existingAssembly) {
+        existingAssembly.value += 1;
+      } else {
+        acc.push({ name: order.assembly, value: 1 });
+      }
+    }
+    return acc;
+  }, []);
+
+  const paintingData = orders.reduce((acc: any[], order: any) => {
+    if (order.painting) {
+      const existingPainting = acc.find((item) => item.name === order.painting);
+
+      if (existingPainting) {
+        existingPainting.value += 1;
+      } else {
+        acc.push({ name: order.painting, value: 1 });
+      }
+    }
+    return acc;
+  }, []);
+
+  const dataToDisplay =
+    selectedChart === "Material"
+      ? materialData
+      : selectedChart === "Assembly"
+      ? assemblyData
+      : paintingData;
+
+      const ChartLineData = orders
+      .filter((order) => order.paymentStatus === "Paid") // กรองเฉพาะคำสั่งซื้อที่ชำระเงินแล้ว
+      .reduce((acc: any[], order: any) => {
+        const date = new Date(order.createdAt).toLocaleDateString(); // เก็บวันที่ในรูปแบบที่ง่ายต่อการแสดง
+        const existingEntry = acc.find((entry) => entry.date === date);
+    
+        if (existingEntry) {
+          existingEntry.totalQuantity += order.quantity; // เพิ่มจำนวนสินค้าของวันนั้น
+        } else {
+          acc.push({ date, totalQuantity: order.quantity }); // ถ้ายังไม่มีข้อมูลในวันนั้น ให้เริ่มนับสินค้าจำนวนที่สั่ง
+        }
+    
+        return acc;
+      }, []);
+    
   return (
     <div className="text-white bg-[#212121] h-screen overflow-auto">
       <Sidebar setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
@@ -136,8 +203,8 @@ export default function Dashboard() {
           <div className="w-1/3">
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={chartData}>
-                <XAxis dataKey="name" tick={{ fontSize: 14 }} />
-                <YAxis tick={{ fontSize: 14 }} />
+                <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip />
                 {/* ใช้ Cell เพื่อกำหนดสีแต่ละ Bar */}
                 <Bar dataKey="value">
@@ -157,10 +224,12 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartLineData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" tick={{ fontSize: 14 }}/>
-                <YAxis tick={{ fontSize: 14 }}/>
-                <Tooltip    />
-                <Legend />
+                <XAxis dataKey="date" tick={{ fontSize: 14 }} />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip />
+                <Legend
+                  formatter={() => "Total orders"} // เปลี่ยนชื่อ Legend
+                />
                 <Line
                   type="monotone"
                   dataKey="totalOrders"
@@ -169,6 +238,92 @@ export default function Dashboard() {
                 />
               </LineChart>
             </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="mb-8 flex justify-between space-x-4">
+          <div className="w-1/4 p-4">
+            {/* 🟢 Dropdown สำหรับเลือกแผนภูมิ */}
+            <select
+              style={{
+            backgroundColor: "#2F2F2F",
+            color: "white",
+            width: "50%",
+            margin: "0 auto",
+            display: "block",
+            border: "1px solid #5B5B5B",
+            borderRadius: "4px",
+            padding: "8px",
+              }}
+              className="mb-4 p-2 border rounded"
+              value={selectedChart}
+              onChange={(e) => setSelectedChart(e.target.value)}
+            >
+              <option value="Material">Material</option>
+              <option value="Assembly">Assembly</option>
+              <option value="Painting">Painting</option>
+            </select>
+
+            <div className="flex flex-col items-center">
+              {/* Heading above the chart */}
+              <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Tooltip
+                formatter={(value, name) => [`${value} orders`, name]}
+              />
+
+              <Pie
+                data={dataToDisplay} // ใช้ข้อมูลที่เลือกมาแสดง
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                label
+              >
+                {dataToDisplay.map((entry, index) => (
+                  <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+
+              <Legend
+                payload={dataToDisplay.map((entry, index) => ({
+                  value: entry.name,
+                  type: "circle",
+                  color: COLORS[index % COLORS.length],
+                }))}
+              />
+            </PieChart>
+              </ResponsiveContainer>
+              <h2 className="text-[16px] font-medium mb-4">
+            {selectedChart} Orders Overview
+              </h2>
+            </div>
+          </div>
+
+          <div className="w-3/4 p-4">
+            <div className="flex flex-col items-center">
+              <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={ChartLineData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" tick={{ fontSize: 14 }} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip />
+              <Legend
+                formatter={() => "Total Quantity"} // เปลี่ยนชื่อ Legend
+              />
+              <Line
+                type="monotone"
+                dataKey="totalQuantity" // ใช้ totalQuantity เป็น dataKey
+                stroke="#0AACF0"
+                activeDot={{ r: 8 }}
+              />
+            </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
       </div>
