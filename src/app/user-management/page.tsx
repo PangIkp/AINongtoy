@@ -133,6 +133,15 @@ export default function UserManagement() {
       render: (text) => <span>{text}</span>,
       sorter: (a, b) => a.role.localeCompare(b.role),
     },
+
+    {
+        title: "Status",
+        dataIndex: "status",
+        key: "status",
+        render: (text) => <span>{text}</span>,
+        sorter: (a, b) => a.role.localeCompare(b.status),
+      },
+
     {
       title: "Actions",
       key: "actions",
