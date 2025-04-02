@@ -7,6 +7,8 @@ import { Loader } from "lucide-react"; // Import Loader
 import { updateUserProfile, updateUserAddresses, getUserById } from '../../api/userAPI';
 import { getUserData, setUserData } from '../../utils/localStorageUtils';
 import Swal from "sweetalert2";
+import Select from 'react-select';
+import { color } from 'framer-motion';
 
 interface Province {
     id: number;
@@ -185,36 +187,38 @@ export default function Page() {
 
     // สร้าง function ที่ใช้ในการเพิ่มฟอร์มที่อยู่
 
-    const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>, index: number) => {
+    const handleProvinceChange = (selectedOption: { value: string } | null, index: number) => {
         const newResults = [...results];
-        newResults[index].provinceId = e.target.value;
+        newResults[index].provinceId = selectedOption?.value || null;
         newResults[index].amphureId = null;
         newResults[index].tambonId = null;
         newResults[index].zipCode = null;
         setResults(newResults);
     };
 
-    const handleAmphureChange = (e: React.ChangeEvent<HTMLSelectElement>, index: number) => {
+    const handleAmphureChange = (selectedOption: { value: string } | null, index: number) => {
         const newResults = [...results];
-        newResults[index].amphureId = e.target.value;
+        newResults[index].amphureId = selectedOption?.value || null;
         newResults[index].tambonId = null;
         newResults[index].zipCode = null;
         setResults(newResults);
     };
 
-    const handleTambonChange = (e: React.ChangeEvent<HTMLSelectElement>, index: number) => {
+    const handleTambonChange = (selectedOption: { value: string } | null, index: number) => {
         const newResults = [...results];
-        newResults[index].tambonId = e.target.value;
+        newResults[index].tambonId = selectedOption?.value || null;
+
         const province = data?.find((province) => province.id === Number(newResults[index].provinceId));
         const amphure = province?.amphure.find((amphure) => amphure.id === Number(newResults[index].amphureId));
-        const tambon = amphure?.tambon.find((tambon) => tambon.id === Number(e.target.value));
+        const tambon = amphure?.tambon.find((tambon) => tambon.id === Number(selectedOption?.value));
         newResults[index].zipCode = tambon?.zip_code || null;
+
         setResults(newResults);
     };
 
-    const handleZipCodeChange = (e: React.ChangeEvent<HTMLSelectElement>, index: number) => {
+    const handleZipCodeChange = (selectedOption: { value: string } | null, index: number) => {
         const newResults = [...results];
-        newResults[index].zipCode = e.target.value;
+        newResults[index].zipCode = selectedOption?.value || null;
         setResults(newResults);
     };
 
@@ -370,10 +374,18 @@ export default function Page() {
             postalCode: '',
         };
 
-        setAddressFormsCount(prevCount => (prevCount < 3 ? prevCount + 1 : prevCount));
-        setAddresses(prevAddresses => [...prevAddresses, newAddress]);
-        setResults(prevResults => [...prevResults, { provinceId: null, amphureId: null, tambonId: null, zipCode: null }]);
-        setCharCount(prevCharCount => [...prevCharCount, 0]);
+        const newResult: Result = {
+            provinceId: null,
+            amphureId: null,
+            tambonId: null,
+            zipCode: null,
+            detail: '', // Ensure this matches the updated structure
+        };
+
+        setAddressFormsCount((prevCount) => (prevCount < 3 ? prevCount + 1 : prevCount));
+        setAddresses((prevAddresses) => [...prevAddresses, newAddress]);
+        setResults((prevResults) => [...prevResults, newResult]);
+        setCharCount((prevCharCount) => [...prevCharCount, 0]);
     };
 
     const handleCancelEditAddress = () => {
@@ -732,91 +744,262 @@ export default function Page() {
                                                         <label htmlFor="province_id" className='hidden'>
                                                             <p>Province</p>
                                                         </label>
-                                                        <select
+                                                        <Select
                                                             id="province_id"
-                                                            value={results[index]?.provinceId || ''}
-                                                            onChange={(e) => handleProvinceChange(e, index)}
-                                                            disabled={!isEditingAddress}
-                                                            className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''} ${!results[index]?.provinceId ? 'text-[#9ca3af]' : ''}`}
-                                                        >
-                                                            <option value="" label="Province" />
-                                                            {data?.map((province) => (
-                                                                <option key={province.id} value={province.id}>
-                                                                    {province.name_en}
-                                                                </option>
-                                                            ))}
-                                                        </select>
+                                                            value={
+                                                                results[index]?.provinceId
+                                                                    ? { value: results[index]?.provinceId.toString(), label: data?.find((province) => province.id === Number(results[index]?.provinceId))?.name_en || '' }
+                                                                    : null
+                                                            }
+                                                            onChange={(selectedOption) =>
+                                                                handleProvinceChange(selectedOption, index)
+                                                            }
+                                                            options={data?.map((province) => ({
+                                                                value: province.id.toString(),
+                                                                label: province.name_en,
+                                                            }))}
+                                                            isDisabled={!isEditingAddress}
+                                                            isClearable
+                                                            classNamePrefix="react-select"
+                                                            placeholder="Province"
+                                                            filterOption={(option, inputValue) =>
+                                                                option.label.toLowerCase().startsWith(inputValue.toLowerCase())
+                                                            }
+                                                            styles={{
+                                                                control: (base) => ({
+                                                                    ...base,
+                                                                    backgroundColor: !isEditingAddress ? '#51536D' : 'white',
+                                                                    borderColor: !isEditingAddress ? 'transparent' : base.borderColor,
+                                                                    input: {
+                                                                        boxShadow: 'none',
+                                                                    },
+
+                                                                }),
+                                                                placeholder: (base) => ({
+                                                                    ...base,
+                                                                    color: '#9ca3af',
+                                                                }),
+                                                                menu: (base) => ({
+                                                                    ...base,
+                                                                    color: '#000',
+                                                                }),
+                                                                singleValue: (base) => ({
+                                                                    ...base,
+                                                                    color: !isEditingAddress ? '#000' : '#333', // ปรับสีข้อความที่เลือก
+                                                                }),
+                                                                dropdownIndicator: (base) => ({
+                                                                    ...base,
+                                                                    color: !isEditingAddress ? '#000' : '#cccccc', // สีของลูกศร dropdown
+                                                                }),
+                                                                indicatorSeparator: (base) => ({
+                                                                    ...base,
+                                                                    backgroundColor: !isEditingAddress ? '#000' : '#cccccc', // สีของขีด | ใกล้ dropdown
+                                                                }),
+                                                            }}
+                                                        />
                                                     </div>
 
                                                     <div>
                                                         <label htmlFor="amphure_id" className='hidden'>
                                                             <p>District</p>
                                                         </label>
-                                                        <select
+                                                        <Select
                                                             id="amphure_id"
-                                                            value={results[index]?.amphureId || ''}
-                                                            onChange={(e) => handleAmphureChange(e, index)}
-                                                            disabled={!isEditingAddress}
-                                                            className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''} ${!results[index]?.amphureId ? 'text-[#9ca3af]' : ''}`}
-                                                        >
-                                                            <option value="" label="District" />
-                                                            {data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.map((amphure) => (
-                                                                <option key={amphure.id} value={amphure.id}>
-                                                                    {amphure.name_en}
-                                                                </option>
-                                                            ))}
-                                                        </select>
+                                                            value={
+                                                                results[index]?.amphureId
+                                                                    ? {
+                                                                        value: results[index]?.amphureId.toString(),
+                                                                        label: data
+                                                                            ?.find((province) => province.id === Number(results[index]?.provinceId))
+                                                                            ?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))?.name_en || ''
+                                                                    }
+                                                                    : null
+                                                            }
+                                                            onChange={(selectedOption) =>
+                                                                handleAmphureChange(selectedOption, index)
+                                                            }
+                                                            options={data
+                                                                ?.find((province) => province.id === Number(results[index]?.provinceId))
+                                                                ?.amphure.map((amphure) => ({
+                                                                    value: amphure.id.toString(),
+                                                                    label: amphure.name_en,
+                                                                }))}
+                                                            isDisabled={!isEditingAddress}
+                                                            isClearable
+                                                            classNamePrefix="react-select"
+                                                            placeholder="District"
+                                                            filterOption={(option, inputValue) =>
+                                                                option.label.toLowerCase().startsWith(inputValue.toLowerCase())
+                                                            }
+                                                            styles={{
+                                                                control: (base) => ({
+                                                                    ...base,
+                                                                    backgroundColor: !isEditingAddress ? '#51536D' : 'white',
+                                                                    borderColor: !isEditingAddress ? 'transparent' : base.borderColor,
+                                                                    input: {
+                                                                        boxShadow: 'none',
+                                                                    },
+                                                                }),
+                                                                placeholder: (base) => ({
+                                                                    ...base,
+                                                                    color: '#9ca3af',
+                                                                }),
+                                                                menu: (base) => ({
+                                                                    ...base,
+                                                                    color: '#000',
+                                                                }),
+                                                                singleValue: (base) => ({
+                                                                    ...base,
+                                                                    color: !isEditingAddress ? '#000' : '#333', // ปรับสีข้อความที่เลือก
+                                                                }),
+                                                                dropdownIndicator: (base) => ({
+                                                                    ...base,
+                                                                    color: !isEditingAddress ? '#000' : '#cccccc', // สีของลูกศร dropdown
+                                                                }),
+                                                                indicatorSeparator: (base) => ({
+                                                                    ...base,
+                                                                    backgroundColor: !isEditingAddress ? '#000' : '#cccccc', // สีของขีด | ใกล้ dropdown
+                                                                }),
+                                                            }}
+                                                        />
                                                     </div>
 
                                                     <div>
                                                         <label htmlFor="tambon_id" className='hidden'>
                                                             <p>Subdistrict</p>
                                                         </label>
-                                                        <select
+                                                        <Select
                                                             id="tambon_id"
-                                                            value={results[index]?.tambonId || ''}
-                                                            onChange={(e) => handleTambonChange(e, index)}
-                                                            disabled={!isEditingAddress}
-                                                            className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent ' : ''} ${!results[index]?.tambonId ? 'text-[#9ca3af]' : ''}`}
-                                                        >
-                                                            <option value="" label="Subdistrict" />
-                                                            {data?.find((province) => province.id === Number(results[index]?.provinceId))?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))?.tambon.map((tambon) => (
-                                                                <option key={tambon.id} value={tambon.id}>
-                                                                    {tambon.name_en}
-                                                                </option>
-                                                            ))}
-                                                        </select>
+                                                            value={
+                                                                results[index]?.tambonId
+                                                                    ? {
+                                                                        value: results[index]?.tambonId.toString(),
+                                                                        label: data
+                                                                            ?.find((province) => province.id === Number(results[index]?.provinceId))
+                                                                            ?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))
+                                                                            ?.tambon.find((tambon) => tambon.id === Number(results[index]?.tambonId))?.name_en || ''
+                                                                    }
+                                                                    : null
+                                                            }
+                                                            onChange={(selectedOption) =>
+                                                                handleTambonChange(selectedOption, index)
+                                                            }
+                                                            options={data
+                                                                ?.find((province) => province.id === Number(results[index]?.provinceId))
+                                                                ?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))
+                                                                ?.tambon.map((tambon) => ({
+                                                                    value: tambon.id.toString(),
+                                                                    label: tambon.name_en,
+                                                                }))}
+                                                            isDisabled={!isEditingAddress}
+                                                            isClearable
+                                                            classNamePrefix="react-select"
+                                                            placeholder="Subdistrict"
+                                                            filterOption={(option, inputValue) =>
+                                                                option.label.toLowerCase().startsWith(inputValue.toLowerCase())
+                                                            }
+                                                            styles={{
+                                                                control: (base) => ({
+                                                                    ...base,
+                                                                    backgroundColor: !isEditingAddress ? '#51536D' : 'white',
+                                                                    borderColor: !isEditingAddress ? 'transparent' : base.borderColor,
+                                                                    input: {
+                                                                        boxShadow: 'none',
+                                                                    },
+                                                                }),
+                                                                placeholder: (base) => ({
+                                                                    ...base,
+                                                                    color: '#9ca3af',
+                                                                }),
+                                                                menu: (base) => ({
+                                                                    ...base,
+                                                                    color: '#000',
+                                                                }),
+                                                                singleValue: (base) => ({
+                                                                    ...base,
+                                                                    color: !isEditingAddress ? '#000' : '#333', // ปรับสีข้อความที่เลือก
+                                                                }),
+                                                                dropdownIndicator: (base) => ({
+                                                                    ...base,
+                                                                    color: !isEditingAddress ? '#000' : '#cccccc', // สีของลูกศร dropdown
+                                                                }),
+                                                                indicatorSeparator: (base) => ({
+                                                                    ...base,
+                                                                    backgroundColor: !isEditingAddress ? '#000' : '#cccccc', // สีของขีด | ใกล้ dropdown
+                                                                }),
+                                                            }}
+                                                        />
                                                     </div>
 
                                                     <div>
                                                         <label htmlFor="zip_code" className='hidden'>
                                                             <p>Postal Code</p>
                                                         </label>
-                                                        <select
+                                                        <Select
                                                             id="zip_code"
-                                                            value={results[index]?.zipCode || ''}
-                                                            onChange={(e) => handleZipCodeChange(e, index)}
-                                                            disabled={!isEditingAddress}
-                                                            className={`${!isEditingAddress ? 'bg-[#51536D] border-transparent' : ''} ${!results[index]?.zipCode ? 'text-[#9ca3af]' : ''}`}
-                                                        >
-                                                            <option value="" label="Postal Code" />
-                                                            {Array.from(
+                                                            value={
+                                                                results[index]?.zipCode
+                                                                    ? { value: results[index]?.zipCode.toString(), label: results[index]?.zipCode.toString() }
+                                                                    : null
+                                                            }
+                                                            onChange={(selectedOption) =>
+                                                                handleZipCodeChange(selectedOption, index)
+                                                            }
+                                                            options={Array.from(
                                                                 new Set(
-                                                                    data?.find((province) => province.id === Number(results[index]?.provinceId))
+                                                                    data
+                                                                        ?.find((province) => province.id === Number(results[index]?.provinceId))
                                                                         ?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))
                                                                         ?.tambon.map((tambon) => tambon.zip_code)
                                                                 )
-                                                            ).map((zip_code) => (
-                                                                <option key={zip_code} value={zip_code}>
-                                                                    {zip_code}
-                                                                </option>
-                                                            ))}
-                                                        </select>
+                                                            ).map((zip_code) => ({
+                                                                value: zip_code.toString(),
+                                                                label: zip_code.toString(),
+                                                            }))}
+                                                            isDisabled={!isEditingAddress}
+                                                            isClearable
+                                                            classNamePrefix="react-select"
+                                                            placeholder="Postal Code"
+                                                            filterOption={(option, inputValue) =>
+                                                                option.label.toLowerCase().startsWith(inputValue.toLowerCase())
+                                                            }
+                                                            styles={{
+                                                                control: (base) => ({
+                                                                    ...base,
+                                                                    backgroundColor: !isEditingAddress ? '#51536D' : 'white',
+                                                                    borderColor: !isEditingAddress ? 'transparent' : base.borderColor,
+                                                                    input: {
+                                                                        boxShadow: 'none',
+                                                                    },
+                                                                }),
+                                                                placeholder: (base) => ({
+                                                                    ...base,
+                                                                    color: '#9ca3af',
+                                                                }),
+                                                                menu: (base) => ({
+                                                                    ...base,
+                                                                    color: '#000',
+                                                                }),
+                                                                singleValue: (base) => ({
+                                                                    ...base,
+                                                                    color: !isEditingAddress ? '#000' : '#333', // ปรับสีข้อความที่เลือก
+                                                                }),
+                                                                dropdownIndicator: (base) => ({
+                                                                    ...base,
+                                                                    color: !isEditingAddress ? '#000' : '#cccccc', // สีของลูกศร dropdown
+                                                                }),
+                                                                indicatorSeparator: (base) => ({
+                                                                    ...base,
+                                                                    backgroundColor: !isEditingAddress ? '#000' : '#cccccc', // สีของขีด | ใกล้ dropdown
+                                                                }),
+
+                                                            }}
+                                                        />
                                                     </div>
 
                                                     <label htmlFor="address" className='col-span-1 sm:col-span-2 relative'>
                                                         <textarea
-                                                            className={`resize-none border-transparent  ${!isEditingAddress ? 'bg-[#51536D]' : ''}`}
+                                                            className={`resize-none border-transparent  ${!isEditingAddress ? 'bg-[#51536D]' : 'text-[#333333]'}`}
                                                             placeholder='Address Detail such as House number, Apartment name, Condo, Village name '
                                                             rows={4}
                                                             maxLength={200}
