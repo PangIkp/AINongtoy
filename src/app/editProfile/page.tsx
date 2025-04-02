@@ -71,13 +71,55 @@ export default function Page() {
     const [firstName, setFirstName] = useState<string | undefined>(undefined);
     const [lastName, setLastName] = useState<string | undefined>(undefined);
     const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
+    const nameRegex = /^[a-zA-Z]{4,40}$/;
+    const phoneRegex = /^0\d{9}$/;
+
+    const [errors, setErrors] = useState({
+        firstName: '',
+        lastName: '',
+        phoneNumber: ''
+    });
+
+    const validateInput = (field: string, value: string) => {
+        if (field === 'firstName' || field === 'lastName') {
+            if (!nameRegex.test(value)) {
+                return 'Alphabetic, 4-40 chars.';
+            }
+        } else if (field === 'phoneNumber') {
+            if (!phoneRegex.test(value)) {
+                return 'Phone: 10 digits, start with 0.';
+            }
+        }
+        return '';
+    };
 
     // สร้าง function ที่ใช้ในการเซฟข้อมูลผู้ใช้
     const handleSaveUserdata = async () => {
+        // Validate inputs
+        const firstNameError = validateInput('firstName', firstName || '');
+        const lastNameError = validateInput('lastName', lastName || '');
+        const phoneNumberError = validateInput('phoneNumber', phoneNumber || '');
+
+        if (firstNameError || lastNameError || phoneNumberError) {
+            setErrors({
+                firstName: firstNameError,
+                lastName: lastNameError,
+                phoneNumber: phoneNumberError,
+            });
+            Swal.fire({
+                icon: 'warning',
+                title: 'Validation Error',
+                text: 'Please correct the highlighted fields.',
+                timer: 1500,
+                showConfirmButton: false,
+            });
+            return;
+        }
+
         const userData = {
             firstName,
             lastName,
-            phoneNumber
+            phoneNumber,
         };
 
         if (userID) {
@@ -97,9 +139,8 @@ export default function Page() {
                     showConfirmButton: false,
                     willClose: () => {
                         window.location.reload();
-                    }
+                    },
                 });
-
             } catch (error: any) {
                 Swal.fire({
                     icon: 'error',
@@ -124,6 +165,11 @@ export default function Page() {
         setFirstName(initialUserData.firstName);
         setLastName(initialUserData.lastName);
         setPhoneNumber(initialUserData.phoneNumber);
+        setErrors({
+            firstName: '',
+            lastName: '',
+            phoneNumber: '',
+        });
         setIsEditing(false);
     };
 
@@ -545,7 +591,7 @@ export default function Page() {
                             </div>
 
                             <div>
-                                <form action="#information" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
+                                <form action="#information" method="post" className='grid grid-cols-1 sm:grid-cols-2 sm:gap-y-6  gap-x-8'>
                                     <label htmlFor="username">
                                         <p>Username</p>
                                         <input
@@ -554,6 +600,7 @@ export default function Page() {
                                             value={username || ''}
                                             readOnly disabled
                                             className='bg-[#51536D] border-transparent' />
+                                        <p className="text-xs my-1 text-yellow-500 h-4"></p>
                                     </label>
                                     <label htmlFor="email">
                                         <p>Email address</p>
@@ -563,33 +610,46 @@ export default function Page() {
                                             value={email || ''}
                                             readOnly disabled
                                             className='bg-[#51536D] border-transparent' />
+                                        <p className="text-xs my-1 text-yellow-500 h-4"></p>
                                     </label>
                                     <label htmlFor="fname">
                                         <p>First Name</p>
                                         <input
                                             type="text"
                                             id="fname"
-                                            pattern='[A-Za-z]'
+                                            pattern="[A-Za-z]"
                                             value={firstName || ''}
                                             readOnly={!isEditing}
                                             disabled={!isEditing}
                                             className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
-                                            onChange={(e) => setFirstName(e.target.value)}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                setFirstName(value);
+                                                setErrors((prev) => ({ ...prev, firstName: validateInput('firstName', value) }));
+                                            }}
                                         />
+                                        <p className="text-xs my-1 text-yellow-500 h-4">{errors.firstName}</p>
                                     </label>
+
                                     <label htmlFor="lname">
                                         <p>Last Name</p>
                                         <input
                                             type="text"
                                             id="lname"
-                                            pattern='[A-Za-z]'
+                                            pattern="[A-Za-z]"
                                             value={lastName || ''}
                                             readOnly={!isEditing}
                                             disabled={!isEditing}
                                             className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
-                                            onChange={(e) => setLastName(e.target.value)}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                setLastName(value);
+                                                setErrors((prev) => ({ ...prev, lastName: validateInput('lastName', value) }));
+                                            }}
                                         />
+                                        <p className="text-xs my-1 text-yellow-500 h-4">{errors.lastName}</p>
                                     </label>
+
                                     <label htmlFor="phone">
                                         <p>Phone Number</p>
                                         <input
@@ -602,8 +662,13 @@ export default function Page() {
                                             readOnly={!isEditing}
                                             disabled={!isEditing}
                                             className={!isEditing ? 'bg-[#51536D] border-transparent' : ''}
-                                            onChange={(e) => setPhoneNumber(e.target.value)}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                setPhoneNumber(value);
+                                                setErrors((prev) => ({ ...prev, phoneNumber: validateInput('phoneNumber', value) }));
+                                            }}
                                         />
+                                        <p className="text-xs my-1 text-yellow-500 h-4">{errors.phoneNumber}</p>
                                     </label>
                                 </form>
                             </div>
@@ -659,7 +724,10 @@ export default function Page() {
                                                     </div>
                                                 </div>
 
-                                                <form action="#address" method="post" className='grid grid-cols-2 gap-y-10 gap-x-8'>
+                                                <form
+                                                    action="#address"
+                                                    method="post"
+                                                    className='grid grid-cols-1 sm:grid-cols-2 gap-y-10 gap-x-8'>
                                                     <div>
                                                         <label htmlFor="province_id" className='hidden'>
                                                             <p>Province</p>
@@ -746,7 +814,7 @@ export default function Page() {
                                                         </select>
                                                     </div>
 
-                                                    <label htmlFor="address" className='col-span-2 relative'>
+                                                    <label htmlFor="address" className='col-span-1 sm:col-span-2 relative'>
                                                         <textarea
                                                             className={`resize-none border-transparent  ${!isEditingAddress ? 'bg-[#51536D]' : ''}`}
                                                             placeholder='Address Detail such as House number, Apartment name, Condo, Village name '
