@@ -54,3 +54,29 @@ export const checkUserExists = async (data: { email?: string; username?: string;
         throw new Error(error.response?.data?.error || 'Failed to check user existence');
     }
 };
+
+// for Admin
+export const getAllUsersForAdmin = async (token: string) => {
+    try {
+        console.log("Fetching all orders for admin...");
+        const response = await fetch("http://localhost:3001/api/v1/user/admin/users", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`, // ส่ง token สำหรับการตรวจสอบสิทธิ์
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to fetch all users for admin");
+        }
+
+        const data = await response.json();
+        console.log("All Users for Admin:", data);
+        return data;
+    } catch (error) {
+        console.error("Error fetching all users for admin:", error);
+        throw error;
+    }
+};

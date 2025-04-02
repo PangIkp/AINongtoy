@@ -1,215 +1,337 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import {
-  Search,
-  ArrowUp,
-  ArrowDown,
-  Filter,
-  Ellipsis,
-  Eye,
-  Edit,
-  Trash,
-  Plus,
-} from "lucide-react";
+  getAllOrdersForAdmin,
+  deleteOrderByAdmin,
+  updateOrderByAdmin,
+} from "@/api/orderAPI";
+import { Table, Dropdown, Menu, Input, Form, Select } from "antd";
+import { Ellipsis, Eye, Edit, Trash } from "lucide-react";
+import { ColumnType } from "antd/es/table";
+import { Button } from "antd";
+import dayjs from "dayjs";
+import OrderModal from "../components/OrderModal";
 
-const orders = Array(8).fill({
-  orderId: "67ce8829cb353540c2634df0",
-  createdAt: "2025-03-20 11:43:01",
-  customer: "Somchai Jaidee",
-  name: "The dragon",
-  qty: 3,
-  total: "2,500",
-  // arttoy: "https://pol...",
-  // confirmation: "https://pol...",
-  payment: "Unpaid",
-  status: "Pending",
-});
-
-export default function OrderDashboard() {
+export default function OrderManagement() {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isNewest, setIsNewest] = useState(true);
-  const [isPaid, setIsPaid] = useState(true);
-  const [isAll, setIsAll] = useState(true);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [token, setToken] = useState<string | null>(null);
+  const [editOrder, setEditOrder] = useState<any | null>(null);
+  const [editingKey, setEditingKey] = useState<string | null>(null);
+  const isEditing = (record: any) => record && record._id === editingKey;
+  const [form] = Form.useForm();
+  const [searchText, setSearchText] = useState("");
 
-  const [selectedStatus, setSelectedStatus] = useState("All");
-  const orderStatusList = [
-    "All",
-    "Pending",
-    "Processing",
-    "Shipped",
-    "Delivered",
-  ];
+  interface EditableColumnType extends ColumnType<any> {
+    editable?: boolean;
+  }
 
-  const [selectedIndex, setSelectedIndex] = useState(null); // menu of order
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
 
-  const toggleSort = () => {
-    setIsNewest(!isNewest);
-  };
+  useEffect(() => {
+    const fetchAdminOrders = async () => {
+      if (!token) return;
+      try {
+        const data = await getAllOrdersForAdmin(token);
+        setOrders(data.data || []);
+      } catch (error) {
+        console.error("Error fetching admin orders:", error);
+      }
+    };
+    if (token) {
+      fetchAdminOrders();
+    }
+  }, [token]);
 
-  const togglePaymentStatus = () => {
-    if (isAll) {
-      setIsAll(false); // ถ้าเป็น "All" เปลี่ยนเป็น "Paid" หรือ "Unpaid"
-    } else {
-      setIsPaid(!isPaid); // สลับสถานะ "Paid" หรือ "Unpaid"
+  const handleDelete = async (id: string) => {
+    if (!token) return;
+    try {
+      await deleteOrderByAdmin(token, id);
+      setOrders((prevOrders) => prevOrders.filter((order) => order._id !== id));
+    } catch (error) {
+      console.error("Error deleting order:", error);
     }
   };
 
-  const handleMenuClick = (index: any) => {
-    setSelectedIndex(selectedIndex === index ? null : index); // Toggle the menu for each row
+  const filteredOrders = orders.filter((order) =>
+    order._id.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const handleEdit = (order: any) => {
+    setEditOrder(order);
+    setEditingKey(order._id); // ตั้งค่า `_id` ของแถวที่กำลังแก้ไข
+    form.setFieldsValue(order); // กำหนดค่าลงในฟอร์ม
+  };
+
+  const EditableCell: React.FC<any> = ({
+    editable,
+    children,
+    dataIndex,
+    record,
+    ...restProps
+  }) => {
+    const editing = isEditing(record);
+    return (
+      <td {...restProps}>
+        {editable && editing ? (
+          <Form.Item
+            name={dataIndex}
+            style={{ margin: 0 }}
+            rules={[
+              {
+                required: true,
+                message: `Please enter ${dataIndex}`,
+              },
+            ]}
+          >
+            {dataIndex === "status" ? (
+              <Select>
+                <Select.Option value="Pending">Pending</Select.Option>
+                <Select.Option value="Processing">Processing</Select.Option>
+                <Select.Option value="Shipped">Shipped</Select.Option>
+                <Select.Option value="Delivered">Delivered</Select.Option>
+                <Select.Option value="Cancelled">Cancelled</Select.Option>{" "}
+                {/* Fixed the duplicate value */}
+              </Select>
+            ) : dataIndex === "paymentStatus" ? (
+              <Select>
+                <Select.Option value="Unpaid">Unpaid</Select.Option>
+                <Select.Option value="Paid">Paid</Select.Option>
+                <Select.Option value="Refunded">Refunded</Select.Option>
+              </Select>
+            ) : (
+              <Input />
+            )}
+          </Form.Item>
+        ) : (
+          children
+        )}
+      </td>
+    );
+  };
+
+  const handleSave = async (values: any) => {
+    if (!token) return;
+
+    try {
+      const updatedOrder = { ...editOrder, ...values }; // รวมค่าที่แก้ไขเข้ากับข้อมูลเก่า
+      await updateOrderByAdmin(token, updatedOrder._id, values);
+
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === updatedOrder._id ? updatedOrder : order
+        )
+      );
+
+      setEditOrder(null);
+      setEditingKey(null); // ออกจากโหมดแก้ไข
+    } catch (error) {
+      console.error("Error updating order:", error);
+    }
+  };
+
+  const columns: EditableColumnType[] = [
+    {
+      title: "Order ID",
+      dataIndex: "_id",
+      key: "_id",
+    },
+    {
+      title: <div className="flex items-center gap-2">Created at</div>,
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text: string) => dayjs(text).format("DD/MM/YYYY HH:mm"),
+      sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
+    },
+    {
+      title: "Customer",
+      dataIndex: "user",
+      key: "user",
+    },
+    {
+      title: <div className="flex items-center gap-2">Name</div>,
+      dataIndex: "name",
+      key: "name",
+      editable: true,
+      sorter: (a, b) => a.name.localeCompare(b.name),
+    },
+    {
+      title: "Qty",
+      dataIndex: "quantity",
+      key: "quantity",
+      editable: true,
+      sorter: (a, b) => a.quantity - b.quantity,
+    },
+    {
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+      editable: true,
+      sorter: (a, b) => a.total - b.total,
+    },
+    {
+      title: "Confirmation",
+      dataIndex: "paymentStatus",
+      key: "paymentStatus",
+      editable: true,
+      sorter: (a, b) => a.paymentStatus.localeCompare(b.paymentStatus),
+    },
+
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      editable: true,
+      sorter: (a, b) => a.status.localeCompare(b.status),
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_: any, record: any) => {
+        const editing = isEditing(record);
+        return editing ? (
+          <div className="flex gap-2">
+            <Button
+              style={{
+                color: "#B5E89D",
+                backgroundColor: "transparent",
+                borderColor: "transparent",
+              }}
+              onClick={() => form.submit()}
+            >
+              Save
+            </Button>
+            <Button
+              style={{
+                color: "#FFA4A4",
+              }}
+              type="link"
+              danger
+              onClick={() => {
+                setEditOrder(null);
+                setEditingKey(null);
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
+        ) : (
+          <Dropdown
+            menu={{
+              className: "custom-menu",
+              items: [
+                {
+                  key: "view",
+                  label: (
+                    <div className="menu-item-content">
+                      <Eye size={16} />
+                      <span className="ml-2">View</span>{" "}
+                      {/* Add a margin-left to create space between the icon and text */}
+                    </div>
+                  ),
+                  onClick: () => handleViewOrder(record),
+                },
+                {
+                  key: "edit",
+                  label: (
+                    <div className="menu-item-content">
+                      <Edit size={16} />
+                      <span className="ml-2">Edit</span>{" "}
+                      {/* Add a margin-left to create space between the icon and text */}
+                    </div>
+                  ),
+                  onClick: () => handleEdit(record),
+                },
+                {
+                  key: "delete",
+                  label: (
+                    <div className="menu-item-content">
+                      <Trash size={16} />
+                      <span className="ml-2">Delete</span>{" "}
+                      {/* Add a margin-left to create space between the icon and text */}
+                    </div>
+                  ),
+                  danger: true,
+                  onClick: () => handleDelete(record._id),
+                },
+              ],
+            }}
+          >
+            <Ellipsis className="cursor-pointer" />
+          </Dropdown>
+        );
+      },
+    },
+  ];
+
+  const mergedColumns: ColumnType<any>[] = columns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record: any) => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title as string, // Ensure title is of type string
+        key: col.key,
+      }),
+    };
+  });
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+
+  const handleViewOrder = (order: any) => {
+    setSelectedOrder(order);
+    setIsModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setSelectedOrder(null);
   };
 
   return (
-    <div className="text-white bg-[#212121] flex">
-      {/* Pass isCollapsed and setIsCollapsed to Sidebar */}
+    <div className="text-white bg-[#212121] h-screen overflow-hidden">
       <Sidebar setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
-
-      {/* Content area with dynamic margin-left */}
       <div
-        className={`flex-1 p-6 overflow-y-auto transition-all duration-300 ${
-          isCollapsed ? "ml-16" : "ml-[130px]"
+        className={`flex-1 p-6 transition-all duration-300 ${
+          isCollapsed ? "ml-16" : "ml-[155px]"
         }`}
       >
         <h1 className="text-3xl font-bold mb-4">Orders</h1>
-
-        <div className="grid grid-cols-5 gap-4 mb-8">
-          <Card title="Total orders" value="120" />
-          <Card title="Total order amount" value="120,000 ฿" />
-          <Card title="Avg. order value" value="1,000 ฿" />
-          <Card title="Order quantity" value="24" />
-          <Card title="Returns" value="0" />
-        </div>
-
-        <div className="mb-8 flex gap-2 items-center">
-          <div className="relative flex-1 max-w-[400px]">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-            />
-            <input
-              type="text"
-              placeholder="Find order..."
-              className="p-2 pl-10 bg-[#2F2F2F] rounded-md w-full border border-[#5B5B5B] text-white focus:outline-none mb-1"
-            />
-          </div>
-
-          <button
-            onClick={toggleSort}
-            className="border border-[#5B5B5B] bg-[#212121] text-[14px] font-medium flex items-center gap-2 py-2 rounded-md hover:bg-[#2F2F2F]"
-          >
-            {isNewest ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
-            {isNewest ? "Newest" : "Oldest"}
-          </button>
-
-          <button
-            onClick={togglePaymentStatus}
-            className="border border-[#5B5B5B] bg-[#212121] text-[14px] font-medium py-2 rounded-md hover:bg-[#2F2F2F] h-full flex items-center gap-2 px-4"
-          >
-            <Filter size={16} className="text-gray-400" />
-            {isAll ? "All" : isPaid ? "Paid" : "Unpaid"}{" "}
-            {/* แสดง All, Paid, Unpaid */}
-          </button>
-
-          <select
-            className="border border-[#5B5B5B] bg-[#212121] w-[140px] text-[14px] font-medium rounded-md hover:bg-[#2F2F2F] text-white mb-1"
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-          >
-            {orderStatusList.map((status) => (
-              <option
-                key={status}
-                value={status}
-                className="bg-[#212121] text-white"
-              >
-                {status}
-              </option>
-            ))}
-          </select>
-
-          <button className="ml-auto text-white text-[14px] py-2 px-2">
-            <Plus size={18} className="inline-block mr-1" /> 
-            Create order
-          </button>
-        </div>
-
-        <div className="rounded-lg overflow-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-gray-700 text-[#B8B8B8]">
-                {[
-                  "Order ID",
-                  "Created at",
-                  "Customer",
-                  "Name",
-                  "Qty",
-                  "Total",
-                  // "Arttoy",
-                  // "Confirmation",
-                  "Payment",
-                  "Status",
-                  "  ",
-                ].map((header) => (
-                  <th key={header} className="p-2 text-sm font-medium">
-                    {header === "" ? (
-                      <span className="inline-block text-xl cursor-pointer">
-                        {/* Use the ArrowDown icon from lucide-react */}
-                      </span>
-                    ) : (
-                      header
-                    )}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order, index) => (
-                <tr key={index} className="border-b border-gray-700 text-sm">
-                  {Object.values(order).map((value, idx) => (
-                    <td key={idx} className="p-2">
-                      {String(value)}
-                    </td>
-                  ))}
-
-                  <td className="p-2 text-center">
-                    <Ellipsis
-                      className="w-5 cursor-pointer"
-                      onClick={() => handleMenuClick(index)} // Toggle menu on click
-                    />
-                    {/* Show menu only for the selected row */}
-                    {selectedIndex === index && (
-                      <div className="absolute bg-[#2F2F2F] border border-[#5B5B5B] rounded-lg shadow-lg p-2 w-10">
-                        <ul className="flex flex-col items-center justify-center">
-                          <li className="cursor-pointer p-1 text-[12px] hover:bg-[#525152] flex justify-center items-center">
-                            <Eye className="inline-block w-4 h-4" />
-                          </li>
-                          <li className="cursor-pointer p-1 text-[12px] hover:bg-[#525152] flex justify-center items-center">
-                            <Edit className="inline-block w-4 h-4" />
-                          </li>
-                          <li className="cursor-pointer p-1 text-[12px] hover:bg-[#525152] flex justify-center items-center">
-                            <Trash className="inline-block w-4 h-4 text-red-500" />
-                          </li>
-                        </ul>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Input.Search
+          placeholder="Search Order ID"
+          allowClear
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ width: 300, marginBottom: 16 }}
+        />
+        <Form form={form} component={false} onFinish={handleSave}>
+          <Table
+            components={{ body: { cell: EditableCell } }}
+            columns={mergedColumns}
+            dataSource={filteredOrders}
+            rowKey="_id"
+            pagination={{ pageSize: 10 }}
+            className="custom-table"
+            rowClassName={() => "custom-hover-row"}
+          />
+        </Form>
       </div>
-    </div>
-  );
-}
 
-function Card({ title, value }: { title: string; value: string }) {
-  return (
-    <div className="bg-[#2F2F2F] rounded-lg w-full">
-      <div className="bg-[#0AACF0] h-1 rounded-t-lg"></div> {/* Blue bar */}
-      <div className="p-4">
-        <p className="text-sm text-[#B8B8B8]">{title}</p>
-        <p className="text-xl font-semibold">{value}</p>
-      </div>
+      <OrderModal
+        isVisible={isModalVisible}
+        order={selectedOrder}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 }
