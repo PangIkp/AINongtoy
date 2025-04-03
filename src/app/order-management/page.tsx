@@ -174,6 +174,7 @@ export default function OrderManagement() {
       key: "total",
       editable: true,
       sorter: (a, b) => a.total - b.total,
+      render: (text: number) => text.toLocaleString()
     },
     {
       title: "Confirmation",
@@ -300,7 +301,7 @@ export default function OrderManagement() {
   };
 
   return (
-    <div className="text-white bg-[#212121] h-screen overflow-hidden">
+    <div className="text-white bg-[#212121] h-screen overflow-x-auto">
       <Sidebar setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
       <div
         className={`flex-1 p-6 transition-all duration-300 ${
