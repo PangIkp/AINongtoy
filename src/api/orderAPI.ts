@@ -116,27 +116,24 @@ export const deleteOrderByAdmin = async (token: string, id: string) => {
   }
 };
 
-export const updateOrderByAdmin = async (token: string, id: string, updateData: object) => {
+export const updateOrderByAdmin = async (token: string, id: string, updateData: Record<string, any>) => {
   try {
     console.log(`Updating order with ID: ${id}...`);
-    const response = await fetch(`http://localhost:3001/api/v1/order/admin/orders/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(updateData), // ส่งข้อมูลที่ต้องการอัปเดตใน body
-    });
+    const res = await axios.patch(
+      `http://localhost:3001/api/v1/order/admin/orders/${id}`,
+      updateData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to update order");
-    }
-
-    console.log("Order updated successfully");
-    return true;
-  } catch (error) {
-    console.error("Error updating order:", error);
+    console.log("Order updated successfully:", res.data);
+    return res.data;
+  } catch (error: any) {
+    console.error("Error updating order:", error?.response?.data || error);
     throw error;
   }
 };

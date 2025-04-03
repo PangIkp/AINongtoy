@@ -68,3 +68,35 @@ export const getAllUsersForAdmin = async (token: string) => {
       throw error;
     }
   };
+
+  export const updateUserForAdmin = async (id: string, updates: any, token: string) => {
+    try {
+      console.log(`Updating user with ID: ${id}...`);
+      const response = await fetch(`http://localhost:3001/api/v1/user/admin/users/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updates),
+      });
+  
+      console.log("Response Status:", response.status); // ตรวจสอบสถานะของการตอบกลับ
+      console.log("Response OK:", response.ok); // ตรวจสอบว่าเป็น OK หรือไม่
+  
+      // ตรวจสอบเนื้อหาที่ได้จาก server
+      const responseText = await response.text(); // รับข้อมูลเป็น text ก่อน
+      if (!response.ok) {
+        console.error("Error response:", responseText); // แสดงข้อมูลจาก API
+        throw new Error("Failed to update user");
+      }
+  
+      const data = JSON.parse(responseText); // แปลงจาก text เป็น JSON
+      console.log("User updated successfully:", data);
+      return data;
+    } catch (error) {
+      console.error("Error updating user:", error);
+      throw error;
+    }
+  };
+  

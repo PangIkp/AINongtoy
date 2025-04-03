@@ -304,7 +304,7 @@ export default function OrderManagement() {
       <Sidebar setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
       <div
         className={`flex-1 p-6 transition-all duration-300 ${
-          isCollapsed ? "ml-16" : "ml-[155px]"
+           isCollapsed ? "ml-16" : "ml-[140px]"
         }`}
       >
         <h1 className="text-3xl font-bold mb-4">Orders</h1>
