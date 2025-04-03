@@ -4,14 +4,15 @@ import Sidebar from "../components/Sidebar";
 import {
   getAllUsersForAdmin,
   updateUserForAdmin,
-  deleteUserForAdmin
+  deleteUserForAdmin,
 } from "@/api/userAPI";
 import { Table, Dropdown, Menu, Input, Form, Select } from "antd";
-import { Ellipsis, Eye, Edit, Trash } from "lucide-react";
+import { Ellipsis, Eye, Edit, Trash, Plus } from "lucide-react";
 import { ColumnType } from "antd/es/table";
 import { Button } from "antd";
 import dayjs from "dayjs";
 import UserModal from "../components/UserModal";
+import ModalForm from "../components/ModalForm";
 
 export default function UserManagement() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -22,6 +23,7 @@ export default function UserManagement() {
   const isEditing = (record: any) => record && record._id === editingKey;
   const [form] = Form.useForm();
   const [searchText, setSearchText] = useState("");
+  const [isFormVisible, setIsFormVisible] = useState(false);
 
   interface EditableColumnType extends ColumnType<any> {
     editable?: boolean;
@@ -49,6 +51,10 @@ export default function UserManagement() {
     }
   }, [token]);
 
+  const handleCreate = () => {
+    setIsFormVisible(!isFormVisible); // สลับการแสดงฟอร์ม
+  };
+
   const handleDelete = async (id: string) => {
     if (!token) return;
     try {
@@ -59,11 +65,11 @@ export default function UserManagement() {
       console.error("Error deleting user:", error);
     }
   };
-  
 
-  const filteredUsers = users.filter((user) =>
-    user._id.toLowerCase().includes(searchText.toLowerCase()) &&
-    user.firstName.toLowerCase().includes(searchText.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user._id.toLowerCase().includes(searchText.toLowerCase()) &&
+      user.firstName.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const handleEdit = (user: any) => {
@@ -80,7 +86,7 @@ export default function UserManagement() {
     ...restProps
   }) => {
     const editing = isEditing(record);
-    
+
     return (
       <td {...restProps}>
         {editable && editing ? (
@@ -97,14 +103,14 @@ export default function UserManagement() {
             {dataIndex === "fullName" ? (
               <div className="flex gap-2">
                 <Input
-                  defaultValue={record.firstName}  // แสดงชื่อที่เก็บไว้
+                  defaultValue={record.firstName} // แสดงชื่อที่เก็บไว้
                   onChange={(e) => {
                     record.firstName = e.target.value;
                   }}
                   placeholder="First Name"
                 />
                 <Input
-                  defaultValue={record.lastName}  // แสดงนามสกุลที่เก็บไว้
+                  defaultValue={record.lastName} // แสดงนามสกุลที่เก็บไว้
                   onChange={(e) => {
                     record.lastName = e.target.value;
                   }}
@@ -127,17 +133,18 @@ export default function UserManagement() {
       </td>
     );
   };
-  
-  
-  
 
   const handleSave = async (values: any) => {
     if (!token) return;
-  
+
     try {
       const updatedUser = { ...editUser, ...values }; // รวมค่าที่แก้ไขเข้ากับข้อมูลเก่า
-      const response = await updateUserForAdmin(updatedUser._id, updatedUser, token); // ส่งข้อมูลทั้งหมดที่ต้องการอัปเดต
-  
+      const response = await updateUserForAdmin(
+        updatedUser._id,
+        updatedUser,
+        token
+      ); // ส่งข้อมูลทั้งหมดที่ต้องการอัปเดต
+
       // ตรวจสอบการตอบกลับจาก API
       if (response) {
         setUsers((prevUsers) =>
@@ -152,7 +159,6 @@ export default function UserManagement() {
       console.error("Error updating user:", error);
     }
   };
-  
 
   const columns: EditableColumnType[] = [
     {
@@ -169,50 +175,49 @@ export default function UserManagement() {
     },
 
     {
-        title: <div className="flex items-center gap-2">First name</div>,
-        dataIndex: "firstName",
-        key: "firstName",
-        editable: true,
-        sorter: (a, b) => a.firstName.localeCompare(b.firstName),
-      },
+      title: <div className="flex items-center gap-2">First name</div>,
+      dataIndex: "firstName",
+      key: "firstName",
+      editable: true,
+      sorter: (a, b) => a.firstName.localeCompare(b.firstName),
+    },
 
-      {
-        title: <div className="flex items-center gap-2">Last name</div>,
-        dataIndex: "lastName",
-        key: "lastName",
-        editable: true,
-        sorter: (a, b) => a.lastName.localeCompare(b.lastName),
-      },
- 
-      
-      {
-        title: <div className="flex items-center gap-2">Username</div>,
-        dataIndex: "username",
-        key: "username",
-        editable: true,
-        sorter: (a, b) => a.username.localeCompare(b.username),
-      },
+    {
+      title: <div className="flex items-center gap-2">Last name</div>,
+      dataIndex: "lastName",
+      key: "lastName",
+      editable: true,
+      sorter: (a, b) => a.lastName.localeCompare(b.lastName),
+    },
 
-      {
-        title: <div className="flex items-center gap-2">Email</div>,
-        dataIndex: "email",
-        key: "email",
-        sorter: (a, b) => a.email.localeCompare(b.email),
-      },
+    {
+      title: <div className="flex items-center gap-2">Username</div>,
+      dataIndex: "username",
+      key: "username",
+      editable: true,
+      sorter: (a, b) => a.username.localeCompare(b.username),
+    },
 
-      {
-        title: <div className="flex items-center gap-2">Phone</div>,
-        dataIndex: "phoneNumber",
-        key: "phoneNumber",
-        editable: true,
-      },
+    {
+      title: <div className="flex items-center gap-2">Email</div>,
+      dataIndex: "email",
+      key: "email",
+      sorter: (a, b) => a.email.localeCompare(b.email),
+    },
 
-      {
-        title: <div className="flex items-center gap-2">Role</div>,
-        dataIndex: "role",
-        key: "role",
-        sorter: (a, b) => a.role.localeCompare(b.role),
-      },
+    {
+      title: <div className="flex items-center gap-2">Phone</div>,
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+      editable: true,
+    },
+
+    {
+      title: <div className="flex items-center gap-2">Role</div>,
+      dataIndex: "role",
+      key: "role",
+      sorter: (a, b) => a.role.localeCompare(b.role),
+    },
 
     {
       title: "Status",
@@ -325,10 +330,11 @@ export default function UserManagement() {
   const handleCloseModal = () => {
     setIsModalVisible(false);
     setSelectedUser(null);
+    setIsFormVisible(false);
   };
 
   return (
-        <div className="text-white bg-[#212121] h-screen overflow-x-auto">
+    <div className="text-white bg-[#212121] h-screen overflow-x-auto">
       <Sidebar setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
       <div
         className={`flex-1 p-6 transition-all duration-300 ${
@@ -336,12 +342,23 @@ export default function UserManagement() {
         }`}
       >
         <h1 className="text-3xl font-bold mb-4">Users</h1>
-        <Input.Search
-          placeholder="Search User ID"
-          allowClear
-          onChange={(e) => setSearchText(e.target.value)}
-          style={{ width: 300, marginBottom: 16 }}
-        />
+        <div className="flex justify-between w-full">
+          <Input.Search
+            placeholder="Search User ID"
+            allowClear
+            onChange={(e) => setSearchText(e.target.value)}
+            style={{ width: 300, marginBottom: 16 }}
+          />
+
+          <button
+            className="text-[14px] h-8 flex items-center gap-2"
+            onClick={handleCreate}
+          >
+            <Plus className="h-4 w-4" />
+            Create user
+          </button>
+        </div>
+
         <Form form={form} component={false} onFinish={handleSave}>
           <Table
             components={{ body: { cell: EditableCell } }}
@@ -359,6 +376,11 @@ export default function UserManagement() {
         isVisible={isModalVisible}
         user={selectedUser}
         onClose={handleCloseModal}
+      />
+
+      <ModalForm
+        isFormVisible={isFormVisible}
+        handleCloseModal={handleCloseModal}
       />
     </div>
   );
