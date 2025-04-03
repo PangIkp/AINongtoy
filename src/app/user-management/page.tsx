@@ -17,7 +17,7 @@ import ModalForm from "../components/ModalForm";
 export default function UserManagement() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string>("");
   const [editUser, setEditUser] = useState<any | null>(null);
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const isEditing = (record: any) => record && record._id === editingKey;
@@ -32,7 +32,7 @@ export default function UserManagement() {
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
-      setToken(storedToken);
+      setToken(storedToken);  // ถ้ามี token ให้เซ็ต
     }
   }, []);
 
@@ -378,10 +378,12 @@ export default function UserManagement() {
         onClose={handleCloseModal}
       />
 
-      <ModalForm
-        isFormVisible={isFormVisible}
-        handleCloseModal={handleCloseModal}
-      />
+<ModalForm
+  isFormVisible={isFormVisible}
+  handleCloseModal={handleCloseModal}
+  token={token} 
+/>
+
     </div>
   );
 }

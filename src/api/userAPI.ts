@@ -81,6 +81,34 @@ export const getAllUsersForAdmin = async (token: string) => {
     }
   };
 
+  export const createUserForAdmin = async (token: string, userData: object) => {
+    try {
+        console.log("Creating user for admin...");
+
+        const response = await fetch("http://localhost:3001/api/v1/user/admin/users", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`, // ส่ง token สำหรับการตรวจสอบสิทธิ์
+            },
+            body: JSON.stringify(userData), // ส่งข้อมูลผู้ใช้ใหม่
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to create user for admin");
+        }
+
+        const data = await response.json();
+        console.log("User created successfully:", data);
+        return data;
+    } catch (error) {
+        console.error("Error creating user for admin:", error);
+        throw error;
+    }
+};
+
+
   export const updateUserForAdmin = async (id: string, updates: any, token: string) => {
     try {
       console.log(`Updating user with ID: ${id}...`);

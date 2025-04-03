@@ -1,16 +1,62 @@
 // ModalForm.tsx
 import React from "react";
+import { createUserForAdmin } from "@/api/userAPI";
 
 interface ModalFormProps {
   isFormVisible: boolean;
   handleCloseModal: () => void;
+  token: string;
 }
 
 const ModalForm: React.FC<ModalFormProps> = ({
   isFormVisible,
   handleCloseModal,
+  token,
 }) => {
   if (!isFormVisible) return null;
+
+  const [formData, setFormData] = React.useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    username: "",
+    phoneNumber: "",
+    role: "user",
+    password: "",
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // สร้างตัวแปรเพื่อเก็บค่า confirmPassword จากฟอร์ม
+    const confirmPassword = (
+      document.getElementById("confirmPassword") as HTMLInputElement
+    ).value;
+
+    // ตรวจสอบว่า password กับ confirmPassword ตรงกันหรือไม่
+    if (formData.password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    try {
+      const createdUser = await createUserForAdmin(token, formData);
+      alert("User created successfully!");
+      handleCloseModal();
+    } catch (error) {
+      alert("Error creating user.");
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
@@ -23,13 +69,15 @@ const ModalForm: React.FC<ModalFormProps> = ({
           X
         </button>
 
-        <form className="grid grid-cols-2 gap-4 text-[14px] text-white">
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 text-[14px] text-white">
           <div>
             <label htmlFor="firstName">First name</label>
             <input
               type="text"
               id="firstName"
               name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
               className="mt-2 p-2 border w-full bg-[#2F2F2F] text-[12px] border border-[#5B5B5B] text-white"
             />
           </div>
@@ -40,6 +88,8 @@ const ModalForm: React.FC<ModalFormProps> = ({
               type="text"
               id="lastName"
               name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
               className="mt-2 p-2 border w-full bg-[#2F2F2F] text-[12px] border border-[#5B5B5B] text-white"
             />
           </div>
@@ -48,8 +98,10 @@ const ModalForm: React.FC<ModalFormProps> = ({
             <label htmlFor="userEmail">Email</label>
             <input
               type="email"
-              id="userEmail"
-              name="userEmail"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               className="mt-2 p-2 border w-full bg-[#2F2F2F] text-[12px] border border-[#5B5B5B] text-white"
             />
           </div>
@@ -58,18 +110,22 @@ const ModalForm: React.FC<ModalFormProps> = ({
             <label htmlFor="userName">Username</label>
             <input
               type="text"
-              id="userName"
-              name="userName"
+              id="username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
               className="mt-2 p-2 border w-full bg-[#2F2F2F] text-[12px] border border-[#5B5B5B] text-white"
             />
           </div>
 
           <div>
-            <label htmlFor="userPhone">Phone number</label>
+            <label htmlFor="phoneNumber">Phone number</label>
             <input
               type="text"
-              id="userPhone"
-              name="userPhone"
+              id="phoneNumber"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
               className="mt-2 p-2 border w-full bg-[#2F2F2F] text-[12px] border border-[#5B5B5B] text-white"
             />
           </div>
@@ -78,11 +134,14 @@ const ModalForm: React.FC<ModalFormProps> = ({
             <select
               id="role"
               name="role"
+              value={formData.role} // ใช้ value แทน selected
+              onChange={handleChange} // ใช้ onChange เพื่อจับการเปลี่ยนแปลง
               className="mt-2 p-2 border w-full bg-[#2F2F2F] text-[12px] text-white border border-[#5B5B5B] text-white"
             >
-              <option value="Admin" disabled selected>
+              <option value="" disabled>
                 Select role
-              </option>
+              </option>{" "}
+              {/* ค่า default ที่ไม่สามารถเลือกได้ */}
               <option value="admin">Admin</option>
               <option value="user">User</option>
             </select>
@@ -94,6 +153,8 @@ const ModalForm: React.FC<ModalFormProps> = ({
               type="password"
               id="password"
               name="password"
+              value={formData.password}
+              onChange={handleChange}
               className="mt-2 p-2 border w-full bg-[#2F2F2F] text-[12px] border border-[#5B5B5B] text-white"
             />
           </div>
