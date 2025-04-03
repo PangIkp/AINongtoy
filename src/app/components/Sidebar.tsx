@@ -17,7 +17,7 @@ export default function Sidebar({
   return (
     <div
       className={`fixed top-0 z-50 left-0 h-full bg-[#2F2F2F] text-white p-4 pt-6 flex flex-col items-center transition-all duration-300 ease-in-out ${
-        isCollapsed ? "w-16" : "w-33"
+        isCollapsed ? "w-16" : "w-[140px]"
       }`}
     >
       <img
