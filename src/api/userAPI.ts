@@ -100,3 +100,31 @@ export const getAllUsersForAdmin = async (token: string) => {
     }
   };
   
+  export const deleteUserForAdmin = async (token: string, id: string) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/v1/user/admin/users/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      console.log("Response Status:", response.status);
+      console.log("Response OK:", response.ok);
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error response:", errorData); // แสดงข้อมูลจาก API
+        throw new Error("Failed to delete user");
+      }
+  
+      const data = await response.json(); // รับข้อมูลเป็น JSON
+      console.log("User deleted successfully:", data);
+      return data;
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      throw error;
+    }
+  };
+  

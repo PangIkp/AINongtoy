@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import {
   getAllUsersForAdmin,
   updateUserForAdmin,
+  deleteUserForAdmin
 } from "@/api/userAPI";
 import { Table, Dropdown, Menu, Input, Form, Select } from "antd";
 import { Ellipsis, Eye, Edit, Trash } from "lucide-react";
@@ -48,15 +49,17 @@ export default function UserManagement() {
     }
   }, [token]);
 
-//   const handleDelete = async (id: string) => {
-//     if (!token) return;
-//     try {
-//       await deleteOrderForAdmin(token, id);
-//       setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
-//     } catch (error) {
-//       console.error("Error deleting user:", error);
-//     }
-//   };
+  const handleDelete = async (id: string) => {
+    if (!token) return;
+    try {
+      await deleteUserForAdmin(token, id);
+      // อัปเดต UI โดยการลบผู้ใช้จาก state
+      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
+  
 
   const filteredUsers = users.filter((user) =>
     user._id.toLowerCase().includes(searchText.toLowerCase()) &&
@@ -283,7 +286,7 @@ export default function UserManagement() {
                     </div>
                   ),
                   danger: true,
-                //   onClick: () => handleDelete(record._id),
+                  onClick: () => handleDelete(record._id),
                 },
               ],
             }}
