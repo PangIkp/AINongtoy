@@ -36,13 +36,13 @@ export default function Contact() {
                 }
                 break;
             case "email":
-                if (!/^[a-zA-Z][a-zA-Z0-9._]*@(gmail\.com|hotmail\.com|hotmail\.co\.th|yahoo\.com|outlook\.com|domain\.co\.th)$/.test(value)) {
-                    error = "Email : must be ( .com , .co.th )";
+                if (!/^[a-zA-Z][^\s@]*@[a-zA-Z]{2,}(\.[a-zA-Z]{2,}){1,2}$/.test(value)) {
+                    error = "Email: Invalid.";
                 }
                 break;
             case "phone":
                 if (!/^0\d{2}-\d{3}-\d{4}$/.test(value)) {
-                    error = "Phone Number : must be start with 0 and 10 digits";
+                    error = "Phone: 10 digits, start with 0.";
                 }
                 break;
             default:
@@ -108,7 +108,7 @@ export default function Contact() {
     };
 
     return (
-        <div className="place-items-center h-[550px] my-20 mx-[13vw]">
+        <div className="place-items-center h-[600px] my-20 mx-[13vw]">
             <div className="max-w-7xl w-full h-full flex gap-x-12">
                 {/* ฝั่งซ้าย (Form) */}
                 <div className="w-full h-full">
@@ -120,9 +120,9 @@ export default function Contact() {
                             </h1>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="flex flex-col w-full h-[60%] mt-[45px]">
+                        <form onSubmit={handleSubmit} className="flex flex-col w-full h-[60%] mt-[30px]">
                             <div className="flex flex-col justify-between h-full w-full">
-                                <div className="grid grid-cols-2 gap-x-4">
+                                <div className="grid sm:grid-cols-2 grid-cols-1 gap-x-4">
                                     <div>
                                         <label htmlFor="fName" className="text-[16px]">
                                             First Name
@@ -136,6 +136,7 @@ export default function Contact() {
                                                 type="text"
                                                 required
                                             />
+                                            <p className="text-xs mt-1 text-yellow-500 h-4">{errors.fName}</p>
                                         </label>
                                     </div>
 
@@ -152,6 +153,7 @@ export default function Contact() {
                                                 type="text"
                                                 required
                                             />
+                                            <p className="text-xs mt-1 text-yellow-500 h-4">{errors.lName}</p>
                                         </label>
                                     </div>
                                 </div>
@@ -168,6 +170,7 @@ export default function Contact() {
                                         type="email"
                                         required
                                     />
+                                    <p className="text-xs mt-1 text-yellow-500 h-4">{errors.email}</p>
                                 </label>
                                 <label htmlFor="phone" className="text-[16px]">
                                     Phone Number
@@ -181,17 +184,14 @@ export default function Contact() {
                                         type="text"
                                         required
                                     />
+                                    <p className="text-xs mt-1 text-yellow-500 h-4">{errors.phone}</p>
                                 </label>
+                                <button className="mt-2 py-2" type="submit" disabled={!isFormValid()}>Submit</button>
 
-                                <button className="h-[45px] mt-3" type="submit" disabled={!isFormValid()}>Submit</button>
                             </div>
                         </form>
-                        <div className="h-[80px] mt-1">
-                            {errors.fName && <p className="text-yellow-500 text-sm">{errors.fName}</p>}
-                            {errors.lName && <p className="text-yellow-500 text-sm">{errors.lName}</p>}
-                            {errors.email && <p className="text-yellow-500 text-sm">{errors.email}</p>}
-                            {errors.phone && <p className="text-yellow-500 text-sm">{errors.phone}</p>}
-                            {successMessage && <p className="text-green-500 text-sm">{successMessage}</p>}
+                        <div className="h-4 mt-1">
+                            <p className="text-green-500 text-sm h-4 m-1">{successMessage}</p>
                         </div>
                     </div>
                 </div>

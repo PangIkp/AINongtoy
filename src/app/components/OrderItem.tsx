@@ -61,8 +61,14 @@ const OrderItemList: React.FC<OrderItemListProps> = ({ orders }) => {
                   src={order.imageUrl}
                   alt={order.name}
                 />
-                <div className="flex flex-col justify-center gap-2">
-                  <p className="font-semibold text-white">{order.name}</p>
+                <div className="flex flex-col justify-between w-full ">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                    <p className="font-semibold text-white">{order.name}</p>
+                    <div className={`${statusColors[order.status] || "text-white"}`}>
+                      <p className="text-[13px] font-medium">{order.status}</p>
+                    </div>
+                  </div>
+
                   <p className="text-sm text-[#B3B0B0]">Size: {order.size}</p>
                   <p className="text-sm text-[#B3B0B0]">
                     Quantity: {order.quantity}
@@ -72,9 +78,7 @@ const OrderItemList: React.FC<OrderItemListProps> = ({ orders }) => {
                   </p>
                 </div>
               </div>
-              <div className={`${statusColors[order.status] || "text-white"}`}>
-                <p className="text-[13px] font-medium mt-3">{order.status}</p>
-              </div>
+
             </div>
           );
         })

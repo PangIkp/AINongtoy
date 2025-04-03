@@ -43,9 +43,9 @@ export default function UserManagement() {
 
   const filteredUsers = users.filter((user) =>
     user._id.toLowerCase().includes(searchText.toLowerCase()) ||
-    user.firstName.toLowerCase().includes(searchText.toLowerCase()) 
+    user.firstName.toLowerCase().includes(searchText.toLowerCase())
   );
-  
+
 
   const handleCloseModal = () => {
     setIsModalVisible(false);
@@ -56,26 +56,26 @@ export default function UserManagement() {
     editable?: boolean;
   }
 
-//    const handleSave = async (values: any) => {
-//       if (!token) return;
-  
-//       try {
-//         const updatedOrder = { ...editUser, ...values }; // รวมค่าที่แก้ไขเข้ากับข้อมูลเก่า
-//         await updateUserByAdmin(token, updatedUser._id, values);
-  
-//         setUsers((prevUsers) =>
-//             prevUsers.map((user) =>
-//             user._id === updatedUser._id ? updatedUser : order
-//           )
-//         );
-  
-//         setEditUser(null);
-//         setEditingKey(null); // ออกจากโหมดแก้ไข
-//       } catch (error) {
-//         console.error("Error updating user:", error);
-//       }
-//     };
-    
+  //    const handleSave = async (values: any) => {
+  //       if (!token) return;
+
+  //       try {
+  //         const updatedOrder = { ...editUser, ...values }; // รวมค่าที่แก้ไขเข้ากับข้อมูลเก่า
+  //         await updateUserByAdmin(token, updatedUser._id, values);
+
+  //         setUsers((prevUsers) =>
+  //             prevUsers.map((user) =>
+  //             user._id === updatedUser._id ? updatedUser : order
+  //           )
+  //         );
+
+  //         setEditUser(null);
+  //         setEditingKey(null); // ออกจากโหมดแก้ไข
+  //       } catch (error) {
+  //         console.error("Error updating user:", error);
+  //       }
+  //     };
+
   const columns: EditableColumnType[] = [
     {
       title: "User ID",
@@ -135,12 +135,12 @@ export default function UserManagement() {
     },
 
     {
-        title: "Status",
-        dataIndex: "status",
-        key: "status",
-        render: (text) => <span>{text}</span>,
-        sorter: (a, b) => a.role.localeCompare(b.status),
-      },
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (text) => <span>{text}</span>,
+      sorter: (a, b) => a.role.localeCompare(b.status),
+    },
 
     {
       title: "Actions",
@@ -153,9 +153,8 @@ export default function UserManagement() {
     <div className="text-white bg-[#212121] h-screen overflow-hidden">
       <Sidebar setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
       <div
-        className={`flex-1 p-6 transition-all duration-300 ${
-          isCollapsed ? "ml-16" : "ml-[155px]"
-        }`}
+        className={`flex-1 p-6 transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[155px]"
+          }`}
       >
         <h1 className="text-3xl font-bold mb-4">Users</h1>
         <Input.Search

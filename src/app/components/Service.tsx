@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Service() {
   return (
-    <div className="h-auto px-28 py-20">
+    <div className="h-auto sm:px-28 px-4 py-20">
       <p className="text-[#0AACF0] font-semibold mb-4">SERVICES</p>
       <div className="flex flex-col mt-6 gap-10">
         <div className="w-full space-y-2">

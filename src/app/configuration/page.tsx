@@ -53,7 +53,10 @@ export default function Configuration() {
           </section>
 
           {/* อัปเดตจำนวน configCount จาก ConfigCard */}
-          <ConfigCard onConfigCountChange={setConfigCount} />
+          <div className="px-3" >
+            <ConfigCard onConfigCountChange={setConfigCount} />
+          </div>
+
         </div>
       </div>
       <Footer />

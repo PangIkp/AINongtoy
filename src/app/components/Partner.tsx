@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Partner() {
   return (
-    <div className="bg-[#1B1D36] h-auto px-28 py-20">
+    <div className="bg-[#1B1D36] h-auto  py-20 sm:px-28 px-4">
       <p className="text-[#0AACF0] font-semibold mb-4">PARTNER</p>
       <p className="text-[30px] sm:text-[40px] md:text-[45px] font-semibold">
         KTP Corporation (Thailand) Co.,Ltd.

@@ -168,7 +168,7 @@ const Config = () => {
           <Loader className="animate-spin text-[#0CACF3]" size={50} />
         </div>
       ) : (
-        <div className="md:block lg:flex gap-10">
+        <div className="md:block lg:flex gap-x-10">
           {/* Left - Image */}
           <div className="md:w-full lg:w-1/2">
             <img
@@ -212,7 +212,7 @@ const Config = () => {
           <div className="w-full">
             {/* Size */}
             <h3 className="font-semibold mb-1">Size</h3>
-            <div className="flex justify-between gap-2">
+            <div className="flex justify-between gap-2 sm:flex-nowrap flex-wrap">
               {["Small", "Medium", "Large"].map((s) => (
                 <button
                   key={s}
@@ -227,11 +227,11 @@ const Config = () => {
 
             {/* Material */}
             <h3 className="font-semibold mt-4 mb-1">Material</h3>
-            <div className="flex justify-between gap-2">
+            <div className="flex justify-between gap-2 sm:flex-nowrap flex-wrap">
               {["PLA", "Resin", "PVC", "Metal"].map((m) => (
                 <button
                   key={m}
-                  className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${material === m ? "border-[#0CACF3]" : "border-gray-600"
+                  className={`px-4 w-full  text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${material === m ? "border-[#0CACF3]" : "border-gray-600"
                     }`}
                   onClick={() => setMaterial(m)}
                 >
@@ -242,7 +242,7 @@ const Config = () => {
 
             {/* Painting */}
             <h3 className="font-semibold mt-4 mb-1">Painting</h3>
-            <div className="flex justify-between gap-2">
+            <div className="flex justify-between gap-2 sm:flex-nowrap flex-wrap">
               {["Hand-painting", "Airbrush", "Pad Printing"].map((p) => (
                 <button
                   key={p}
@@ -257,7 +257,7 @@ const Config = () => {
 
             {/* Assembly */}
             <h3 className="font-semibold mt-4 mb-1">Assembly</h3>
-            <div className="flex justify-between gap-2">
+            <div className="flex justify-between gap-2 sm:flex-nowrap flex-wrap">
               {["Fixed Pose", "Articulated Joints", "Magnet Joints"].map((a) => (
                 <button
                   key={a}
@@ -272,7 +272,7 @@ const Config = () => {
 
             {/* Quantity */}
             <h3 className="font-semibold mt-4 mb-1">Quantity</h3>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between sm:flex-nowrap flex-wrap gap-y-4">
               <div className="space-x-4">
                 <button
                   className="px-3 py-1 bg-transparent hover:bg-transparent border border-gray-700 rounded-lg"

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-// import useScreen from 'use-screen';
+
 const images = [
   "/Images/AINongtoy/Princess.jpg",
   "/Images/AINongtoy/Rabbit.jpg",
@@ -13,25 +13,26 @@ const images = [
 export default function ImageSlider() {
   const [activeIndex, setActiveIndex] = useState(2);
   const [isMobile, setIsMobile] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   // ตรวจจับการเปลี่ยนขนาดหน้าจอ
   useEffect(() => {
-    // ตรวจสอบ window เฉพาะฝั่งไคลเอนต์
-    setIsMobile(window.innerWidth < 1280);
-
-    const handleResize = () => {
+    const updateScreenSize = () => {
       setIsMobile(window.innerWidth < 1280);
+      setIsSmallScreen(window.innerWidth < 500);
     };
 
-    // เพิ่ม event listener
-    window.addEventListener("resize", handleResize);
+    // เรียกครั้งแรกและเพิ่ม event listener
+    updateScreenSize();
+    window.addEventListener("resize", updateScreenSize);
 
     // Cleanup function ตอน component unmount
-    return () => window.removeEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", updateScreenSize);
   }, []);
 
   const handlePrev = () => {
     setActiveIndex((prev) => {
+      if (isSmallScreen) return prev === 0 ? images.length - 1 : prev - 1; // Small screen: วนกลับปกติ
       if (isMobile) return prev === 0 ? 1 : 0; // Mobile: วนกลับระหว่าง 0 ↔ 1
       return prev > 0 ? prev - 1 : images.length - 1; // Desktop: วนกลับตามปกติ
     });
@@ -39,6 +40,7 @@ export default function ImageSlider() {
 
   const handleNext = () => {
     setActiveIndex((prev) => {
+      if (isSmallScreen) return prev === images.length - 1 ? 0 : prev + 1; // Small screen: วนกลับปกติ
       if (isMobile) return prev === 1 ? 0 : 1; // Mobile: วนกลับระหว่าง 0 ↔ 1
       return prev < images.length - 1 ? prev + 1 : 0; // Desktop: วนกลับตามปกติ
     });
@@ -51,31 +53,30 @@ export default function ImageSlider() {
         className="p-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-all"
         onClick={handlePrev}
       >
-        {" "}
         <p className="hidden">a</p>
         <ChevronLeft size={24} />
       </button>
 
       {/* Container ของภาพ */}
       <div
-        className={`${
-          isMobile
+        className={`${isSmallScreen
+          ? "flex items-center justify-center w-[200px]" // แสดง 1 ภาพ
+          : isMobile
             ? "flex items-center justify-center overflow-x-auto whitespace-nowrap gap-4 w-[360px]" // แสดง 2 ภาพและเลื่อนได้
             : "grid grid-cols-5 gap-4 w-[914px] h-[200px]" // แสดง 5 ภาพเต็ม ไม่ต้องเลื่อน
-        }`}
+          }`}
       >
         {images
-          .slice(0, isMobile ? 2 : images.length) // จำกัด 2 ภาพเมื่อเป็น mobile
+          .slice(0, isSmallScreen ? 1 : isMobile ? 2 : images.length) // จำกัด 1 ภาพเมื่อเป็น small screen
           .map((src, index) => {
             const isActive = index === activeIndex;
             return (
               <motion.div
                 key={index}
-                className={`relative rounded-lg overflow-hidden transition-all duration-500 ${
-                  isActive
-                    ? "w-[170px] h-[200px] opacity-100"
-                    : "w-[160px] h-[190px] opacity-70"
-                }`}
+                className={`relative rounded-lg overflow-hidden transition-all duration-500 ${isActive
+                  ? "w-[170px] h-[200px] opacity-100"
+                  : "w-[160px] h-[190px] opacity-70"
+                  }`}
               >
                 <img
                   src={src}
@@ -95,7 +96,6 @@ export default function ImageSlider() {
         className="p-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-all"
         onClick={handleNext}
       >
-        {" "}
         <p className="hidden">a</p>
         <ChevronRight size={24} />
       </button>

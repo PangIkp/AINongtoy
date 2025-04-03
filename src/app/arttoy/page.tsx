@@ -25,7 +25,7 @@ export default function Arttoy() {
   useEffect(() => {
     const prompt = `${searchInput} ${selectedFilters.join(", ")} art toy`.trim();
     setFinalPrompt(prompt);
-    setArtToyData({prompt: prompt});
+    setArtToyData({ prompt: prompt });
     setLoadedImages(0); // Reset loading state when new images are fetched
   }, [searchInput, selectedFilters]);
 
@@ -69,7 +69,7 @@ export default function Arttoy() {
         </div>
       </div>
 
-      <div className="flex justify-between pl-10">
+      <div className="flex justify-between sm:pl-10 sm:px-0 px-4 sm:flex-row flex-col sm:pb-0 pb-3">
         {/* Filter updates selectedFilters */}
         <Filter onFilterChange={setSelectedFilters} />
 
@@ -79,12 +79,12 @@ export default function Arttoy() {
 
           <div className="p-10">
             {/* Show loading indicator until all images are loaded */}
-            {loadedImages < totalImages &&   (
+            {loadedImages < totalImages && (
               <p className="text-white text-center">Loading images... ({loadedImages}/{totalImages})</p>
             )}
 
             {/* Render images with onLoad handler */}
-            <ArttoyCard imageUrls={imageUrls} onImageLoad={handleImageLoad} isLoading={loadedImages < totalImages}/>
+            <ArttoyCard imageUrls={imageUrls} onImageLoad={handleImageLoad} isLoading={loadedImages < totalImages} />
           </div>
         </div>
       </div>
