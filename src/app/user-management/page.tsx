@@ -7,11 +7,12 @@ import {
   deleteUserForAdmin
 } from "@/api/userAPI";
 import { Table, Dropdown, Menu, Input, Form, Select } from "antd";
-import { Ellipsis, Eye, Edit, Trash } from "lucide-react";
+import { Ellipsis, Eye, Edit, Trash, Loader } from "lucide-react"; // เพิ่ม Loader
 import { ColumnType } from "antd/es/table";
 import { Button } from "antd";
 import dayjs from "dayjs";
 import UserModal from "../components/UserModal";
+import Swal from "sweetalert2";
 
 export default function UserManagement() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -19,6 +20,7 @@ export default function UserManagement() {
   const [token, setToken] = useState<string | null>(null);
   const [editUser, setEditUser] = useState<any | null>(null);
   const [editingKey, setEditingKey] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // เพิ่ม state สำหรับการโหลด
   const isEditing = (record: any) => record && record._id === editingKey;
   const [form] = Form.useForm();
   const [searchText, setSearchText] = useState("");
@@ -42,6 +44,8 @@ export default function UserManagement() {
         setUsers(data.data || []);
       } catch (error) {
         console.error("Error fetching admin users:", error);
+      } finally {
+        setIsLoading(false); // โหลดเสร็จ
       }
     };
     if (token) {
@@ -49,25 +53,32 @@ export default function UserManagement() {
     }
   }, [token]);
 
-<<<<<<< HEAD
-  const filteredUsers = users.filter((user) =>
-    user._id.toLowerCase().includes(searchText.toLowerCase()) ||
-    user.firstName.toLowerCase().includes(searchText.toLowerCase())
-  );
-
-=======
   const handleDelete = async (id: string) => {
     if (!token) return;
-    try {
-      await deleteUserForAdmin(token, id);
-      // อัปเดต UI โดยการลบผู้ใช้จาก state
-      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
-    } catch (error) {
-      console.error("Error deleting user:", error);
+
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteUserForAdmin(token, id);
+        // Update UI by removing the user from the state
+        setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+        Swal.fire("Deleted!", "The user has been deleted.", "success");
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        Swal.fire("Error!", "Failed to delete the user.", "error");
+      }
     }
   };
-  
->>>>>>> 43f5c0a2e1b9be490e929e9b6fe0d959dc1fec93
 
   const filteredUsers = users.filter((user) =>
     user._id.toLowerCase().includes(searchText.toLowerCase()) &&
@@ -80,31 +91,6 @@ export default function UserManagement() {
     form.setFieldsValue(user); // กำหนดค่าลงในฟอร์ม
   };
 
-<<<<<<< HEAD
-  interface EditableColumnType extends ColumnType<any> {
-    editable?: boolean;
-  }
-
-  //    const handleSave = async (values: any) => {
-  //       if (!token) return;
-
-  //       try {
-  //         const updatedOrder = { ...editUser, ...values }; // รวมค่าที่แก้ไขเข้ากับข้อมูลเก่า
-  //         await updateUserByAdmin(token, updatedUser._id, values);
-
-  //         setUsers((prevUsers) =>
-  //             prevUsers.map((user) =>
-  //             user._id === updatedUser._id ? updatedUser : order
-  //           )
-  //         );
-
-  //         setEditUser(null);
-  //         setEditingKey(null); // ออกจากโหมดแก้ไข
-  //       } catch (error) {
-  //         console.error("Error updating user:", error);
-  //       }
-  //     };
-=======
   const EditableCell: React.FC<any> = ({
     editable,
     children,
@@ -113,7 +99,7 @@ export default function UserManagement() {
     ...restProps
   }) => {
     const editing = isEditing(record);
-    
+
     return (
       <td {...restProps}>
         {editable && editing ? (
@@ -160,18 +146,15 @@ export default function UserManagement() {
       </td>
     );
   };
-  
-  
-  
 
   const handleSave = async (values: any) => {
     if (!token) return;
-  
+
     try {
-      const updatedUser = { ...editUser, ...values }; // รวมค่าที่แก้ไขเข้ากับข้อมูลเก่า
-      const response = await updateUserForAdmin(updatedUser._id, updatedUser, token); // ส่งข้อมูลทั้งหมดที่ต้องการอัปเดต
-  
-      // ตรวจสอบการตอบกลับจาก API
+      const updatedUser = { ...editUser, ...values }; // Combine edited values with the existing user data
+      const response = await updateUserForAdmin(updatedUser._id, updatedUser, token); // Send updated data to the API
+
+      // Check the API response
       if (response) {
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
@@ -179,14 +162,28 @@ export default function UserManagement() {
           )
         );
         setEditUser(null);
-        setEditingKey(null); // ออกจากโหมดแก้ไข
+        setEditingKey(null); // Exit edit mode
+
+        // Show success message
+        await Swal.fire({
+          title: "Success!",
+          text: "User details have been updated successfully.",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
       }
     } catch (error) {
       console.error("Error updating user:", error);
+
+      // Show error message
+      await Swal.fire({
+        title: "Error!",
+        text: "Failed to update user details. Please try again.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
-  
->>>>>>> 43f5c0a2e1b9be490e929e9b6fe0d959dc1fec93
 
   const columns: EditableColumnType[] = [
     {
@@ -203,60 +200,49 @@ export default function UserManagement() {
     },
 
     {
-        title: <div className="flex items-center gap-2">First name</div>,
-        dataIndex: "firstName",
-        key: "firstName",
-        editable: true,
-        sorter: (a, b) => a.firstName.localeCompare(b.firstName),
-      },
-
-      {
-        title: <div className="flex items-center gap-2">Last name</div>,
-        dataIndex: "lastName",
-        key: "lastName",
-        editable: true,
-        sorter: (a, b) => a.lastName.localeCompare(b.lastName),
-      },
- 
-      
-      {
-        title: <div className="flex items-center gap-2">Username</div>,
-        dataIndex: "username",
-        key: "username",
-        editable: true,
-        sorter: (a, b) => a.username.localeCompare(b.username),
-      },
-
-      {
-        title: <div className="flex items-center gap-2">Email</div>,
-        dataIndex: "email",
-        key: "email",
-        sorter: (a, b) => a.email.localeCompare(b.email),
-      },
-
-      {
-        title: <div className="flex items-center gap-2">Phone</div>,
-        dataIndex: "phoneNumber",
-        key: "phoneNumber",
-        editable: true,
-      },
-
-<<<<<<< HEAD
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (text) => <span>{text}</span>,
-      sorter: (a, b) => a.role.localeCompare(b.status),
+      title: <div className="flex items-center gap-2">First name</div>,
+      dataIndex: "firstName",
+      key: "firstName",
+      editable: true,
+      sorter: (a, b) => a.firstName.localeCompare(b.firstName),
     },
-=======
-      {
-        title: <div className="flex items-center gap-2">Role</div>,
-        dataIndex: "role",
-        key: "role",
-        sorter: (a, b) => a.role.localeCompare(b.role),
-      },
->>>>>>> 43f5c0a2e1b9be490e929e9b6fe0d959dc1fec93
+
+    {
+      title: <div className="flex items-center gap-2">Last name</div>,
+      dataIndex: "lastName",
+      key: "lastName",
+      editable: true,
+      sorter: (a, b) => a.lastName.localeCompare(b.lastName),
+    },
+
+    {
+      title: <div className="flex items-center gap-2">Username</div>,
+      dataIndex: "username",
+      key: "username",
+      editable: true,
+      sorter: (a, b) => a.username.localeCompare(b.username),
+    },
+
+    {
+      title: <div className="flex items-center gap-2">Email</div>,
+      dataIndex: "email",
+      key: "email",
+      sorter: (a, b) => a.email.localeCompare(b.email),
+    },
+
+    {
+      title: <div className="flex items-center gap-2">Phone</div>,
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+      editable: true,
+    },
+
+    {
+      title: <div className="flex items-center gap-2">Role</div>,
+      dataIndex: "role",
+      key: "role",
+      sorter: (a, b) => a.role.localeCompare(b.role),
+    },
 
     {
       title: "Status",
@@ -372,36 +358,39 @@ export default function UserManagement() {
   };
 
   return (
-        <div className="text-white bg-[#212121] h-screen overflow-x-auto">
+    <div className="text-white bg-[#212121] h-screen overflow-x-auto">
       <Sidebar setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
       <div
-<<<<<<< HEAD
-        className={`flex-1 p-6 transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[155px]"
+        className={`flex-1 p-6 transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[140px]"
           }`}
-=======
-        className={`flex-1 p-6 transition-all duration-300 ${
-          isCollapsed ? "ml-16" : "ml-[140px]"
-        }`}
->>>>>>> 43f5c0a2e1b9be490e929e9b6fe0d959dc1fec93
       >
         <h1 className="text-3xl font-bold mb-4">Users</h1>
-        <Input.Search
-          placeholder="Search User ID"
-          allowClear
-          onChange={(e) => setSearchText(e.target.value)}
-          style={{ width: 300, marginBottom: 16 }}
-        />
-        <Form form={form} component={false} onFinish={handleSave}>
-          <Table
-            components={{ body: { cell: EditableCell } }}
-            columns={mergedColumns}
-            dataSource={filteredUsers}
-            rowKey="_id"
-            pagination={{ pageSize: 10 }}
-            className="custom-table"
-            rowClassName={() => "custom-hover-row"}
-          />
-        </Form>
+        {isLoading ? ( // แสดง Loader ระหว่างโหลด
+          <div className="flex justify-center items-center h-[80vh]">
+            <Loader className="animate-spin text-[#0CACF3]" size={48} />
+          </div>
+        ) : (
+          <>
+            <Input.Search
+              placeholder="Search User ID"
+              allowClear
+              onChange={(e) => setSearchText(e.target.value)}
+              style={{ width: 300, marginBottom: 16 }}
+            />
+
+            <Form form={form} component={false} onFinish={handleSave}>
+              <Table
+                components={{ body: { cell: EditableCell } }}
+                columns={mergedColumns}
+                dataSource={filteredUsers}
+                rowKey="_id"
+                pagination={{ pageSize: 10 }}
+                className="custom-table"
+                rowClassName={() => "custom-hover-row"}
+              />
+            </Form>
+          </>
+        )}
       </div>
 
       <UserModal

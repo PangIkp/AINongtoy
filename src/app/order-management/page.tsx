@@ -7,11 +7,12 @@ import {
   updateOrderByAdmin,
 } from "@/api/orderAPI";
 import { Table, Dropdown, Menu, Input, Form, Select } from "antd";
-import { Ellipsis, Eye, Edit, Trash } from "lucide-react";
+import { Ellipsis, Eye, Edit, Trash, Loader } from "lucide-react";
 import { ColumnType } from "antd/es/table";
 import { Button } from "antd";
 import dayjs from "dayjs";
 import OrderModal from "../components/OrderModal";
+import Swal from "sweetalert2";
 
 export default function OrderManagement() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -22,6 +23,7 @@ export default function OrderManagement() {
   const isEditing = (record: any) => record && record._id === editingKey;
   const [form] = Form.useForm();
   const [searchText, setSearchText] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   interface EditableColumnType extends ColumnType<any> {
     editable?: boolean;
@@ -42,6 +44,8 @@ export default function OrderManagement() {
         setOrders(data.data || []);
       } catch (error) {
         console.error("Error fetching admin orders:", error);
+      } finally {
+        setIsLoading(false); // โหลดเสร็จ
       }
     };
     if (token) {
@@ -51,11 +55,27 @@ export default function OrderManagement() {
 
   const handleDelete = async (id: string) => {
     if (!token) return;
+
+    const confirmResult = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      reverseButtons: true,
+    });
+
+    if (!confirmResult.isConfirmed) return;
+
     try {
       await deleteOrderByAdmin(token, id);
       setOrders((prevOrders) => prevOrders.filter((order) => order._id !== id));
+      Swal.fire("Deleted!", "The order has been deleted.", "success");
     } catch (error) {
       console.error("Error deleting order:", error);
+      Swal.fire("Error!", "Failed to delete the order.", "error");
     }
   };
 
@@ -131,8 +151,11 @@ export default function OrderManagement() {
 
       setEditOrder(null);
       setEditingKey(null); // ออกจากโหมดแก้ไข
+
+      Swal.fire("Success!", "The order has been updated successfully.", "success");
     } catch (error) {
       console.error("Error updating order:", error);
+      Swal.fire("Error!", "Failed to update the order.", "error");
     }
   };
 
@@ -303,28 +326,36 @@ export default function OrderManagement() {
     <div className="text-white bg-[#212121] h-screen overflow-hidden">
       <Sidebar setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
       <div
-        className={`flex-1 p-6 transition-all duration-300 ${
-           isCollapsed ? "ml-16" : "ml-[140px]"
-        }`}
+        className={`flex-1 p-6 transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[140px]"
+          }`}
       >
         <h1 className="text-3xl font-bold mb-4">Orders</h1>
-        <Input.Search
-          placeholder="Search Order ID"
-          allowClear
-          onChange={(e) => setSearchText(e.target.value)}
-          style={{ width: 300, marginBottom: 16 }}
-        />
-        <Form form={form} component={false} onFinish={handleSave}>
-          <Table
-            components={{ body: { cell: EditableCell } }}
-            columns={mergedColumns}
-            dataSource={filteredOrders}
-            rowKey="_id"
-            pagination={{ pageSize: 10 }}
-            className="custom-table"
-            rowClassName={() => "custom-hover-row"}
-          />
-        </Form>
+        {isLoading ? (
+          <div className="flex justify-center items-center h-[80vh]">
+            <Loader className="animate-spin text-[#0CACF3]" size={48} />
+          </div>
+        ) : (
+          <>
+            <Input.Search
+              placeholder="Search Order ID"
+              allowClear
+              onChange={(e) => setSearchText(e.target.value)}
+              style={{ width: 300, marginBottom: 16 }}
+            />
+
+            <Form form={form} component={false} onFinish={handleSave}>
+              <Table
+                components={{ body: { cell: EditableCell } }}
+                columns={mergedColumns}
+                dataSource={filteredOrders}
+                rowKey="_id"
+                pagination={{ pageSize: 10 }}
+                className="custom-table"
+                rowClassName={() => "custom-hover-row"}
+              />
+            </Form>
+          </>
+        )}
       </div>
 
       <OrderModal
