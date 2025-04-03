@@ -79,9 +79,6 @@ export const getAllUsersForAdmin = async (token: string) => {
         console.error("Error fetching all users for admin:", error);
         throw error;
     }
-<<<<<<< HEAD
-};
-=======
   };
 
   export const updateUserForAdmin = async (id: string, updates: any, token: string) => {
@@ -143,4 +140,3 @@ export const getAllUsersForAdmin = async (token: string) => {
     }
   };
   
->>>>>>> 43f5c0a2e1b9be490e929e9b6fe0d959dc1fec93
