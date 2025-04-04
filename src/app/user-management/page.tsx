@@ -91,7 +91,7 @@ export default function UserManagement() {
       .toLowerCase()
       .includes(searchText.toLowerCase())
   );
-  
+
 
   const handleEdit = (user: any) => {
     setEditUser(user);
@@ -373,9 +373,8 @@ export default function UserManagement() {
     <div className="text-white bg-[#212121] h-screen overflow-x-auto">
       <Sidebar setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
       <div
-        className={`flex-1 p-6 transition-all duration-300 ${
-          isCollapsed ? "ml-16" : "ml-[140px]"
-        }`}
+        className={`flex-1 p-6 transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[140px]"
+          }`}
       >
         <h1 className="text-3xl font-bold mb-4">Users</h1>
         {isLoading ? ( // แสดง Loader ระหว่างโหลด
@@ -384,36 +383,36 @@ export default function UserManagement() {
           </div>
         ) : (
           <>
-        <div className="flex justify-between w-full">
-          <Input.Search
-            placeholder="Search User ID"
-            allowClear
-            onChange={(e) => setSearchText(e.target.value)}
-            style={{ width: 300, marginBottom: 16 }}
-          />
+            <div className="flex justify-between w-full">
+              <Input.Search
+                placeholder="Search User ID"
+                allowClear
+                onChange={(e) => setSearchText(e.target.value)}
+                style={{ width: 300, marginBottom: 16 }}
+              />
 
-          <button
-            className="text-[14px] h-8 flex items-center gap-2"
-            onClick={handleCreate}
-          >
-            <Plus className="h-4 w-4" />
-            Create user
-          </button>
-        </div>
+              <button
+                className="text-[14px] h-8 flex items-center gap-2"
+                onClick={handleCreate}
+              >
+                <Plus className="h-4 w-4" />
+                Create user
+              </button>
+            </div>
 
-        <Form form={form} component={false} onFinish={handleSave}>
-          <Table
-            components={{ body: { cell: EditableCell } }}
-            columns={mergedColumns}
-            dataSource={filteredUsers}
-            rowKey="_id"
-            pagination={{ pageSize: 10 }}
-            className="custom-table"
-            rowClassName={() => "custom-hover-row"}
-          />
-        </Form>
-        </>
-    )}
+            <Form form={form} component={false} onFinish={handleSave}>
+              <Table
+                components={{ body: { cell: EditableCell } }}
+                columns={mergedColumns}
+                dataSource={filteredUsers}
+                rowKey="_id"
+                pagination={{ pageSize: 10 }}
+                className="custom-table"
+                rowClassName={() => "custom-hover-row"}
+              />
+            </Form>
+          </>
+        )}
       </div>
 
       <UserModal

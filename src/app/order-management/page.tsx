@@ -176,7 +176,9 @@ export default function OrderManagement() {
       title: "Customer",
       dataIndex: "user",
       key: "user",
+      render: (user: any) => `${user?.firstName ?? "-"} ${user?.lastName ?? ""}`,
     },
+
     {
       title: <div className="flex items-center gap-2">Name</div>,
       dataIndex: "name",
