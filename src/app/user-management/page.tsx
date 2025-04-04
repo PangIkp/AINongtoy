@@ -141,7 +141,6 @@ export default function UserManagement() {
             ) : dataIndex === "status" ? (
               <Select>
                 <Select.Option value="Active">Active</Select.Option>
-                <Select.Option value="Inactive">Inactive</Select.Option>
                 <Select.Option value="Banned">Banned</Select.Option>
               </Select>
             ) : (
