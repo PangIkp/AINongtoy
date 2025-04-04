@@ -19,7 +19,6 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState<string | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
@@ -77,16 +76,10 @@ const Login = () => {
       const data = await login(username, password);
       console.log("Login successful:", data);
 
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("username", data.username);
-        localStorage.setItem("firstname", data.firstName);
-        localStorage.setItem("lastname", data.lastName);
-        setUser(data.username);
-        setFirstName(data.firstName);
-        setLastName(data.lastName);
-        setIsLoggedIn(true);
+      if (data.data.role === "admin") {
+        window.location.href = "/user-management"; // เปลี่ยนเส้นทางไปที่หน้า user-management
       }
+      else window.location.href = "/"; // เปลี่ยนเส้นทางไปที่หน้า home
 
       if (rememberMe) {
         const encryptedUsername = CryptoJS.AES.encrypt(username, SECRET_KEY).toString();
@@ -99,6 +92,8 @@ const Login = () => {
         Cookies.remove("password");
       }
 
+
+
     } catch (error: any) {
       console.error("Login error:", error.message);
       Swal.fire({
@@ -108,12 +103,6 @@ const Login = () => {
       });
     }
   };
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      window.location.href = "/";
-    }
-  }, [isLoggedIn]);
 
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);
