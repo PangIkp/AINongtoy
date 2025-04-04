@@ -86,11 +86,12 @@ export default function UserManagement() {
     }
   };
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user._id.toLowerCase().includes(searchText.toLowerCase()) &&
-      user.firstName.toLowerCase().includes(searchText.toLowerCase())
+  const filteredUsers = users.filter((user) =>
+    `${user._id} ${user.firstName} ${user.lastName} ${user.email} ${user.username}`
+      .toLowerCase()
+      .includes(searchText.toLowerCase())
   );
+  
 
   const handleEdit = (user: any) => {
     setEditUser(user);
