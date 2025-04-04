@@ -3,6 +3,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { Users, Inbox, ChartBarBig, ChevronLeft, ChevronRight } from "lucide-react";
 import { usePathname } from "next/navigation"; // ใช้ usePathname แทน useRouter
+import { useTokenValidation } from "@/utils/useTokenValidation";
+
 
 export default function Sidebar({
   setIsCollapsed,
@@ -14,6 +16,8 @@ export default function Sidebar({
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
+
+  useTokenValidation(); // เรียกใช้ useTokenValidation เพื่อทำการตรวจสอบ Token
 
   return (
     <div
