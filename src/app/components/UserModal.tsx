@@ -35,7 +35,7 @@ const UserModal: React.FC<UserModalProps> = ({ isVisible, user, onClose }) => {
                 border: "1px solid #ddd",
               }}
             >
-              User ID:
+              User ID
             </td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>
               {user._id}
@@ -49,7 +49,7 @@ const UserModal: React.FC<UserModalProps> = ({ isVisible, user, onClose }) => {
                 border: "1px solid #ddd",
               }}
             >
-              Created At:
+              Created At
             </td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>
               {dayjs(user.createdAt).format("DD/MM/YYYY HH:mm")}
@@ -92,7 +92,7 @@ const UserModal: React.FC<UserModalProps> = ({ isVisible, user, onClose }) => {
                 border: "1px solid #ddd",
               }}
             >
-              First name:
+              First name
             </td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>
               {user.firstName}
@@ -106,7 +106,7 @@ const UserModal: React.FC<UserModalProps> = ({ isVisible, user, onClose }) => {
                 border: "1px solid #ddd",
               }}
             >
-              Last name:
+              Last name
             </td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>
               {user.lastName}

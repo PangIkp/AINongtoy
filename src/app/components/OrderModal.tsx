@@ -22,41 +22,53 @@ const OrderModal: React.FC<OrderModalProps> = ({ isVisible, order, onClose }) =>
       <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #ddd" }}>
         <tbody>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Order ID:</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Order ID</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order._id}</td>
           </tr>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Created At:</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Created At</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>
               {dayjs(order.createdAt).format("DD/MM/YYYY HH:mm")}
             </td>
           </tr>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Customer:</td>
-            <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.user}</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Customer</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+              {order.user ? `${order.user.firstName} ${order.user.lastName}` : "-"}
+            </td>
           </tr>
+
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Name:</td>
+  <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Phone number</td>
+  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+    {order.user ? `${order.user.phoneNumber}` : "-"}
+  </td>
+</tr>
+
+
+
+          <tr>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Name</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.name}</td>
           </tr>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Size:</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Size</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.size}</td>
           </tr>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Material:</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Material</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.material}</td>
           </tr>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Painting:</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Painting</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.painting}</td>
           </tr>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Assembly:</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Assembly</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.assembly}</td>
           </tr>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Art toy:</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Art toy</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>
               <img
                 src={order.imageUrl}
@@ -66,19 +78,19 @@ const OrderModal: React.FC<OrderModalProps> = ({ isVisible, order, onClose }) =>
             </td>
           </tr>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Price:</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Price</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.price.toLocaleString()}</td>
           </tr>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Shipping:</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Shipping</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.shipping}</td>
           </tr>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Total:</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Total</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.total.toLocaleString()}</td>
           </tr>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Address:</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Address</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>
               {order.address
                 ? (() => {
@@ -93,11 +105,11 @@ const OrderModal: React.FC<OrderModalProps> = ({ isVisible, order, onClose }) =>
             </td>
           </tr>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Confirmation:</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Confirmation</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.paymentStatus}</td>
           </tr>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Payment Status:</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Payment Status</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>
               {order.payment ? (
                 <img
@@ -111,7 +123,7 @@ const OrderModal: React.FC<OrderModalProps> = ({ isVisible, order, onClose }) =>
             </td>
           </tr>
           <tr>
-            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Status:</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Status</td>
             <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.status}</td>
           </tr>
         </tbody>
