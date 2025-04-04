@@ -24,7 +24,13 @@ export const login = async (username: string, password: string) => {
     console.log("Login API Response:", data); // ✅ Debug
 
     if (!response.ok) {
-      throw new Error(data.message || "Login failed");
+      throw new Error(data.message || "Invalid username or passwords");
+    }
+
+    // ตรวจสอบสถานะว่าเป็น banned หรือไม่
+    const status = data.data?.status?.toLowerCase();
+    if (status === "banned") {
+      throw new Error("Your account has been banned. Please contact support.");
     }
 
     localStorage.setItem("user", JSON.stringify(data.data)); // เก็บข้อมูล user
