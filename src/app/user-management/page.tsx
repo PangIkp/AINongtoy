@@ -7,11 +7,12 @@ import {
   deleteUserForAdmin,
 } from "@/api/userAPI";
 import { Table, Dropdown, Menu, Input, Form, Select } from "antd";
-import { Ellipsis, Eye, Edit, Trash, Plus } from "lucide-react";
+import { Ellipsis, Eye, Edit, Trash, Loader, Plus } from "lucide-react"; // เพิ่ม Loader
 import { ColumnType } from "antd/es/table";
 import { Button } from "antd";
 import dayjs from "dayjs";
 import UserModal from "../components/UserModal";
+import Swal from "sweetalert2";
 import ModalForm from "../components/ModalForm";
 
 export default function UserManagement() {
@@ -20,6 +21,7 @@ export default function UserManagement() {
   const [token, setToken] = useState<string>("");
   const [editUser, setEditUser] = useState<any | null>(null);
   const [editingKey, setEditingKey] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // เพิ่ม state สำหรับการโหลด
   const isEditing = (record: any) => record && record._id === editingKey;
   const [form] = Form.useForm();
   const [searchText, setSearchText] = useState("");
@@ -32,7 +34,7 @@ export default function UserManagement() {
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
-      setToken(storedToken);  // ถ้ามี token ให้เซ็ต
+      setToken(storedToken); // ถ้ามี token ให้เซ็ต
     }
   }, []);
 
@@ -44,6 +46,8 @@ export default function UserManagement() {
         setUsers(data.data || []);
       } catch (error) {
         console.error("Error fetching admin users:", error);
+      } finally {
+        setIsLoading(false); // โหลดเสร็จ
       }
     };
     if (token) {
@@ -57,12 +61,28 @@ export default function UserManagement() {
 
   const handleDelete = async (id: string) => {
     if (!token) return;
-    try {
-      await deleteUserForAdmin(token, id);
-      // อัปเดต UI โดยการลบผู้ใช้จาก state
-      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
-    } catch (error) {
-      console.error("Error deleting user:", error);
+
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteUserForAdmin(token, id);
+        // Update UI by removing the user from the state
+        setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+        Swal.fire("Deleted!", "The user has been deleted.", "success");
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        Swal.fire("Error!", "Failed to delete the user.", "error");
+      }
     }
   };
 
@@ -138,14 +158,14 @@ export default function UserManagement() {
     if (!token) return;
 
     try {
-      const updatedUser = { ...editUser, ...values }; // รวมค่าที่แก้ไขเข้ากับข้อมูลเก่า
+      const updatedUser = { ...editUser, ...values }; // Combine edited values with the existing user data
       const response = await updateUserForAdmin(
         updatedUser._id,
         updatedUser,
         token
-      ); // ส่งข้อมูลทั้งหมดที่ต้องการอัปเดต
+      ); // Send updated data to the API
 
-      // ตรวจสอบการตอบกลับจาก API
+      // Check the API response
       if (response) {
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
@@ -153,10 +173,26 @@ export default function UserManagement() {
           )
         );
         setEditUser(null);
-        setEditingKey(null); // ออกจากโหมดแก้ไข
+        setEditingKey(null); // Exit edit mode
+
+        // Show success message
+        await Swal.fire({
+          title: "Success!",
+          text: "User details have been updated successfully.",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
       }
     } catch (error) {
       console.error("Error updating user:", error);
+
+      // Show error message
+      await Swal.fire({
+        title: "Error!",
+        text: "Failed to update user details. Please try again.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 
@@ -342,6 +378,12 @@ export default function UserManagement() {
         }`}
       >
         <h1 className="text-3xl font-bold mb-4">Users</h1>
+        {isLoading ? ( // แสดง Loader ระหว่างโหลด
+          <div className="flex justify-center items-center h-[80vh]">
+            <Loader className="animate-spin text-[#0CACF3]" size={48} />
+          </div>
+        ) : (
+          <>
         <div className="flex justify-between w-full">
           <Input.Search
             placeholder="Search User ID"
@@ -370,6 +412,8 @@ export default function UserManagement() {
             rowClassName={() => "custom-hover-row"}
           />
         </Form>
+        </>
+    )}
       </div>
 
       <UserModal
@@ -378,12 +422,11 @@ export default function UserManagement() {
         onClose={handleCloseModal}
       />
 
-<ModalForm
-  isFormVisible={isFormVisible}
-  handleCloseModal={handleCloseModal}
-  token={token} 
-/>
-
+      <ModalForm
+        isFormVisible={isFormVisible}
+        handleCloseModal={handleCloseModal}
+        token={token}
+      />
     </div>
   );
 }

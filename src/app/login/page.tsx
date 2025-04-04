@@ -5,31 +5,34 @@ import Footer from "../components/Footer";
 import { login } from "@/api/authAPI";
 import PasswordInput from "../components/PasswordInput";
 import Swal from "sweetalert2";
-import Cookies from "js-cookie"; // เพิ่มการ import js-cookie
-import CryptoJS from "crypto-js"; // เพิ่มการ import crypto-js
+import Cookies from "js-cookie";
+import CryptoJS from "crypto-js";
 import dotenv from "dotenv";
-dotenv.config(); // โหลด environment variables
+import { Loader } from "lucide-react"; // เพิ่มการ import Loader
+dotenv.config();
 
-const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY || ""; // ดึงค่าจาก environment variable
-
-interface LoginResponse {
-  token: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-}
+const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY || "";
 
 const Login = () => {
   const [isClient, setIsClient] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // เพิ่ม state สำหรับการโหลด
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [user, setUser] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [firstName, setFirstName] = useState<string | null>(null); // State สำหรับ firstName
+  const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
-  const [rememberMe, setRememberMe] = useState(false); // State สำหรับ "Remember me"
+  const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false); // ปิดการโหลดหลังจาก 0ms
+    }, 0);
+
+    return () => clearTimeout(timer); // ล้าง timer เมื่อ component ถูก unmount
+  }, []);
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
@@ -46,14 +49,13 @@ const Login = () => {
       setLastName(storedLastName);
     }
 
-    // โหลดข้อมูลจาก Cookies และถอดรหัส
     const encryptedUsername = Cookies.get("username");
     const encryptedPassword = Cookies.get("password");
 
     if (encryptedUsername) {
       const decryptedUsername = CryptoJS.AES.decrypt(encryptedUsername, SECRET_KEY).toString(CryptoJS.enc.Utf8);
       setUsername(decryptedUsername);
-      setRememberMe(true); // ตั้งค่า Remember me เป็น true หากมีข้อมูลใน Cookies
+      setRememberMe(true);
     }
 
     if (encryptedPassword) {
@@ -76,22 +78,20 @@ const Login = () => {
     }
 
     try {
-      const data = await login(username, password); // เรียก API จาก authService
+      const data = await login(username, password);
       console.log("Login successful:", data);
 
       if (data.token) {
-        // เก็บข้อมูลทั้งหมดใน localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("username", data.username);
-        localStorage.setItem("firstname", data.firstName);  // เก็บ firstName
-        localStorage.setItem("lastname", data.lastName);    // เก็บ lastName
+        localStorage.setItem("firstname", data.firstName);
+        localStorage.setItem("lastname", data.lastName);
         setUser(data.username);
-        setFirstName(data.firstName); // อัปเดตค่า firstName ใน state
-        setLastName(data.lastName);   // อัปเดตค่า lastName ใน state
+        setFirstName(data.firstName);
+        setLastName(data.lastName);
         setIsLoggedIn(true);
       }
 
-      // หากเลือก "Remember me" ให้เข้ารหัสและบันทึกข้อมูลลงใน Cookies
       if (rememberMe) {
         const encryptedUsername = CryptoJS.AES.encrypt(username, SECRET_KEY).toString();
         const encryptedPassword = CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
@@ -99,7 +99,6 @@ const Login = () => {
         Cookies.set("username", encryptedUsername, { expires: 30 });
         Cookies.set("password", encryptedPassword, { expires: 30 });
       } else {
-        // หากไม่ได้เลือก "Remember me" ให้ลบ Cookies
         Cookies.remove("username");
         Cookies.remove("password");
       }
@@ -116,9 +115,8 @@ const Login = () => {
   };
 
   useEffect(() => {
-    // หากผู้ใช้ล็อกอินสำเร็จ ให้ไปหน้า Home
     if (isLoggedIn) {
-      window.location.href = "/"; // ✅ Redirect ไปหน้า Home
+      window.location.href = "/";
     }
   }, [isLoggedIn]);
 
@@ -141,81 +139,84 @@ const Login = () => {
         contactRef={contactRef}
       />
       <div className="w-full h-[90vh] mt-[5rem]">
+
         <div className="relative w-full h-full flex items-center justify-center">
-          <img src="/Images/AINongtoy/mainbg.png" alt="" className="w-full h-full object-cover" />
-          <div className="absolute max-w-[375px] w-full p-4">
-            <div>
-              <h1 className="text-4xl font-semibold mb-3">Welcome back</h1>
-              <p className="font-extralight">Please enter your details</p>
+          {isLoading ? (
+            <div className="flex justify-center items-center">
+              <Loader className="animate-spin text-[#0CACF3]" size={48} />
             </div>
-            <div>
-              <form
-                onSubmit={handleSubmit}
-                className="flex flex-col justify-between gap-4 w-full h-[70%] pt-5"
-              >
-                <label className="hidden" htmlFor="username">
-                  <p>Username</p>
-                </label>
-                <input
-                  className="block"
-                  type="text"
-                  id="username"
-                  placeholder="Username"
-                  maxLength={40}
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-
-                <PasswordInput
-                  id="password"
-                  name="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-
-                <div className="flex justify-between text-[13px]">
-                  <label
-                    htmlFor="remember"
-                    className="flex items-center gap-2 cursor-pointer"
+          ) : (
+            <>
+              <img src="/Images/AINongtoy/mainbg.png" alt="" className="w-full h-full object-cover" />
+              <div className="absolute max-w-[375px] w-full p-4">
+                <div>
+                  <h1 className="text-4xl font-semibold mb-3">Welcome back</h1>
+                  <p className="font-extralight">Please enter your details</p>
+                </div>
+                <div>
+                  <form
+                    onSubmit={handleSubmit}
+                    className="flex flex-col justify-between gap-4 w-full h-[70%] pt-5"
                   >
-                    <div>
-                      <input
-                        className="scale-125 accent-black focus:ring-black"
-                        type="checkbox"
-                        id="remember"
-                        checked={rememberMe}
-                        onChange={(e) => setRememberMe(e.target.checked)}
-                      />
+                    <label className="hidden" htmlFor="username">
+                      <p>Username</p>
+                    </label>
+                    <input
+                      className="block"
+                      type="text"
+                      id="username"
+                      placeholder="Username"
+                      maxLength={40}
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+
+                    <PasswordInput
+                      id="password"
+                      name="password"
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+
+                    <div className="flex justify-between text-[13px]">
+                      <label
+                        htmlFor="remember"
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
+                        <div>
+                          <input
+                            className="scale-125 accent-black focus:ring-black"
+                            type="checkbox"
+                            id="remember"
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
+                          />
+                        </div>
+
+                        Remember&nbsp;me
+                      </label>
+                      <a href="/forgotpassword" className="text-[#0AACF0]">
+                        Forgot password ?
+                      </a>
                     </div>
-
-                    Remember&nbsp;me
-                  </label>
-                  <a href="/forgotpassword" className="text-[#0AACF0]">
-                    Forgot password ?
-                  </a>
+                    <button type="submit" className="h-[40px]">
+                      Login
+                    </button>
+                    <div className="flex justify-center text-[13px]">
+                      <p>
+                        Not registered yet ?{" "}
+                        <a href="/signup" className="text-[#0AACF0] underline">
+                          Sign up
+                        </a>
+                      </p>
+                    </div>
+                  </form>
                 </div>
-                <button type="submit" className="h-[40px]">
-                  Login
-                </button>
-                <div className="flex justify-center text-[13px]">
-                  <p>
-                    Not registered yet ?{" "}
-                    <a href="/signup" className="text-[#0AACF0] underline">
-                      Sign up
-                    </a>
-                  </p>
-                </div>
-              </form>
-              {/* <div className="mt-4 h-[40px] text-[14px] font-thin text-red-300">
-                <p>{usernameError}</p>
-                <p>{passwordError}</p>
-              </div> */}
+              </div>
+            </>
+          )}
 
-              {/* แสดงข้อมูลผู้ใช้เมื่อล็อกอินสำเร็จ */}
-
-            </div>
-          </div>
         </div>
       </div>
       <Footer />
