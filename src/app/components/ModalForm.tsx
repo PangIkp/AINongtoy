@@ -1,6 +1,7 @@
 // ModalForm.tsx
 import React from "react";
 import { createUserForAdmin } from "@/api/userAPI";
+import Swal from "sweetalert2";
 
 interface ModalFormProps {
   isFormVisible: boolean;
@@ -45,16 +46,28 @@ const ModalForm: React.FC<ModalFormProps> = ({
 
     // ตรวจสอบว่า password กับ confirmPassword ตรงกันหรือไม่
     if (formData.password !== confirmPassword) {
-      alert("Passwords do not match!");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Passwords do not match!",
+      });
       return;
     }
 
     try {
       const createdUser = await createUserForAdmin(token, formData);
-      alert("User created successfully!");
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "User created successfully!",
+      });
       handleCloseModal();
     } catch (error) {
-      alert("Error creating user.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Error creating user.",
+      });
     }
   };
 

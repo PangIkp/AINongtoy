@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Users, Inbox, ChartBarBig, ChevronLeft, ChevronRight } from "lucide-react";
+import { usePathname } from "next/navigation"; // ใช้ usePathname แทน useRouter
 
 export default function Sidebar({
   setIsCollapsed,
@@ -16,9 +17,8 @@ export default function Sidebar({
 
   return (
     <div
-      className={`fixed top-0 z-50 left-0 h-full bg-[#2F2F2F] text-white p-4 pt-6 flex flex-col items-center transition-all duration-300 ease-in-out ${
-        isCollapsed ? "w-16" : "w-[140px]"
-      }`}
+      className={`fixed top-0 z-50 left-0 h-full bg-[#2F2F2F] text-white p-4 pt-6 flex flex-col items-center transition-all duration-300 ease-in-out ${isCollapsed ? "w-16" : "w-[140px]"
+        }`}
     >
       <img
         src="/Images/AINongtoy/BotLogo.png"
@@ -47,7 +47,7 @@ export default function Sidebar({
           to="/order-management"
           isCollapsed={isCollapsed}
         />
-         <SidebarItem
+        <SidebarItem
           icon={<ChartBarBig size={20} />}
           label="Dashboard"
           to="/dashboard"
@@ -69,11 +69,17 @@ function SidebarItem({
   to: string;
   isCollapsed: boolean;
 }) {
+  const pathname = usePathname(); // ดึง path ปัจจุบัน
+  const isActive = pathname.startsWith(to); // ใช้ startsWith เพื่อรองรับ path ที่มี / ต่อท้าย
+
   return (
     <Link href={to}>
-      <div className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152]">
+      <div
+        className={`flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152] ${isActive ? "bg-[#525152]" : ""
+          }`} // เพิ่ม class สำหรับ active item
+      >
         {icon}
-        {!isCollapsed && <span>{label}</span>} {/* Hide label when collapsed */}
+        {!isCollapsed && <span>{label}</span>} {/* ซ่อน label เมื่อ collapsed */}
       </div>
     </Link>
   );
