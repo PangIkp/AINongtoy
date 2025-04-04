@@ -75,7 +75,7 @@ function SidebarItem({
   return (
     <Link href={to}>
       <div
-        className={`flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152] ${isActive ? "bg-[#525152]" : ""
+        className={`flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152] ${isActive ? "bg-[#787678]" : ""
           }`} // เพิ่ม class สำหรับ active item
       >
         {icon}
