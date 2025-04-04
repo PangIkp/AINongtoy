@@ -9,12 +9,9 @@ import {
   LogOut,
 } from "lucide-react";
 import { usePathname } from "next/navigation"; // ใช้ usePathname แทน useRouter
-<<<<<<< HEAD
 import { useTokenValidation } from "@/utils/useTokenValidation";
 
-=======
 import Swal from "sweetalert2";
->>>>>>> 0029b9d38c14db97d5ac33dbf95757d4fe237609
 
 export default function Sidebar({
   setIsCollapsed,
@@ -27,9 +24,7 @@ export default function Sidebar({
     setIsCollapsed(!isCollapsed);
   };
 
-<<<<<<< HEAD
   useTokenValidation(); // เรียกใช้ useTokenValidation เพื่อทำการตรวจสอบ Token
-=======
   const handleLogout = async () => {
     await fetch("/api/logout", { method: "POST" });
     localStorage.clear();
@@ -54,13 +49,11 @@ export default function Sidebar({
       }
     });
   };
->>>>>>> 0029b9d38c14db97d5ac33dbf95757d4fe237609
 
   return (
     <div
-      className={`fixed top-0 z-50 left-0 h-full bg-[#2F2F2F] text-white p-4 pt-6 flex flex-col items-center transition-all duration-300 ease-in-out ${
-        isCollapsed ? "w-16" : "w-[140px]"
-      }`}
+      className={`fixed top-0 z-50 left-0 h-full bg-[#2F2F2F] text-white p-4 pt-6 flex flex-col items-center transition-all duration-300 ease-in-out ${isCollapsed ? "w-16" : "w-[140px]"
+        }`}
     >
       <img
         src="/Images/AINongtoy/BotLogo.png"
@@ -132,9 +125,8 @@ function SidebarItem({
   return (
     <Link
       href={to}
-      className={`flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152] ${
-        isActive ? "bg-[#787678]" : ""
-      }`}
+      className={`flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152] ${isActive ? "bg-[#787678]" : ""
+        }`}
       onClick={onClick}
     >
       {icon}

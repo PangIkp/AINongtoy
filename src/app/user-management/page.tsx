@@ -140,8 +140,8 @@ export default function UserManagement() {
               </div>
             ) : dataIndex === "status" ? (
               <Select>
-                <Select.Option value="Active">Active</Select.Option>
-                <Select.Option value="Banned">Banned</Select.Option>
+                <Select.Option value="active">active</Select.Option>
+                <Select.Option value="banned">banned</Select.Option>
               </Select>
             ) : (
               <Input />
