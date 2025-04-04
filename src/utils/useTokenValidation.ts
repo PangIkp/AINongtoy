@@ -11,6 +11,22 @@ export const useTokenValidation = () => {
     const token = localStorage.getItem("token"); // ดึง token จาก localStorage
     const parsedUser = getUserData(); // ดึงข้อมูลผู้ใช้
 
+    // ตรวจสอบสถานะของผู้ใช้
+    const userStatus = parsedUser?.status?.toLowerCase(); // แปลง status เป็นพิมพ์เล็ก
+
+    if (userStatus === "banned") {
+      Swal.fire({
+        icon: "error",
+        title: "Account Banned",
+        text: "Your account has been banned. Please contact support.",
+      }).then(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = "/login"; // เปลี่ยนเส้นทางไปหน้า Login
+      });
+      return;
+    }
+
     // ตรวจสอบว่าผู้ใช้เข้าไปที่หน้า /login และมี token กับข้อมูลผู้ใช้
     if (currentPath === "/login" && (token && parsedUser)) {
       window.location.href = "/"; // เปลี่ยนเส้นทางไปหน้า /

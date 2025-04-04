@@ -18,8 +18,6 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(true); // เพิ่ม state สำหรับการโหลด
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [usernameError, setUsernameError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
   const [user, setUser] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [firstName, setFirstName] = useState<string | null>(null);
@@ -67,8 +65,6 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !password) {
-      setUsernameError(!username ? "Username is required" : "");
-      setPasswordError(!password ? "Password is required" : "");
       Swal.fire({
         icon: 'warning',
         title: 'Please fill in all fields',
@@ -105,11 +101,10 @@ const Login = () => {
 
     } catch (error: any) {
       console.error("Login error:", error.message);
-      setPasswordError("Invalid username or password");
       Swal.fire({
-        icon: 'warning',
-        title: 'Login Failed',
-        text: 'Invalid username or password',
+        icon: 'error',
+        title: 'Login failed',
+        text: error.message,
       });
     }
   };
