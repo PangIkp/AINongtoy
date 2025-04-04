@@ -90,14 +90,13 @@ export default function Sidebar({
         </div>
 
         {/* ปุ่ม Logout อยู่ด้านล่างสุด */}
-        <SidebarItem
-          icon={<LogOut size={20} className="text-red-400" />}
-          label="Logout"
-          to="/login"
+        <div
           onClick={confirmLogout}
-          isCollapsed={isCollapsed}
-          labelClass="text-red-400"
-        />
+          className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152] text-red-400"
+        >
+          <LogOut size={20} />
+          {!isCollapsed && <span className="text-red-400">Logout</span>}
+        </div>
       </nav>
     </div>
   );
@@ -122,15 +121,15 @@ function SidebarItem({
   const isActive = pathname.startsWith(to); // ใช้ startsWith เพื่อรองรับ path ที่มี / ต่อท้าย
 
   return (
-    <div
+    <Link
+      href={to}
       className={`flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152] ${
         isActive ? "bg-[#787678]" : ""
-      }`} // เพิ่ม class สำหรับ active item
-      onClick={onClick} // เพิ่ม onClick
+      }`}
+      onClick={onClick}
     >
       {icon}
-      {!isCollapsed && <span className={labelClass}>{label}</span>}{" "}
-      {/* ซ่อน label เมื่อ collapsed */}
-    </div>
+      {!isCollapsed && <span className={labelClass}>{label}</span>}
+    </Link>
   );
 }
