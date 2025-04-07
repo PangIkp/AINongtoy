@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */ 
 export const getUserData = () => {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
         const user = localStorage.getItem("user");

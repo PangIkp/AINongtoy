@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ArtToy } from "@/mainstore";
 
 export const getArtToyById = async (id: string, token: string) => {

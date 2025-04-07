@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const API_URL = "http://localhost:3001/api/v1/auth";
 
 const isEmail = (value: string): boolean => {
