@@ -60,7 +60,7 @@ export default function Navbar({
   return (
     <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-8 lg:px-20 py-6 bg-[#010312] text-white drop-shadow-lg z-50">
       {/* Logo */}
-      <a href="/">
+      <Link href="/">
         <p className="hidden">a</p>
         <img
           src="/Images/AINongtoy/Logo.png"
@@ -69,7 +69,7 @@ export default function Navbar({
           height={100}
           className="object-contain"
         />
-      </a>
+      </Link>
 
       {/* Menu ปกติ */}
       <ul className="hidden lg:flex space-x-[50px] text-[16px] font-semibold">

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import Image from "next/image";
 import emailjs from "emailjs-com";
@@ -53,8 +54,7 @@ export default function Contact() {
 
     const validateForm = () => {
         let valid = true;
-        let newErrors: { [key in keyof typeof formData]: string } = { fName: "", lName: "", email: "", phone: "" };
-
+        const newErrors: { [key in keyof typeof formData]: string } = { fName: "", lName: "", email: "", phone: "" };
         for (const field in formData) {
             if (formData.hasOwnProperty(field)) {
                 const error = validateField(field as keyof typeof formData, formData[field as keyof typeof formData]);

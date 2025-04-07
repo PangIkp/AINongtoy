@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // ModalForm.tsx
 import React from "react";
+import { useState } from "react";
 import { createUserForAdmin } from "@/api/userAPI";
 import Swal from "sweetalert2";
 
@@ -14,9 +16,8 @@ const ModalForm: React.FC<ModalFormProps> = ({
   handleCloseModal,
   token,
 }) => {
-  if (!isFormVisible) return null;
-
-  const [formData, setFormData] = React.useState({
+  
+  const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -25,6 +26,8 @@ const ModalForm: React.FC<ModalFormProps> = ({
     role: "user",
     password: "",
   });
+  
+  if (!isFormVisible) return null;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

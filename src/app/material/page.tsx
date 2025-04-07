@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useRouter, usePathname } from "next/navigation";
 import { useRef } from "react";
