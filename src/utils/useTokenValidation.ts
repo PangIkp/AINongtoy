@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from "react";
 import { checkTokenValidity } from "../api/authAPI";
 import { getUserData } from "./localStorageUtils";

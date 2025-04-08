@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
@@ -6,7 +7,7 @@ import {
   updateUserForAdmin,
   deleteUserForAdmin,
 } from "@/api/userAPI";
-import { Table, Dropdown, Menu, Input, Form, Select } from "antd";
+import { Table, Dropdown, Input, Form, Select } from "antd";
 import { Ellipsis, Eye, Edit, Trash, Loader, Plus } from "lucide-react"; // เพิ่ม Loader
 import { ColumnType } from "antd/es/table";
 import { Button } from "antd";

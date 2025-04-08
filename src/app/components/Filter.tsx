@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 const characterStyles = ["Sci-Fi", "Fantasy", "Cute", "Horror", "Cyberpunk", "Steampunk", "Animal"];
-const colors = ["Pastel", "Monochrome", "Dark & Gothic", "Vintage", "Earth Tone", "Rainbow"];
+const colors = ["Pastel", "Monochrome", "Dark & Gothic", "Vintage", "Earth tones", "Rainbow color"];
 
 export default function Filter({ onFilterChange }: { onFilterChange: (filters: string[]) => void }) {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);

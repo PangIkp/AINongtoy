@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useRouter, usePathname } from "next/navigation";
-import { useRef } from "react";
+import { Suspense, useRef } from "react";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -46,7 +47,9 @@ export default function Material() {
         </div>
 
         <div className="mt-10 mb-10">
-          <Config />
+          <Suspense fallback={<div>Loading...</div>}>
+            <Config />
+          </Suspense>
         </div>
       </div>
 

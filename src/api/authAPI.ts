@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:3001/api/v1/auth";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const API_URL = "https://nongtoybackend-rby6pw6h.b4a.run/api/v1/auth";
 
 const isEmail = (value: string): boolean => {
   // Regular Expression สำหรับตรวจสอบว่าเป็นอีเมลหรือไม่
@@ -48,7 +49,7 @@ export const login = async (username: string, password: string) => {
 // http://localhost:3001/api/v1/auth/about
 export const getUser = async (token: string) => {
   try {
-    const response = await fetch("http://localhost:3001/api/v1/auth/about", {
+    const response = await fetch("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/auth/about", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`, // ส่ง token สำหรับการตรวจสอบสิทธิ์

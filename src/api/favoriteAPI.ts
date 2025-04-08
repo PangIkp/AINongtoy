@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3001/api/v1/favorite";
+const API_URL = "https://nongtoybackend-rby6pw6h.b4a.run/api/v1/favorite";
 
 // ดึงรายการ Favorite ทั้งหมด
 export const getAllFavorites = async (token: string) => {

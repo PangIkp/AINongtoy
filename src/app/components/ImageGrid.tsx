@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect } from 'react';
 
 // ประกาศอินเตอร์เฟส ImageGridProps เพื่อกำหนดประเภทของ props ที่คอมโพเนนต์ ImageGrid จะรับ

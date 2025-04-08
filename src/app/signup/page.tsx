@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -108,7 +110,7 @@ const Signup = () => {
   useEffect(() => {
     const fetchUserCount = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/api/v1/user/");
+        const response = await axios.get("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/user/");
         setUserCount(response.data.count);
       } catch (error) {
         console.error("Error fetching user count:", error);
@@ -265,7 +267,7 @@ const Signup = () => {
         };
 
         const response = await axios.post(
-          "http://localhost:3001/api/v1/user/",
+          "https://nongtoybackend-rby6pw6h.b4a.run/api/v1/user/",
           newUser
         );
 

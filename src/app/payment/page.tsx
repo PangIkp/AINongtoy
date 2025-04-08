@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { ArtToy } from "@/mainstore"; // นำเข้า interface ArtToy
 import React, { useEffect, useRef, useState } from "react";
