@@ -50,7 +50,7 @@ const QRCodeSection: React.FC<QRCodeSectionProps> = ({ setPaymentImage }) => {
             </div>
 
             <div className='flex flex-col gap-2 items-center p-4 w-full justify-center'>
-                <p className='text-sm'>Upload QR Code</p>
+                <p className='text-sm'>Upload Slip</p>
                 {!uploadedImage && (
                     <div className='flex justify-center items-center w-[200px] h-[200px] outline-2 outline-dashed rounded-xl'>
                         <label className="upload-btn text-sm">
