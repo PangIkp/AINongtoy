@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { checkTokenValidity } from "../api/authAPI";
 import { getUserData } from "./localStorageUtils";
+import { getUserById } from "../api/userAPI";
 import Swal from "sweetalert2";
 
 export const useTokenValidation = () => {
@@ -11,22 +12,9 @@ export const useTokenValidation = () => {
 
     const token = localStorage.getItem("token");
     const parsedUser = getUserData();
+    const userId = parsedUser?._id;
 
-    const userStatus = parsedUser?.status?.toLowerCase();
     const userRole = parsedUser?.role?.toLowerCase();
-
-    if (userStatus === "banned") {
-      Swal.fire({
-        icon: "error",
-        title: "Account Banned",
-        text: "Your account has been banned. Please contact support.",
-      }).then(() => {
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = "/login";
-      });
-      return;
-    }
 
     if (currentPath === "/login" && (token && parsedUser)) {
       window.location.href = "/";
@@ -63,6 +51,49 @@ export const useTokenValidation = () => {
       }
     };
 
+    const checkUserStatus = async () => {
+      if (!userId) {
+        console.error("User ID is missing");
+        return null;
+      }
+      try {
+        const userData = await getUserById(userId);
+        console.log("User data fetched successfully:", userData);
+        console.log("User status:", userData.data.status.toLowerCase());
+
+        if (userData.data.status.toLowerCase() === "banned") {
+          let isConfirmed = false;
+
+          const result = await Swal.fire({
+            title: "Account Banned",
+            text: "Your account has been banned. Please contact support.",
+            icon: "error",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            timer: 5000,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+            willClose: () => {
+              if (!isConfirmed) {
+                isConfirmed = true;
+              }
+            },
+          });
+
+          if (result.isConfirmed || isConfirmed) {
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = "/login";
+          }
+          return;
+        }
+      } catch (error: any) {
+        console.error("Error fetching user data:", error.message);
+        return;
+      }
+    };
+
     const handleLogout = async () => {
       let isConfirmed = false;
 
@@ -95,6 +126,7 @@ export const useTokenValidation = () => {
       }
     };
 
+    checkUserStatus();
     validateToken();
   }, []);
 };

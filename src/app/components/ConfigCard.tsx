@@ -210,60 +210,61 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
         <div className="flex justify-center items-center col-span-3 min-h-[623px]">
           <Loader className="animate-spin text-[#0CACF3]" size={50} />
         </div>
-      ) : artToys.length > 0 ? (
-        artToys.map((artToy, index) => (
-          <div
-            key={index}
-            className="relative bg-[#202133] shadow-lg rounded-lg p-4 cursor-pointer"
-            onClick={() => handleEdit(artToy)}
-          >
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                console.log("Clicked ArtToy ID:", artToy._id);
-                handleDelete(artToy._id);
-              }}
-              className="z-10 absolute top-2 right-2 bg-[#51536D] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-500 hover:text-white transition duration-200"
+      ) :
+        artToys.length > 0 ? (
+          artToys.map((artToy, index) => (
+            <div
+              key={index}
+              className="relative bg-[#202133] shadow-lg rounded-lg p-4 cursor-pointer"
+              onClick={() => handleEdit(artToy)}
             >
-              ✕
-            </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log("Clicked ArtToy ID:", artToy._id);
+                  handleDelete(artToy._id);
+                }}
+                className="z-10 absolute top-2 right-2 bg-[#51536D] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-500 hover:text-white transition duration-200"
+              >
+                ✕
+              </button>
 
-            {artToy.imageUrl && (
-              <img
-                src={artToy.imageUrl}
-                alt="Art Toy"
-                className="w-full h-auto object-cover rounded-md mb-4"
-              />
-            )}
-            <h2 className="text-[18px] font-semibold mb-2">{artToy.name}</h2>
-            <div className="text-[13px] grid grid-cols-[1fr_2fr] gap-x-4 gap-y-2">
-              <p>
-                <strong className="font-medium">Size :</strong> {artToy.size}
-              </p>
-              <p>
-                <strong className="font-medium">Painting :</strong>{" "}
-                {artToy.painting}
-              </p>
-              <p>
-                <strong className="font-medium">Material :</strong>{" "}
-                {artToy.material}
-              </p>
-              <p>
-                <strong className="font-medium">Assembly :</strong>{" "}
-                {artToy.assembly}
-              </p>
-              <p>
-                <strong className="font-medium">Quantity :</strong>{" "}
-                {artToy.quantity}
-              </p>
+              {artToy.imageUrl && (
+                <img
+                  src={artToy.imageUrl}
+                  alt="Art Toy"
+                  className="w-full h-auto object-cover rounded-md mb-4"
+                />
+              )}
+              <h2 className="text-[18px] font-semibold mb-2">{artToy.name}</h2>
+              <div className="text-[13px] grid grid-cols-[1fr_2fr] gap-x-4 gap-y-2">
+                <p>
+                  <strong className="font-medium">Size :</strong> {artToy.size}
+                </p>
+                <p>
+                  <strong className="font-medium">Painting :</strong>{" "}
+                  {artToy.painting}
+                </p>
+                <p>
+                  <strong className="font-medium">Material :</strong>{" "}
+                  {artToy.material}
+                </p>
+                <p>
+                  <strong className="font-medium">Assembly :</strong>{" "}
+                  {artToy.assembly}
+                </p>
+                <p>
+                  <strong className="font-medium">Quantity :</strong>{" "}
+                  {artToy.quantity}
+                </p>
+              </div>
             </div>
-          </div>
-        ))
-      ) : (
-        <p className="text-center text-gray-500 col-span-3">
-          There are no recorded items.
-        </p>
-      )}
+          ))
+        ) : (
+          <p className="text-center text-gray-500 col-span-3 min-h-[623px]">
+            There are no recorded items.
+          </p>
+        )}
     </div>
   );
 }

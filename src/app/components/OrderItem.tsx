@@ -83,7 +83,7 @@ const OrderItemList: React.FC<OrderItemListProps> = ({ orders }) => {
           );
         })
       ) : (
-        <p className="text-white text-center">No orders found.</p>
+        <p className="text-gray-500 text-center">No orders found.</p>
       )}
     </div>
   );
