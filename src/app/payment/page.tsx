@@ -288,7 +288,15 @@ export default function Payment() {
               <button
                 className="w-full sm:w-1/2 h-[40px]"
                 onClick={() => {
-                  if (!paymentImage) {
+                  if (!selectedAddress && (!address || address.length === 0)) {
+                    Swal.fire({
+                      title: "Address Required",
+                      text: "Please select or add an address before confirming.",
+                      icon: "warning",
+                      confirmButtonText: "OK",
+                    });
+                    return;
+                  } else if (!paymentImage) {
                     Swal.fire({
                       title: "Upload Required",
                       text: "Please upload a payment proof image before confirming.",

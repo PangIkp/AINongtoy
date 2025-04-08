@@ -21,11 +21,11 @@ const QRCodeSection: React.FC<QRCodeSectionProps> = ({ setPaymentImage }) => {
             };
             reader.readAsDataURL(file);
         }
-            // if (file) {
-            //     const imageUrl = URL.createObjectURL(file); 
-            //     console.log("Uploaded Image URL:", imageUrl);
-            //     setUploadedImage(imageUrl);
-            // }
+        // if (file) {
+        //     const imageUrl = URL.createObjectURL(file); 
+        //     console.log("Uploaded Image URL:", imageUrl);
+        //     setUploadedImage(imageUrl);
+        // }
     };
 
     const handleImageClick = () => {
@@ -35,9 +35,9 @@ const QRCodeSection: React.FC<QRCodeSectionProps> = ({ setPaymentImage }) => {
     };
 
     const handleDeleteImage = () => {
-        setUploadedImage(null);
+        setUploadedImage(null); // Clear the uploaded image state
+        setPaymentImage(null); // Clear the payment image state
     };
-
     return (
         <section className='bg-[#202133] border border-[#202133] rounded-xl w-full flex flex-col gap-4 h-full sm:flex-row justify-center'>
             <div className='flex flex-col gap-2 items-center p-4 w-full justify-center h-full'>
@@ -62,7 +62,7 @@ const QRCodeSection: React.FC<QRCodeSectionProps> = ({ setPaymentImage }) => {
                 {uploadedImage && (
                     <div className='relative w-[200px] h-[200px] place-content-center place-items-center'>
                         <img className='w-full h-full object-fill rounded-xl cursor-pointer' src={uploadedImage} alt="Uploaded QR Code" onClick={handleImageClick} />
-                        <button className='absolute top-2 right-2 text-white bg-red-500 text-sm font-medium' onClick={handleDeleteImage}>
+                        <button className='absolute top-2 right-2 text-white bg-red-500 text-sm font-medium' onClick={handleDeleteImage} >
                             X
                         </button>
                         <label htmlFor="upload" className='hidden'>a</label>
