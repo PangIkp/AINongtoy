@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 
-const API_URL = "http://localhost:3001/api/v1/user";
+const API_URL = "https://nongtoybackend-rby6pw6h.b4a.run/api/v1/user";
 
 export const updateUserProfile = async (userId: string, userData: any) => {
     try {
@@ -60,7 +60,7 @@ export const checkUserExists = async (data: { email?: string; username?: string;
 export const getAllUsersForAdmin = async (token: string) => {
     try {
         console.log("Fetching all orders for admin...");
-        const response = await fetch("http://localhost:3001/api/v1/user/admin/users", {
+        const response = await fetch("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/user/admin/users", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -86,7 +86,7 @@ export const getAllUsersForAdmin = async (token: string) => {
     try {
         console.log("Creating user for admin...");
 
-        const response = await fetch("http://localhost:3001/api/v1/user/admin/users", {
+        const response = await fetch("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/user/admin/users", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -113,7 +113,7 @@ export const getAllUsersForAdmin = async (token: string) => {
   export const updateUserForAdmin = async (id: string, updates: any, token: string) => {
     try {
         console.log(`Updating user with ID: ${id}...`);
-        const response = await fetch(`http://localhost:3001/api/v1/user/admin/users/${id}`, {
+        const response = await fetch(`https://nongtoybackend-rby6pw6h.b4a.run/api/v1/user/admin/users/${id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
@@ -143,7 +143,7 @@ export const getAllUsersForAdmin = async (token: string) => {
 
 export const deleteUserForAdmin = async (token: string, id: string) => {
     try {
-        const response = await fetch(`http://localhost:3001/api/v1/user/admin/users/${id}`, {
+        const response = await fetch(`https://nongtoybackend-rby6pw6h.b4a.run/api/v1/user/admin/users/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",

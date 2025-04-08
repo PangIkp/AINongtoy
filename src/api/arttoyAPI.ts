@@ -3,7 +3,7 @@ import { ArtToy } from "@/mainstore";
 
 export const getArtToyById = async (id: string, token: string) => {
   try {
-    const response = await fetch(`http://localhost:3001/api/v1/arttoy/${id}`, {
+    const response = await fetch(`https://nongtoybackend-rby6pw6h.b4a.run/api/v1/arttoy/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -28,7 +28,7 @@ export const getArtToyById = async (id: string, token: string) => {
 // http://localhost:3001/api/v1/arttoy
 export const getArtToys = async (token: string) => {
   try {
-    const response = await fetch("http://localhost:3001/api/v1/arttoy", {
+    const response = await fetch("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/arttoy", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export const getArtToys = async (token: string) => {
 
 export const createArtToy = async (artToyData: any, token: string) => {
     try {
-      const response = await fetch("http://localhost:3001/api/v1/arttoy", {
+      const response = await fetch("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/arttoy", {
         method: "POST", // ใช้ POST เพื่อส่งข้อมูล
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +79,7 @@ export const deleteArtToy = async (id: string, token?: string) => {
   }
 
   try {
-    const response = await fetch(`http://localhost:3001/api/v1/arttoy/${id}`, {
+    const response = await fetch(`https://nongtoybackend-rby6pw6h.b4a.run/api/v1/arttoy/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -106,7 +106,7 @@ export const updateArtToy = async (id: string, updatedData?: Partial<ArtToy>, to
   }
 
   try {
-    const response = await fetch(`http://localhost:3001/api/v1/arttoy/${id}`, {
+    const response = await fetch(`https://nongtoybackend-rby6pw6h.b4a.run/api/v1/arttoy/${id}`, {
       method: "PATCH", // ใช้ PATCH เพื่ออัปเดตเฉพาะฟิลด์ที่ส่งมา
       headers: {
         "Content-Type": "application/json",

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 
-const API_URL = "http://localhost:3001/api/v1/order";
+const API_URL = "https://nongtoybackend-rby6pw6h.b4a.run/api/v1/order";
 
 export const createOrder = async (
   token: string,
@@ -71,7 +71,7 @@ export const getOrderById = async (id: string, token: string) => {
 export const getAllOrdersForAdmin = async (token: string) => {
   try {
     console.log("Fetching all orders for admin...");
-    const response = await fetch("http://localhost:3001/api/v1/order/admin/orders", {
+    const response = await fetch("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/order/admin/orders", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -96,7 +96,7 @@ export const getAllOrdersForAdmin = async (token: string) => {
 export const deleteOrderByAdmin = async (token: string, id: string) => {
   try {
     console.log(`Deleting order with ID: ${id}...`);
-    const response = await fetch(`http://localhost:3001/api/v1/order/admin/orders/${id}`, {
+    const response = await fetch(`https://nongtoybackend-rby6pw6h.b4a.run/api/v1/order/admin/orders/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -121,7 +121,7 @@ export const updateOrderByAdmin = async (token: string, id: string, updateData: 
   try {
     console.log(`Updating order with ID: ${id}...`);
     const res = await axios.patch(
-      `http://localhost:3001/api/v1/order/admin/orders/${id}`,
+      `https://nongtoybackend-rby6pw6h.b4a.run/api/v1/order/admin/orders/${id}`,
       updateData,
       {
         headers: {

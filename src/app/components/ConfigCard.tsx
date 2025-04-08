@@ -42,7 +42,7 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
           setIsLoading(false); // ปิด loader หากไม่มี token
           return;
         }
-        const response = await fetch("http://localhost:3001/api/v1/arttoy", {
+        const response = await fetch("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/arttoy", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
