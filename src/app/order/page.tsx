@@ -6,6 +6,7 @@ import Pagination from "../components/Pagination";
 import OrderItemList from "../components/OrderItem";
 import MyProfile from "../components/MyProfile";
 import { getOrdersByUserId } from "@/api/orderAPI";
+import { Loader } from "lucide-react"; // เพิ่มการ import Loader
 
 export default function Order() {
   const aboutRef = useRef<HTMLDivElement>(null!);
@@ -14,6 +15,7 @@ export default function Order() {
 
   const [orders, setOrders] = useState<any[]>([]);
   const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // เพิ่ม state สำหรับสถานะการโหลด
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -39,12 +41,13 @@ export default function Order() {
   useEffect(() => {
     const fetchOrders = async () => {
       if (!token) return;
-
       try {
         const data = await getOrdersByUserId(token);
         setOrders(data.data || []); // ตรวจสอบให้แน่ใจว่า orders เป็น array
       } catch (error) {
         console.error("Error fetching orders:", error);
+      } finally {
+        setIsLoading(false); // โหลดเสร็จ
       }
     };
 
@@ -98,14 +101,24 @@ export default function Order() {
             </a>
           </section>
 
-          <OrderItemList orders={paginatedOrders} />
+          {isLoading ? ( // แสดง Loader ระหว่างโหลด
+            <div className="flex justify-center items-center h-[623px]">
+              <Loader className="animate-spin text-[#0CACF3]" size={50} />
+            </div>
+          ) : (
+            <>
+              <div className="min-h-[623px]">
+                <OrderItemList orders={paginatedOrders} />
+                {totalPages > 1 && (
+                  <Pagination
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+                  />
+                )}
+              </div>
 
-          {totalPages > 1 && (
-            <Pagination
-              totalPages={totalPages}
-              currentPage={currentPage}
-              onPageChange={handlePageChange}
-            />
+            </>
           )}
         </div>
       </div>

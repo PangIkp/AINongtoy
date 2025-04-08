@@ -207,7 +207,7 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
       {isLoading ? ( // แสดง loader ระหว่างโหลดข้อมูล
-        <div className="flex justify-center items-center col-span-3 min-h-[470px]">
+        <div className="flex justify-center items-center col-span-3 min-h-[623px]">
           <Loader className="animate-spin text-[#0CACF3]" size={50} />
         </div>
       ) : artToys.length > 0 ? (

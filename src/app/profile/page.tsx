@@ -108,24 +108,31 @@ export default function Profile() {
           </section>
 
           {isLoading ? (
-            <div className="flex justify-center items-center h-[360px]">
+            <div className="flex justify-center items-center h-[623px]">
               <Loader className="animate-spin text-[#0CACF3]" size={50} />
             </div>
           ) : (
-            <ArtToyCard
-              imageUrls={currentImages}
-              isLoading={isLoading}
-              onFavoriteDeleted={handleFavoriteDeleted} // ส่ง callback ไปยัง ArtToyCard
-            />
+            <div className="min-h-[623px]">
+              <ArtToyCard
+                imageUrls={currentImages}
+                isLoading={isLoading}
+                onFavoriteDeleted={handleFavoriteDeleted} // ส่ง callback ไปยัง ArtToyCard
+              />
+
+              <div className="mt-6">
+                {totalPages > 1 && (
+                  <Pagination
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+                  />
+                )}
+              </div>
+
+            </div>
           )}
 
-          {totalPages > 1 && (
-            <Pagination
-              totalPages={totalPages}
-              currentPage={currentPage}
-              onPageChange={handlePageChange}
-            />
-          )}
+
         </div>
       </div>
       <Footer />
