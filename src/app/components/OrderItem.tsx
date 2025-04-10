@@ -1,9 +1,6 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { getOrderById } from "@/api/orderAPI";
-import { useTranslation } from "react-i18next"; // Import useTranslation
-import "../../i18n"; // Import i18n
-import Swal from "sweetalert2";
 
 interface OrderItem {
   _id: string; // ✅ เพิ่ม id
@@ -28,23 +25,21 @@ const statusColors: { [key: string]: string } = {
 
 const OrderItemList: React.FC<OrderItemListProps> = ({ orders }) => {
   const router = useRouter();
-  const { t } = useTranslation(); // ใช้ useTranslation
 
   const handleClick = async (id: string) => {
+    console.log("Fetching Order ID:", id);
+
     const token = localStorage.getItem("token");
     if (!token) return;
 
     try {
       const orderDetail = await getOrderById(id, token);
+      console.log("Order Detail:", orderDetail);
 
       localStorage.setItem("selectedOrder", JSON.stringify(orderDetail));
       router.push("/order_detail");
-    } catch {
-      Swal.fire({
-        icon: "error",
-        title: t("orderDetail.errorTitle"),
-        text: t("orderDetail.errorText"),
-      });
+    } catch (error) {
+      console.error("Failed to fetch order details:", error);
     }
   };
 
@@ -52,6 +47,7 @@ const OrderItemList: React.FC<OrderItemListProps> = ({ orders }) => {
     <div className="flex flex-col gap-4">
       {orders.length > 0 ? (
         orders.map((order, index) => {
+          console.log("Order ID:", order._id); // Debugging
 
           return (
             <div
@@ -67,30 +63,27 @@ const OrderItemList: React.FC<OrderItemListProps> = ({ orders }) => {
                 />
                 <div className="flex flex-col justify-between w-full ">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                    <p className="font-semibold text-white">
-                      {order.name === "Unnamed Art Toy" ? t(`artToy.names.${order.name}`, "Unnamed Art Toy") : order.name}
-                    </p>
+                    <p className="font-semibold text-white">{order.name}</p>
                     <div className={`${statusColors[order.status] || "text-white"}`}>
-                      <p className="text-[13px] font-medium">{t(`order.status.${order.status}`, order.status)}</p>
+                      <p className="text-[13px] font-medium">{order.status}</p>
                     </div>
                   </div>
 
+                  <p className="text-sm text-[#B3B0B0]">Size: {order.size}</p>
                   <p className="text-sm text-[#B3B0B0]">
-                    {t("order.size")}: {t(`artToy.sizeOptions.${order.size}`, order.size)}
-                  </p>
-                  <p className="text-sm text-[#B3B0B0]">
-                    {t("order.quantity")}: {order.quantity}
+                    Quantity: {order.quantity}
                   </p>
                   <p className="text-sm font-semibold text-white">
                     {order.price.toLocaleString()} ฿
                   </p>
                 </div>
               </div>
+
             </div>
           );
         })
       ) : (
-        <p className="text-gray-500 text-center">{t("order.noOrders")}</p>
+        <p className="text-gray-500 text-center">No orders found.</p>
       )}
     </div>
   );

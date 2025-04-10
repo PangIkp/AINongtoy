@@ -16,104 +16,108 @@ const OrderModal: React.FC<OrderModalProps> = ({ isVisible, order, onClose }) =>
   return (
     <Modal
       title="Order Details"
-      open={isVisible}
+      open={isVisible} 
       onCancel={onClose}
       footer={null}
       style={{ maxHeight: "60vh", overflowY: "auto" }}
     >
-      <table className="w-full border-collapse border border-gray-300">
+      <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #ddd" }}>
         <tbody>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Order ID</td>
-            <td className="p-2 border border-gray-300">{order._id}</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Order ID</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order._id}</td>
           </tr>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Created At</td>
-            <td className="p-2 border border-gray-300">
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Created At</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>
               {dayjs(order.createdAt).format("DD/MM/YYYY HH:mm")}
             </td>
           </tr>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Customer</td>
-            <td className="p-2 border border-gray-300">
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Customer</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>
               {order.user ? `${order.user.firstName} ${order.user.lastName}` : "-"}
             </td>
           </tr>
+
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Phone number</td>
-            <td className="p-2 border border-gray-300">
-              {order.user ? `${order.user.phoneNumber}` : "-"}
-            </td>
+  <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Phone number</td>
+  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+    {order.user ? `${order.user.phoneNumber}` : "-"}
+  </td>
+</tr>
+
+
+
+          <tr>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Name</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.name}</td>
           </tr>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Name</td>
-            <td className="p-2 border border-gray-300">{order.name}</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Size</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.size}</td>
           </tr>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Size</td>
-            <td className="p-2 border border-gray-300">{order.size}</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Material</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.material}</td>
           </tr>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Material</td>
-            <td className="p-2 border border-gray-300">{order.material}</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Painting</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.painting}</td>
           </tr>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Painting</td>
-            <td className="p-2 border border-gray-300">{order.painting}</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Assembly</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.assembly}</td>
           </tr>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Assembly</td>
-            <td className="p-2 border border-gray-300">{order.assembly}</td>
-          </tr>
-          <tr>
-            <td className="p-2 font-bold border border-gray-300">Art toy</td>
-            <td className="p-2 border border-gray-300">
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Art toy</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>
               <img
                 src={order.imageUrl}
                 alt="Art Toy"
-                className="w-52 h-auto"
+                style={{ width: "200px", height: "auto" }}
               />
             </td>
           </tr>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Price</td>
-            <td className="p-2 border border-gray-300">{order.price.toLocaleString()}</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Price</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.price.toLocaleString()}</td>
           </tr>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Shipping</td>
-            <td className="p-2 border border-gray-300">{order.shipping}</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Shipping</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.shipping}</td>
           </tr>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Total</td>
-            <td className="p-2 border border-gray-300">{order.total.toLocaleString()}</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Total</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.total.toLocaleString()}</td>
           </tr>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Address</td>
-            <td className="p-2 border border-gray-300">
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Address</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>
               {order.address
                 ? (() => {
-                  try {
-                    const addressObject = JSON.parse(order.address);
-                    return `${addressObject.subdistrict}, ${addressObject.district}, ${addressObject.province}, ${addressObject.postalCode}, ${addressObject.detail}`;
-                  } catch (error) {
-                    return "Invalid address format";
-                  }
-                })()
+                    try {
+                      const addressObject = JSON.parse(order.address); // Parse the address
+                      return `${addressObject.subdistrict}, ${addressObject.district}, ${addressObject.province}, ${addressObject.postalCode}, ${addressObject.detail}`;
+                    } catch (error) {
+                      return "Invalid address format"; // If parsing fails
+                    }
+                  })()
                 : "No address provided"}
             </td>
           </tr>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Confirmation</td>
-            <td className="p-2 border border-gray-300">{order.paymentStatus}</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Confirmation</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.paymentStatus}</td>
           </tr>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Payment Status</td>
-            <td className="p-2 border border-gray-300">
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Payment Status</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>
               {order.payment ? (
                 <img
-                  src={order.payment}
+                  src={order.payment} // Base64 encoded image for payment status
                   alt="Payment Status"
-                  className="w-24 h-24"
+                  style={{ width: "100px", height: "100px" }} // Adjust the size
                 />
               ) : (
                 "No payment image available"
@@ -121,8 +125,8 @@ const OrderModal: React.FC<OrderModalProps> = ({ isVisible, order, onClose }) =>
             </td>
           </tr>
           <tr>
-            <td className="p-2 font-bold border border-gray-300">Status</td>
-            <td className="p-2 border border-gray-300">{order.status}</td>
+            <td style={{ padding: "8px", fontWeight: "bold", border: "1px solid #ddd" }}>Status</td>
+            <td style={{ padding: "8px", border: "1px solid #ddd" }}>{order.status}</td>
           </tr>
         </tbody>
       </table>

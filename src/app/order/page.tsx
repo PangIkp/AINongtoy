@@ -8,11 +8,8 @@ import OrderItemList from "../components/OrderItem";
 import MyProfile from "../components/MyProfile";
 import { getOrdersByUserId } from "@/api/orderAPI";
 import { Loader } from "lucide-react"; // เพิ่มการ import Loader
-import { useTranslation } from "react-i18next"; // Import useTranslation
-import "../../i18n"; // Import i18n
 
 export default function Order() {
-  const { t } = useTranslation(); // Initialize useTranslation
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);
   const contactRef = useRef<HTMLDivElement>(null!);
@@ -79,31 +76,29 @@ export default function Order() {
         contactRef={contactRef}
       />
       <div className="w-full place-content-center place-items-center h-[100px] mt-[5rem] bg-black">
-        <h1 className="text-4xl font-semibold mb-3 text-white">
-          {t("myProfile")} {/* ใช้การแปล */}
-        </h1>
+        <h1 className="text-4xl font-semibold mb-3">My Profile</h1>
       </div>
       <div className="w-full place-items-center">
         <div className="w-full max-w-[1024px] px-4 py-20 flex flex-col gap-12">
           <MyProfile
             followMessage={
               orders.length > 0
-                ? t("profile.orderMessage", { count: orders.length }) // ใช้การแปลพร้อมตัวแปร
-                : t("profile.noOrderMessage") // ใช้การแปล
+                ? `You have ${orders.length} models to follow`
+                : "You have no models to follow"
             }
           />
           <section className="flex gap-10 font-semibold">
             <a className="hover:text-[#0AACF0] transition-all" href="/profile">
-              {t("profile.favorite")} {/* ใช้การแปล */}
+              Favorite
             </a>
             <a
               className="hover:text-[#0AACF0] transition-all"
               href="/configuration"
             >
-              {t("profile.artToyConfig")} {/* ใช้การแปล */}
+              Art Toy Config
             </a>
             <a className="text-[#0AACF0] underline" href="/order">
-              {t("profile.order")} {/* ใช้การแปล */}
+              Order
             </a>
           </section>
 
@@ -123,6 +118,7 @@ export default function Order() {
                   />
                 )}
               </div>
+
             </>
           )}
         </div>

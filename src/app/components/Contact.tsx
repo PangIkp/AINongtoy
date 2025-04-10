@@ -2,12 +2,8 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import Image from "next/image";
 import emailjs from "emailjs-com";
-import { useTranslation } from "react-i18next";
-import "../../i18n";
 
 export default function Contact() {
-    const { t } = useTranslation(); // ใช้ useTranslation
-
     const [formData, setFormData] = useState({
         fName: "",
         lName: "",
@@ -32,22 +28,22 @@ export default function Contact() {
         switch (name) {
             case "fName":
                 if (!/^[a-zA-Zก-ฮะ-ูเ-์]+$/.test(value)) {
-                    error = t("validation.firstName"); // ใช้ข้อความแปล
+                    error = "First Name : only letters";
                 }
                 break;
             case "lName":
                 if (!/^[a-zA-Zก-ฮะ-ูเ-์]+$/.test(value)) {
-                    error = t("validation.lastName"); // ใช้ข้อความแปล
+                    error = "Last Name : only letters";
                 }
                 break;
             case "email":
                 if (!/^[a-zA-Z][^\s@]*@[a-zA-Z]{2,}(\.[a-zA-Z]{2,}){1,2}$/.test(value)) {
-                    error = t("validation.email"); // ใช้ข้อความแปล
+                    error = "Email: Invalid.";
                 }
                 break;
             case "phone":
                 if (!/^0\d{2}-\d{3}-\d{4}$/.test(value)) {
-                    error = t("validation.phone"); // ใช้ข้อความแปล
+                    error = "Phone: 10 digits, start with 0.";
                 }
                 break;
             default:
@@ -99,7 +95,7 @@ export default function Contact() {
                 .then((result) => {
                     console.log(result.text);
                     setFormData({ fName: "", lName: "", email: "", phone: "" });
-                    setSuccessMessage(t("form.success")); // ใช้ข้อความแปล
+                    setSuccessMessage("Form submitted successfully!");
                 }, (error) => {
                     console.log(error.text);
                 });
@@ -118,9 +114,9 @@ export default function Contact() {
                 <div className="w-full h-full">
                     <div className="w-full h-full">
                         <div className="w-full h-[30%]">
-                            <p className="text-[#0AACF0] font-semibold mb-4">{t("contact.title")}</p>
+                            <p className="text-[#0AACF0] font-semibold mb-4">CONTACT US</p>
                             <h1 className="text-[30px] sm:text-[40px] md:text-[45px] font-semibold">
-                                {t("contact.subtitle")}
+                                We will get back to you asap!
                             </h1>
                         </div>
 
@@ -129,7 +125,7 @@ export default function Contact() {
                                 <div className="grid sm:grid-cols-2 grid-cols-1 gap-x-4">
                                     <div>
                                         <label htmlFor="fName" className="text-[16px]">
-                                            {t("form.firstName")}
+                                            First Name
                                             <input
                                                 name="fName"
                                                 value={formData.fName}
@@ -146,7 +142,7 @@ export default function Contact() {
 
                                     <div>
                                         <label htmlFor="lName" className="text-[16px]">
-                                            {t("form.lastName")}
+                                            Last Name
                                             <input
                                                 name="lName"
                                                 value={formData.lName}
@@ -163,7 +159,7 @@ export default function Contact() {
                                 </div>
 
                                 <label htmlFor="email" className="text-[16px]">
-                                    {t("form.email")}
+                                    Email
                                     <input
                                         name="email"
                                         value={formData.email}
@@ -177,7 +173,7 @@ export default function Contact() {
                                     <p className="text-xs mt-1 text-yellow-500 h-4">{errors.email}</p>
                                 </label>
                                 <label htmlFor="phone" className="text-[16px]">
-                                    {t("form.phone")}
+                                    Phone Number
                                     <input
                                         name="phone"
                                         value={formData.phone}
@@ -190,7 +186,7 @@ export default function Contact() {
                                     />
                                     <p className="text-xs mt-1 text-yellow-500 h-4">{errors.phone}</p>
                                 </label>
-                                <button className="mt-2 py-2" type="submit" disabled={!isFormValid()}>{t("form.submit")}</button>
+                                <button className="mt-2 py-2" type="submit" disabled={!isFormValid()}>Submit</button>
 
                             </div>
                         </form>

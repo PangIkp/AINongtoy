@@ -4,8 +4,6 @@ import React from "react";
 import { useState } from "react";
 import { createUserForAdmin } from "@/api/userAPI";
 import Swal from "sweetalert2";
-import "../../i18n";
-import { useTranslation } from "react-i18next";
 
 interface ModalFormProps {
   isFormVisible: boolean;
@@ -18,8 +16,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
   handleCloseModal,
   token,
 }) => {
-  const { t } = useTranslation(); // ใช้ useTranslation เพื่อเรียกฟังก์ชัน t
-
+  
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -29,7 +26,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
     role: "user",
     password: "",
   });
-
+  
   if (!isFormVisible) return null;
 
   const handleChange = (
@@ -54,8 +51,8 @@ const ModalForm: React.FC<ModalFormProps> = ({
     if (formData.password !== confirmPassword) {
       Swal.fire({
         icon: "error",
-        title: t("mForm.error"),
-        text: t("mForm.password_mismatch"),
+        title: "Error",
+        text: "Passwords do not match!",
       });
       return;
     }
@@ -64,15 +61,15 @@ const ModalForm: React.FC<ModalFormProps> = ({
       const createdUser = await createUserForAdmin(token, formData);
       Swal.fire({
         icon: "success",
-        title: t("mForm.success"),
-        text: t("mForm.user_created"),
+        title: "Success",
+        text: "User created successfully!",
       });
       handleCloseModal();
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: t("mForm.error"),
-        text: t("mForm.creation_failed"),
+        title: "Error",
+        text: "Error creating user.",
       });
     }
   };
@@ -85,12 +82,12 @@ const ModalForm: React.FC<ModalFormProps> = ({
           onClick={handleCloseModal}
           className="absolute top-4 right-4 text-gray-600"
         >
-          {t("mForm.close")}
+          X
         </button>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 text-[14px] text-white">
           <div>
-            <label htmlFor="firstName">{t("mForm.first_name")}</label>
+            <label htmlFor="firstName">First name</label>
             <input
               type="text"
               id="firstName"
@@ -102,7 +99,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
           </div>
 
           <div>
-            <label htmlFor="lastName">{t("mForm.last_name")}</label>
+            <label htmlFor="lastName">Last name</label>
             <input
               type="text"
               id="lastName"
@@ -114,7 +111,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
           </div>
 
           <div>
-            <label htmlFor="email">{t("mForm.email")}</label>
+            <label htmlFor="userEmail">Email</label>
             <input
               type="email"
               id="email"
@@ -126,7 +123,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
           </div>
 
           <div>
-            <label htmlFor="username">{t("mForm.username")}</label>
+            <label htmlFor="userName">Username</label>
             <input
               type="text"
               id="username"
@@ -138,7 +135,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
           </div>
 
           <div>
-            <label htmlFor="phoneNumber">{t("mForm.phone_number")}</label>
+            <label htmlFor="phoneNumber">Phone number</label>
             <input
               type="text"
               id="phoneNumber"
@@ -149,7 +146,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
             />
           </div>
           <div>
-            <label htmlFor="role">{t("mForm.role")}</label>
+            <label htmlFor="role">Role</label>
             <select
               id="role"
               name="role"
@@ -157,13 +154,17 @@ const ModalForm: React.FC<ModalFormProps> = ({
               onChange={handleChange} // ใช้ onChange เพื่อจับการเปลี่ยนแปลง
               className="mt-2 p-2 border w-full bg-[#2F2F2F] text-[12px] text-white border-[#5B5B5B]"
             >
-              <option value="user">{t("mForm.roles.user")}</option>
-              <option value="admin">{t("mForm.roles.admin")}</option>
+              <option value="" disabled>
+                Select role
+              </option>{" "}
+              {/* ค่า default ที่ไม่สามารถเลือกได้ */}
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
             </select>
           </div>
 
           <div>
-            <label htmlFor="password">{t("mForm.password")}</label>
+            <label htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
@@ -175,7 +176,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
           </div>
 
           <div>
-            <label htmlFor="confirmPassword">{t("mForm.confirm_password")}</label>
+            <label htmlFor="confirmPassword">Confirm password</label>
             <input
               type="password"
               id="confirmPassword"
@@ -186,13 +187,13 @@ const ModalForm: React.FC<ModalFormProps> = ({
 
           <div className="col-span-2 flex justify-end mt-4">
             <button type="submit" className="text-white p-2 rounded w-full">
-              {t("mForm.submit")}
+              Submit
             </button>
           </div>
         </form>
       </div>
     </div>
-  );
+  );  
 };
 
 export default ModalForm;

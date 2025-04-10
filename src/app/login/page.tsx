@@ -12,8 +12,6 @@ import CryptoJS from "crypto-js";
 import dotenv from "dotenv";
 import { Loader } from "lucide-react"; // เพิ่มการ import Loader
 dotenv.config();
-import { useTranslation } from "react-i18next";
-import "../../i18n";
 
 const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY || "";
 
@@ -26,7 +24,6 @@ const Login = () => {
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
-  const { t } = useTranslation(); // ใช้ useTranslation
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -71,14 +68,16 @@ const Login = () => {
     if (!username || !password) {
       Swal.fire({
         icon: 'warning',
-        title: t('login.warningTitle'),
-        text: t('login.warningText'),
+        title: 'Please fill in all fields',
+        text: 'Username and Password are required',
       });
       return;
     }
 
     try {
       const data = await login(username, password);
+      console.log("Login successful:", data);
+
       if (data.data.role === "admin") {
         window.location.href = "/user-management"; // เปลี่ยนเส้นทางไปที่หน้า user-management
       }
@@ -95,14 +94,14 @@ const Login = () => {
         Cookies.remove("password");
       }
 
-    } catch (error: any) {
-      // ใช้ t เพื่อแปลข้อความ error.message
-      const translatedMessage = t(`login.errors.${error.message}`, error.message);
 
+
+    } catch (error: any) {
+      console.error("Login error:", error.message);
       Swal.fire({
         icon: 'error',
-        title: String(t('login.errorTitle')), // แปลงเป็น string
-        text: String(translatedMessage), // แปลงเป็น string
+        title: 'Login failed',
+        text: error.message,
       });
     }
   };
@@ -137,8 +136,8 @@ const Login = () => {
               <img src="/Images/AINongtoy/mainbg.png" alt="" className="w-full h-full object-cover" />
               <div className="absolute max-w-[375px] w-full p-4">
                 <div>
-                  <h1 className="text-4xl font-semibold mb-3">{t('login.welcomeBack')}</h1>
-                  <p className="font-extralight">{t('login.enterDetails')}</p>
+                  <h1 className="text-4xl font-semibold mb-3">Welcome back</h1>
+                  <p className="font-extralight">Please enter your details</p>
                 </div>
                 <div>
                   <form
@@ -146,13 +145,13 @@ const Login = () => {
                     className="flex flex-col justify-between gap-4 w-full h-[70%] pt-5"
                   >
                     <label className="hidden" htmlFor="username">
-                      <p>{t('login.username')}</p>
+                      <p>Username</p>
                     </label>
                     <input
                       className="block"
                       type="text"
                       id="username"
-                      placeholder={t('login.username')}
+                      placeholder="Username"
                       maxLength={40}
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
@@ -161,7 +160,7 @@ const Login = () => {
                     <PasswordInput
                       id="password"
                       name="password"
-                      placeholder={t('login.password')}
+                      placeholder="Password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
@@ -180,20 +179,21 @@ const Login = () => {
                             onChange={(e) => setRememberMe(e.target.checked)}
                           />
                         </div>
-                        {t('login.rememberMe')}
+
+                        Remember&nbsp;me
                       </label>
                       <a href="/forgotpassword" className="text-[#0AACF0]">
-                        {t('login.forgotPassword')}
+                        Forgot password ?
                       </a>
                     </div>
                     <button type="submit" className="h-[40px]">
-                      {t('login.loginButton')}
+                      Login
                     </button>
                     <div className="flex justify-center text-[13px]">
                       <p>
-                        {t('login.notRegistered')}{" "}
+                        Not registered yet ?{" "}
                         <a href="/signup" className="text-[#0AACF0] underline">
-                          {t('login.signUp')}
+                          Sign up
                         </a>
                       </p>
                     </div>
@@ -202,6 +202,7 @@ const Login = () => {
               </div>
             </>
           )}
+
         </div>
       </div>
       <Footer />

@@ -15,8 +15,6 @@ import { Button } from "antd";
 import dayjs from "dayjs";
 import OrderModal from "../components/OrderModal";
 import Swal from "sweetalert2";
-import "../../i18n";
-import { useTranslation } from "react-i18next";
 
 export default function OrderManagement() {
   const [isCollapsed, setIsCollapsed] = useState(false);

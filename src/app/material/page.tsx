@@ -6,11 +6,8 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Config from "../components/Config";
-import { useTranslation } from "react-i18next";
-import "../../i18n";
 
 export default function Material() {
-  const { t } = useTranslation(); // ใช้ useTranslation
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);
   const contactRef = useRef<HTMLDivElement>(null!);
@@ -35,8 +32,8 @@ export default function Material() {
       <div className="md:p-40 w-full pl-10 pr-10 pt-40">
         <div className="sm:flex justify-between items-center space-y-">
           <div>
-            <p className="font-semibold text-4xl">{t("material.title")}</p>
-            <p>{t("material.subtitle")}</p>
+            <p className="font-semibold text-4xl">Material Selection</p>
+            <p>Choose Your Material</p>
           </div>
           <div className="flex items-center md:justify-start">
             <img src="/Images/AINongtoy/Tips.png" alt="Tips" className="w-5" />
@@ -44,13 +41,13 @@ export default function Material() {
               className="bg-transparent hover:bg-transparent font-light text-[#FCFF68] p-0"
               onClick={() => setIsOpen(true)}
             >
-              {t("material.tipsButton")}
+              Tips
             </button>
           </div>
         </div>
 
         <div className="mt-10 mb-10">
-          <Suspense fallback={<div>{t("material.loading")}</div>}>
+          <Suspense fallback={<div>Loading...</div>}>
             <Config />
           </Suspense>
         </div>
@@ -69,11 +66,16 @@ export default function Material() {
             </button>
 
             {/* เนื้อหา Popup */}
-            <p className="text-gray-800 font-semibold">{t("material.tipsTitle")}</p>
+            <p className="text-gray-800 font-semibold">Tips</p>
             <ul className="list-disc pl-5 text-gray-800">
-              <li>{t("material.tip1")}</li>
-              <li>{t("material.tip2")}</li>
-              <li>{t("material.tip3")}</li>
+              <li>
+                For custom or limited edition art toys, choose hand-painting.
+              </li>
+              <li>For mass production, use Pad Printing.</li>
+              <li>
+                For complex designs, consider magnetic joints or interchangeable
+                parts for added functionality.
+              </li>
             </ul>
           </div>
         </div>
