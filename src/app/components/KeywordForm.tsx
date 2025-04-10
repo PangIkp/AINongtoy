@@ -6,31 +6,31 @@ import { createKeywordForAdmin } from "@/api/keywordAPI";
 import Swal from "sweetalert2";
 
 interface KeywordFormProps {
-    isFormVisible: boolean;
-    handleCloseModal: () => void;
-    token: string;
-    fetchAdminKeywords: () => void;
-  }
-  
+  isFormVisible: boolean;
+  handleCloseModal: () => void;
+  token: string;
+  fetchAdminKeywords: () => void;
+}
 
-  const KeywordForm: React.FC<KeywordFormProps> = ({
-    isFormVisible,
-    handleCloseModal,
-    token,
-    fetchAdminKeywords,
-  }) => {
-  
-  
+
+const KeywordForm: React.FC<KeywordFormProps> = ({
+  isFormVisible,
+  handleCloseModal,
+  token,
+  fetchAdminKeywords,
+}) => {
+
+
   const [formData, setFormData] = useState({
     name: "",
-    type:"Color",
+    type: "Color",
   });
 
   const [errors, setErrors] = useState({
     name: "",
     type: "",
   });
-  
+
   if (!isFormVisible) return null;
 
   const handleChange = (
@@ -93,7 +93,7 @@ interface KeywordFormProps {
 
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 text-[14px] text-white">
           <div>
-            <label htmlFor="firstName">Name</label>
+            <label htmlFor="name">Name</label>
             <input
               type="text"
               id="name"
@@ -108,12 +108,12 @@ interface KeywordFormProps {
           </div>
 
           <div>
-            <label htmlFor="role">Type</label>
+            <label htmlFor="type" >Type</label>
             <select
               id="type"
               name="type"
-              value={formData.type} 
-              onChange={handleChange} 
+              value={formData.type}
+              onChange={handleChange}
               className="mt-2 p-2 border w-full bg-[#2F2F2F] text-[12px] text-white border-[#5B5B5B]"
             >
               <option value="" disabled>
@@ -135,7 +135,7 @@ interface KeywordFormProps {
         </form>
       </div>
     </div>
-  );  
+  );
 };
 
 export default KeywordForm;

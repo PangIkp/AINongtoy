@@ -256,18 +256,10 @@ export default function Dashboard() {
             <div className="mb-8 flex sm:flex-row flex-col items-center justify-between space-x-4">
               <div className="sm:w-1/4 w-full p-4">
                 {/* 🟢 Dropdown สำหรับเลือกแผนภูมิ */}
+                <label htmlFor="abc" className="hidden">abc</label>
                 <select
-                  style={{
-                    backgroundColor: "#2F2F2F",
-                    color: "white",
-                    width: "50%",
-                    margin: "0 auto",
-                    display: "block",
-                    border: "1px solid #5B5B5B",
-                    borderRadius: "4px",
-                    padding: "8px",
-                  }}
-                  className="mb-4 p-2 border rounded"
+                  id="abc"
+                  className="mb-4 p-2 w-1/2 mx-auto block bg-[#2F2F2F] text-white border border-[#5B5B5B] rounded"
                   value={selectedChart}
                   onChange={(e) => setSelectedChart(e.target.value)}
                 >

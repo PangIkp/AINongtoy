@@ -212,19 +212,19 @@ export default function Navbar({
           </Link>
         )}
         {/* Language Switcher */}
-        <div className="flex space-x-2">
-          <button
-            onClick={() => changeLanguage("en")}
-            className="px-2 py-1 bg-blue-500 rounded hover:bg-blue-700 transition"
+        <div className="flex items-center">
+          <label htmlFor="language-select" className="hidden">
+            {t("navbar.language")} {/* เพิ่มข้อความแปลสำหรับชื่อภาษา */}
+          </label>
+          <select
+            id="language-select"
+            onChange={(e) => changeLanguage(e.target.value)}
+            className="m-0 p-1 bg-transparent text-white hover:bg-[#010311] border-transparent h-[40px]"
+            defaultValue={i18n.language} // ตั้งค่าภาษาเริ่มต้น
           >
-            EN
-          </button>
-          <button
-            onClick={() => changeLanguage("th")}
-            className="px-2 py-1 bg-green-500 rounded hover:bg-green-700 transition"
-          >
-            TH
-          </button>
+            <option className="bg-[#010311]" value="en">EN</option>
+            <option className="bg-[#010311]" value="th">TH</option>
+          </select>
         </div>
       </div>
     </nav>

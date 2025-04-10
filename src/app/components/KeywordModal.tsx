@@ -18,58 +18,24 @@ const KeywordModal: React.FC<KeywordModalProps> = ({ isVisible, keyword, onClose
       open={isVisible}
       onCancel={onClose}
       footer={null}
-      style={{ maxHeight: "60vh", overflowY: "auto" }}
+      className="max-h-[60vh] overflow-y-auto"
     >
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          border: "1px solid #ddd",
-        }}
-      >
+      <table className="w-full border-collapse border border-gray-300">
         <tbody>
           <tr>
-            <td
-              style={{
-                padding: "8px",
-                fontWeight: "bold",
-                border: "1px solid #ddd",
-              }}
-            >
-              User ID
-            </td>
-            <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-              {keyword._id}
-            </td>
+            <td className="p-2 font-bold border border-gray-300">User ID</td>
+            <td className="p-2 border border-gray-300">{keyword._id}</td>
           </tr>
           <tr>
-            <td
-              style={{
-                padding: "8px",
-                fontWeight: "bold",
-                border: "1px solid #ddd",
-              }}
-            >
-              Created At
-            </td>
-            <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+            <td className="p-2 font-bold border border-gray-300">Created At</td>
+            <td className="p-2 border border-gray-300">
               {dayjs(keyword.createdAt).format("DD/MM/YYYY HH:mm")}
             </td>
           </tr>
           <tr>
-            <td
-              style={{
-                padding: "8px",
-                fontWeight: "bold",
-                border: "1px solid #ddd",
-              }}
-            >
-              Email:
-            </td>
-            <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-              {keyword.email}
-            </td>
-          </tr> 
+            <td className="p-2 font-bold border border-gray-300">Email</td>
+            <td className="p-2 border border-gray-300">{keyword.email}</td>
+          </tr>
         </tbody>
       </table>
     </Modal>
