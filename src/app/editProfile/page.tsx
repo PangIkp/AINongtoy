@@ -10,8 +10,7 @@ import { updateUserProfile, updateUserAddresses, getUserById } from '../../api/u
 import { getUserData, setUserData } from '../../utils/localStorageUtils';
 import Swal from "sweetalert2";
 import Select from 'react-select';
-import { useTranslation } from 'react-i18next';
-import '../../i18n'; // Import i18n for translations
+import { color } from 'framer-motion';
 
 interface Province {
     id: number;
@@ -49,7 +48,6 @@ interface Address {
 
 
 export default function Page() {
-    const { t } = useTranslation(); // ใช้ useTranslation เพื่อเรียกฟังก์ชัน t สำหรับแปลข้อความ
     // navbar
     const aboutRef = useRef<HTMLDivElement>(null!);
     const partnerRef = useRef<HTMLDivElement>(null!);
@@ -448,6 +446,9 @@ export default function Page() {
         setCharCount(newCharCount);
         setAddressFormsCount(addresses.length);
         setIsEditingAddress(false);
+
+        console.log('results', results);
+        console.log('addresses', addresses);
     };
 
     // สร้าง function ที่ใช้ในการดึงข้อมูลผู้ใช้ และ ที่อยู่ของผู้ใช้
@@ -568,6 +569,10 @@ export default function Page() {
         setResults(newResults);
         setCharCount(newCharCount);
         setAddressFormsCount(addresses.length);
+
+        console.log('results', results);
+        console.log('addresses', addresses);
+
     }, [addresses.length, data]); // useEffect will run when addresses.length or data changes
 
     return (
@@ -581,25 +586,19 @@ export default function Page() {
             ) : (
                 <>
                     <div className='w-full place-content-center place-items-center h-[100px] mt-[5rem] bg-black'>
-                        <h1 className='text-4xl font-semibold mb-3'>{t('myProfile')}</h1> {/* ใช้ t() แปลข้อความ */}
+                        <h1 className='text-4xl font-semibold mb-3'>My Profile</h1>
                     </div>
                     <div className='w-full place-items-center'>
                         <div className='w-full max-w-[980px] px-4 py-20 flex flex-col gap-12'>
                             <div className='flex justify-between border-b border-white pb-2'>
-                                <p className='text-xl font-semibold'>{t('editProfile.information.title')}</p> {/* ใช้ t() แปลข้อความ */}
+                                <p className='text-xl font-semibold'>Information</p>
                                 <div className='place-aitems-end place-content-center'>
                                     {!isEditing ? (
-                                        <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => setIsEditing(true)}>
-                                            {t('editProfile.information.edit')}
-                                        </button>
+                                        <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => setIsEditing(true)}>Edit</button>
                                     ) : (
                                         <div className='flex gap-2'>
-                                            <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={handleCancelEdit}>
-                                                {t('editProfile.information.cancel')}
-                                            </button>
-                                            <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={handleSaveUserdata}>
-                                                {t('editProfile.information.save')}
-                                            </button>
+                                            <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={handleCancelEdit}>Cancel</button>
+                                            <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={handleSaveUserdata}>Save</button>
                                         </div>
                                     )}
                                 </div>
@@ -608,7 +607,7 @@ export default function Page() {
                             <div>
                                 <form action="#information" method="post" className='grid grid-cols-1 sm:grid-cols-2 sm:gap-y-6  gap-x-8'>
                                     <label htmlFor="username">
-                                        <p>{t('editProfile.information.username')}</p>
+                                        <p>Username</p>
                                         <input
                                             type="text"
                                             id="username"
@@ -618,7 +617,7 @@ export default function Page() {
                                         <p className="text-xs my-1 text-yellow-500 h-4"></p>
                                     </label>
                                     <label htmlFor="email">
-                                        <p>{t('editProfile.information.email')}</p>
+                                        <p>Email address</p>
                                         <input
                                             type="email"
                                             id="email"
@@ -628,7 +627,7 @@ export default function Page() {
                                         <p className="text-xs my-1 text-yellow-500 h-4"></p>
                                     </label>
                                     <label htmlFor="fname">
-                                        <p>{t('editProfile.information.firstName')}</p>
+                                        <p>First Name</p>
                                         <input
                                             type="text"
                                             id="fname"
@@ -647,7 +646,7 @@ export default function Page() {
                                     </label>
 
                                     <label htmlFor="lname">
-                                        <p>{t('editProfile.information.lastName')}</p>
+                                        <p>Last Name</p>
                                         <input
                                             type="text"
                                             id="lname"
@@ -666,7 +665,7 @@ export default function Page() {
                                     </label>
 
                                     <label htmlFor="phone">
-                                        <p>{t('editProfile.information.phone')}</p>
+                                        <p>Phone Number</p>
                                         <input
                                             type="tel"
                                             id="phone"
@@ -690,7 +689,7 @@ export default function Page() {
                             <div>
                                 <div className='flex justify-between'>
                                     <h1 className='text-xl font-semibold'>
-                                        {t('editProfile.address.title')}
+                                        Address
                                     </h1>
                                     <div className='place-aitems-end place-content-center'>
                                         {!isEditingAddress ? (
@@ -699,7 +698,7 @@ export default function Page() {
                                                 onClick={() => setIsEditingAddress(true)}
                                                 disabled={addressFormsCount <= 0}
                                             >
-                                                {t('editProfile.address.edit')}
+                                                Edit
                                             </button>
                                         ) : (
                                             <div className="flex gap-2">
@@ -707,13 +706,13 @@ export default function Page() {
                                                     className="bg-background border border-white font-normal text-xs py-1 px-3"
                                                     onClick={handleCancelEditAddress}
                                                 >
-                                                    {t('editProfile.address.cancel')}
+                                                    Cancel
                                                 </button>
                                                 <button
                                                     className="bg-background border border-white font-normal text-xs py-1 px-3"
                                                     onClick={handleSaveAddresses}
                                                 >
-                                                    {t('editProfile.address.save')}
+                                                    Save
                                                 </button>
                                             </div>
                                         )
@@ -727,14 +726,14 @@ export default function Page() {
                                         {results[index] && (
                                             <div>
                                                 <div className='flex justify-between my-4'>
-                                                    <p>{index === 0 ? t('editProfile.address.form') : `${t('editProfile.address.form')} ${index + 1}`}</p>
+                                                    <p>{index === 0 ? 'Address Form' : `Address Form ${index + 1}`}</p>
                                                     <div className='place-aitems-end place-content-center'>
                                                         <button
                                                             className={`bg-background border border-white font-normal text-xs py-1 px-3 ${!isEditingAddress ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                             onClick={() => isEditingAddress && handleDeleteAddress(index)}
                                                             disabled={!isEditingAddress}
                                                         >
-                                                            {t('editProfile.address.delete')}
+                                                            Delete
                                                         </button>
                                                     </div>
                                                 </div>
@@ -1024,7 +1023,7 @@ export default function Page() {
                                 {addressFormsCount < 3 && (
                                     <button aria-hidden='true' onClick={handleAddAddressForm} className='flex justify-center items-center gap-1 h-[40px] w-full mt-5'>
                                         <IoIosAddCircle className='text-white text-2xl' />
-                                        <p className='text-white'>{t('editProfile.address.add')}</p>
+                                        <p className='text-white'>Add Address</p>
                                     </button>
                                 )}
                             </div>
