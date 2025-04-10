@@ -1,19 +1,40 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
+import { getAllKeywords } from "@/api/keywordAPI";
 
-const characterStyles = ["Sci-Fi", "Fantasy", "Cute", "Horror", "Cyberpunk", "Steampunk", "Animal"];
-const colors = ["Pastel", "Monochrome", "Dark & Gothic", "Vintage", "Earth tones", "Rainbow color"];
+interface Keyword {
+  name: string;
+  type: "Character" | "Color"; // ตั้งค่า type ให้ตรงตามที่ต้องการ
+}
 
 export default function Filter({ onFilterChange }: { onFilterChange: (filters: string[]) => void }) {
   const { t } = useTranslation(); // ใช้ useTranslation เพื่อเรียก t
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [characterStyles, setCharacterStyles] = useState<string[]>([]);
+  const [colors, setColors] = useState<string[]>([]);
 
   const toggleFilter = (filter: string) => {
     setSelectedFilters((prev) =>
       prev.includes(filter) ? prev.filter((f) => f !== filter) : [...prev, filter]
     );
   };
+
+  useEffect(() => {
+    const fetchKeywords = async () => {
+      try {
+        const data: Keyword[] = await getAllKeywords(); // ระบุประเภทข้อมูลให้ตรง
+        const characterList = data.filter((item) => item.type === "Character").map((item) => item.name);
+        const colorList = data.filter((item) => item.type === "Color").map((item) => item.name);
+        setCharacterStyles(characterList);
+        setColors(colorList);
+      } catch (error) {
+        console.error("Failed to load keywords:", error);
+      }
+    };
+
+    fetchKeywords();
+  }, []);
 
   useEffect(() => {
     onFilterChange(selectedFilters);

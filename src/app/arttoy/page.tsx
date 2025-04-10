@@ -25,7 +25,7 @@ export default function Arttoy() {
   const { setArtToyData } = useMainStore();
   const totalImages = 10;
 
-  // ✅ Update prompt when Search or Filter changes
+  // Update prompt when Search or Filter changes
   useEffect(() => {
     const prompt = `${searchInput} ${selectedFilters.join(", ")} art toy`.trim();
     setFinalPrompt(prompt);

@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  Sparkles,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useTokenValidation } from "@/utils/useTokenValidation";
@@ -61,8 +62,9 @@ export default function Sidebar({
 
   return (
     <div
-      className={`fixed top-0 z-50 left-0 h-full bg-[#2F2F2F] text-white p-4 pt-6 flex flex-col items-center transition-all duration-300 ease-in-out ${isCollapsed ? "w-16" : "w-[140px]"
-        }`}
+      className={`fixed top-0 z-50 left-0 h-full bg-[#2F2F2F] text-white p-4 pt-6 flex flex-col items-center transition-all duration-300 ease-in-out ${
+        isCollapsed ? "w-16" : "w-[140px]"
+      }`}
     >
       <img
         src="/Images/AINongtoy/BotLogo.png"
@@ -105,6 +107,14 @@ export default function Sidebar({
             to="/order-management"
             isCollapsed={isCollapsed}
           />
+
+          <SidebarItem
+            icon={<Sparkles size={20} />}
+            label="Keyword"
+            to="/keyword-management"
+            isCollapsed={isCollapsed}
+          />
+
           <SidebarItem
             icon={<ChartBarBig size={20} />}
             label={t("Sidebar.Dashboard")}
@@ -149,8 +159,9 @@ function SidebarItem({
   return (
     <Link
       href={to}
-      className={`flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152] ${isActive ? "bg-[#787678]" : ""
-        }`}
+      className={`flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152] ${
+        isActive ? "bg-[#787678]" : ""
+      }`}
       onClick={onClick}
     >
       {icon}
