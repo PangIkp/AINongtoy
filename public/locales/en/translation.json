@@ -269,7 +269,8 @@
         "noAddressProvided": "No address provided",
         "noPhoneNumberProvided": "No phone number provided",
         "errorTitle": "Error",
-        "errorText": "Failed to fetch order details. Please try again later."
+        "errorText": "Failed to fetch order details. Please try again later.",
+        "artToyImageAlt": "Image of the art toy"
     },
     "payment": {
         "title": "Payment",

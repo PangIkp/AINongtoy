@@ -62,9 +62,8 @@ export default function Sidebar({
 
   return (
     <div
-      className={`fixed top-0 z-50 left-0 h-full bg-[#2F2F2F] text-white p-4 pt-6 flex flex-col items-center transition-all duration-300 ease-in-out ${
-        isCollapsed ? "w-16" : "w-[140px]"
-      }`}
+      className={`fixed top-0 z-50 left-0 h-full bg-[#2F2F2F] text-white p-4 pt-6 flex flex-col items-center transition-all duration-300 ease-in-out ${isCollapsed ? "w-16" : "w-[140px]"
+        }`}
     >
       <img
         src="/Images/AINongtoy/BotLogo.png"
@@ -82,7 +81,11 @@ export default function Sidebar({
       {/* Language Switcher */}
       <div className="place-items-center place-content-center">
         <div className="mt-4 w-[55px]">
+          <label htmlFor="language-select" className="hidden">
+            {t("Sidebar.Language")} {/* เพิ่มข้อความแปลสำหรับชื่อภาษา */}
+          </label>
           <select
+            id="language-select"
             onChange={(e) => changeLanguage(e.target.value)}
             className="text-white bg-transparent border-transparent px-2 py-1 rounded hover:bg-[#787678] w-full"
             defaultValue={i18n.language} // ตั้งค่าภาษาเริ่มต้น
@@ -159,9 +162,8 @@ function SidebarItem({
   return (
     <Link
       href={to}
-      className={`flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152] ${
-        isActive ? "bg-[#787678]" : ""
-      }`}
+      className={`flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152] ${isActive ? "bg-[#787678]" : ""
+        }`}
       onClick={onClick}
     >
       {icon}

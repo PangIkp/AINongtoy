@@ -70,6 +70,7 @@ export default function OrderDetail() {
               <div className="flex gap-7 ">
                 <img
                   className="w-[30%] object-contain rounded-lg"
+                  alt={t("orderDetail.artToyImageAlt")} // ใช้การแปล
                   src={orderDetail.imageUrl}
                 />
                 <div className="flex flex-col justify-center gap-2">
