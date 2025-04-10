@@ -92,7 +92,8 @@
             "Dark & Gothic": "มืด & กอธิค",
             "Vintage": "วินเทจ",
             "Earth tones": "โทนสีธรรมชาติ",
-            "Rainbow color": "สีรุ้ง"
+            "Rainbow color": "สีรุ้ง",
+            "Warm & Cozy": "อบอุ่น & สบาย"
         }
     },
     "Search": {
@@ -466,7 +467,7 @@
         "Users": "ผู้ใช้",
         "Orders": "คำสั่งซื้อ",
         "Dashboard": "แดชบอร์ด",
-        "Logout": "ออกระบบ",
+        "Logout": "ออกจากระบบ",
         "LanguageSwitcher": {
             "EN": "อังกฤษ",
             "TH": "ไทย"
