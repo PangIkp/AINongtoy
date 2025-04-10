@@ -66,7 +66,6 @@ button {
   color: black;
 }
 
-
 /* table for admin */
 
 .custom-table {
@@ -118,8 +117,10 @@ button {
 
 .custom-table .ant-pagination .ant-pagination-item-active {
   background-color: transparent !important;
-  border: none !important;
   font-weight: medium !important;
+  border: 1px solid #444 !important; /* Add border color */
+  border-radius: 8px !important; /* Apply rounded corners */
+  color: #444 !important; /* Adjust text color if needed */
 }
 
 .custom-table .ant-pagination-prev .ant-pagination-item-link,
@@ -131,10 +132,7 @@ button {
   background-color: #444 !important; /* หรือสีที่ต้องการ */
 }
 
-.ant-table-wrapper
-  .ant-table-tbody
-  .ant-table-row
-  > .ant-table-cell-row-hover {
+.ant-table-wrapper .ant-table-tbody .ant-table-row > .ant-table-cell-row-hover {
   background: #444 !important;
 }
 
@@ -145,24 +143,18 @@ button {
   box-shadow: none !important; /* เอาเงาออก */
 }
 
-.ant-dropdown
-  .ant-dropdown-menu
-  .ant-dropdown-menu-item {
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item {
   color: #f0f0f0 !important; /* สีข้อความที่ต้องการ */
 }
 
 /* เปลี่ยนสีของเมนูเมื่อ hover */
-.ant-dropdown
-  .ant-dropdown-menu
-  .ant-dropdown-menu-item:hover {
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item:hover {
   background-color: #444 !important; /* สีที่ต้องการเมื่อ hover */
   color: #fff !important; /* เปลี่ยนสีข้อความเมื่อ hover */
 }
 
 /* เปลี่ยนสีเมื่อเมนู active */
-.ant-dropdown
-  .ant-dropdown-menu
-  .ant-dropdown-menu-item-active {
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item-active {
   background-color: #0578ab !important; /* สีที่ต้องการเมื่อ active */
   color: #fff !important; /* เปลี่ยนสีข้อความเมื่อ active */
 }
@@ -191,9 +183,7 @@ button {
   color: #eb5b5b !important;
 }
 
-.ant-dropdown
-  .ant-dropdown-menu
-  .ant-dropdown-menu-item-danger:hover {
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item-danger:hover {
   background-color: #eb5b5b !important; /* เปลี่ยนพื้นหลังเป็นสีแดงเมื่อ hover */
   color: white !important; /* เปลี่ยนข้อความเป็นสีขาวเมื่อ hover */
 }
@@ -219,33 +209,39 @@ button {
 }
 
 .ant-empty-normal .ant-empty-description {
-    color: white;
+  color: white;
 }
 
-.ant-table-wrapper .ant-table-tbody > tr.ant-table-placeholder:hover > th, 
-.ant-table-wrapper .ant-table-tbody > tr.ant-table-placeholder:hover > td, 
+.ant-table-wrapper .ant-table-tbody > tr.ant-table-placeholder:hover > th,
+.ant-table-wrapper .ant-table-tbody > tr.ant-table-placeholder:hover > td,
 .ant-table-wrapper .ant-table-tbody > tr.ant-table-placeholder {
-    background: transparent !important;
+  background: transparent !important;
 }
 
 .ant-table-wrapper td.ant-table-column-sort {
-    background: transparent !important;
+  background: transparent !important;
 }
 
 /* ตั้งค่าขนาดของ icon ของการเรียงลำดับ */
 .ant-table-wrapper .ant-table-column-sorter {
-    margin-inline-start: 1px;
-    color: #B8B8B8 !important;
-    font-size: 0;
-    transition: color 0.3s;
+  margin-inline-start: 1px;
+  color: #b8b8b8 !important;
+  font-size: 0;
+  transition: color 0.3s;
 }
 
 /* ตั้งค่าขนาดของ icon ของการเรียงลำดับ */
-.ant-table-wrapper .ant-table-column-sorter-up.active, .ant-table-wrapper .ant-table-column-sorter-down.active {
-    color: white;
+.ant-table-wrapper .ant-table-column-sorter-up.active,
+.ant-table-wrapper .ant-table-column-sorter-down.active {
+  color: white;
 }
 
 /* ขนาดของไอคอนเรียงลำดับ */
-.ant-table-wrapper .ant-table-column-sorter-up, .ant-table-wrapper .ant-table-column-sorter-down {
-    font-size: 9px;
+.ant-table-wrapper .ant-table-column-sorter-up,
+.ant-table-wrapper .ant-table-column-sorter-down {
+  font-size: 9px;
+}
+
+.ant-pagination .ant-pagination-item {
+  background: transparent;
 }
