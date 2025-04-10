@@ -255,7 +255,7 @@ export default function Dashboard() {
 
             <div className="mb-8 flex sm:flex-row flex-col items-center justify-between space-x-4">
               <div className="sm:w-1/4 w-full p-4">
-                {/* 🟢 Dropdown สำหรับเลือกแผนภูมิ */}
+                {/* Dropdown สำหรับเลือกแผนภูมิ */}
                 <select
                   style={{
                     backgroundColor: "#2F2F2F",
