@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from "react";
+
+import React from "react";
 import Link from "next/link";
 import {
   Users,
@@ -11,10 +11,11 @@ import {
   LogOut,
   Sparkles,
 } from "lucide-react";
-import { usePathname } from "next/navigation"; // ใช้ usePathname แทน useRouter
+import { usePathname } from "next/navigation";
 import { useTokenValidation } from "@/utils/useTokenValidation";
-
 import Swal from "sweetalert2";
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 
 export default function Sidebar({
   setIsCollapsed,
@@ -23,11 +24,17 @@ export default function Sidebar({
   setIsCollapsed: any;
   isCollapsed: any;
 }) {
+  const { t, i18n } = useTranslation(); // ใช้ react-i18next
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
-  useTokenValidation(); // เรียกใช้ useTokenValidation เพื่อทำการตรวจสอบ Token
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang); // เปลี่ยนภาษา
+  };
+
+  useTokenValidation();
+
   const handleLogout = async () => {
     await fetch("/api/logout", { method: "POST" });
     localStorage.clear();
@@ -37,14 +44,14 @@ export default function Sidebar({
 
   const confirmLogout = () => {
     Swal.fire({
-      title: "Log out",
-      text: "Are you sure you want to log out?",
+      title: t("Sidebar.Warning.LogOutTitle"),
+      text: t("Sidebar.Warning.LogOutText"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#51536D",
-      confirmButtonText: "Confirm",
-      cancelButtonText: "Cancel",
+      confirmButtonText: t("Sidebar.Warning.Confirm"),
+      cancelButtonText: t("Sidebar.Warning.Cancel"),
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
@@ -72,18 +79,31 @@ export default function Sidebar({
       >
         {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
       </button>
+      {/* Language Switcher */}
+      <div className="place-items-center place-content-center">
+        <div className="mt-4 w-[55px]">
+          <select
+            onChange={(e) => changeLanguage(e.target.value)}
+            className="text-white bg-transparent border-transparent px-2 py-1 rounded hover:bg-[#787678] w-full"
+            defaultValue={i18n.language} // ตั้งค่าภาษาเริ่มต้น
+          >
+            <option className="bg-[#212121]" value="en">EN</option>
+            <option className="bg-[#212121]" value="th">TH</option>
+          </select>
+        </div>
+      </div>
 
       <nav className="space-y-4 mt-8 text-[14px] flex flex-col justify-between h-full">
         <div className="flex-grow">
           <SidebarItem
             icon={<Users size={20} />}
-            label="Users"
+            label={t("Sidebar.Users")}
             to="/user-management"
             isCollapsed={isCollapsed}
           />
           <SidebarItem
             icon={<Inbox size={20} />}
-            label="Orders"
+            label={t("Sidebar.Orders")}
             to="/order-management"
             isCollapsed={isCollapsed}
           />
@@ -97,19 +117,21 @@ export default function Sidebar({
 
           <SidebarItem
             icon={<ChartBarBig size={20} />}
-            label="Dashboard"
+            label={t("Sidebar.Dashboard")}
             to="/dashboard"
             isCollapsed={isCollapsed}
           />
         </div>
 
-        {/* ปุ่ม Logout อยู่ด้านล่างสุด */}
+
+
+        {/* Logout button */}
         <div
           onClick={confirmLogout}
           className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152] text-red-400"
         >
           <LogOut size={20} />
-          {!isCollapsed && <span className="text-red-400">Logout</span>}
+          {!isCollapsed && <span className="text-red-400">{t("Sidebar.Logout")}</span>}
         </div>
       </nav>
     </div>
@@ -131,8 +153,8 @@ function SidebarItem({
   onClick?: () => void;
   labelClass?: string;
 }) {
-  const pathname = usePathname(); // ดึง path ปัจจุบัน
-  const isActive = pathname.startsWith(to); // ใช้ startsWith เพื่อรองรับ path ที่มี / ต่อท้าย
+  const pathname = usePathname();
+  const isActive = pathname.startsWith(to);
 
   return (
     <Link

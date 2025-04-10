@@ -137,7 +137,7 @@ button {
 }
 
 /* เปลี่ยนพื้นหลังของเมนูหลัก */
-:where(.css-dev-only-do-not-override-1a3rktk).ant-dropdown .ant-dropdown-menu {
+.ant-dropdown .ant-dropdown-menu {
   background-color: #2f2f2f !important; /* สีพื้นหลังของเมนู */
   border-radius: 8px !important; /* เพิ่มการมุมมนถ้าต้องการ */
   box-shadow: none !important; /* เอาเงาออก */
@@ -188,13 +188,13 @@ button {
   color: white !important; /* เปลี่ยนข้อความเป็นสีขาวเมื่อ hover */
 }
 
-:where(.css-dev-only-do-not-override-1a3rktk).ant-table-wrapper
+.ant-table-wrapper
   .ant-table-thead
   > tr
   > th:not(:last-child):not(.ant-table-selection-column):not(
     .ant-table-row-expand-icon-cell
   ):not([colspan])::before,
-:where(.css-dev-only-do-not-override-1a3rktk).ant-table-wrapper
+.ant-table-wrapper
   .ant-table-thead
   > tr
   > td:not(:last-child):not(.ant-table-selection-column):not(

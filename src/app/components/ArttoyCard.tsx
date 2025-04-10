@@ -9,6 +9,8 @@ import {
   deleteFavorite,
 } from "@/api/favoriteAPI";
 import Swal from "sweetalert2";
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 
 interface ArtToyCardProps {
   imageUrls: string[];
@@ -23,6 +25,7 @@ export default function ArtToyCard({
   isLoading,
   onFavoriteDeleted, // รับ callback
 }: ArtToyCardProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
   const [favorites, setFavorites] = useState<{ [key: string]: string }>({});
@@ -65,14 +68,14 @@ export default function ArtToyCard({
     const token = localStorage.getItem("token");
     if (!token) {
       Swal.fire({
-        title: "You need to login first!",
-        text: "Do you want to go to the login page?",
+        title: t("arttoyCard.login.required.title"),
+        text: t("arttoyCard.login.required.text"),
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: '#0CACF3',
         cancelButtonColor: '#51536D',
-        confirmButtonText: "Yes, take me there!",
-        cancelButtonText: "Cancel",
+        confirmButtonText: t("arttoyCard.login.confirm.button"),
+        cancelButtonText: t("arttoyCard.login.cancel.button"),
         reverseButtons: true,
       }).then((result) => {
         if (result.isConfirmed) {
@@ -96,7 +99,6 @@ export default function ArtToyCard({
           ...prev,
           [imageUrl]: favoriteData._id, // บันทึก `_id` ที่ได้จาก API
         }));
-        console.log("✅ Favorite added successfully!");
       }
     } catch (error) {
       console.error("❌ Error handling favorite:", error);
@@ -109,14 +111,14 @@ export default function ArtToyCard({
     const token = localStorage.getItem("token");
     if (!token) {
       Swal.fire({
-        title: "You need to login first!",
-        text: "Do you want to go to the login page?",
+        title: t("arttoyCard.login.required.title"),
+        text: t("arttoyCard.login.required.text"),
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: '#0CACF3',
         cancelButtonColor: '#51536D',
-        confirmButtonText: "Yes, take me there!",
-        cancelButtonText: "Cancel",
+        confirmButtonText: t("arttoyCard.login.confirm.button"),
+        cancelButtonText: t("arttoyCard.login.cancel.button"),
         reverseButtons: true,
       }).then((result) => {
         if (result.isConfirmed) {
@@ -137,11 +139,15 @@ export default function ArtToyCard({
         });
         return updatedFavorites;
       });
-      console.log("✅ Favorite deleted successfully!");
       if (onFavoriteDeleted) onFavoriteDeleted(); // เรียก callback เมื่อสำเร็จ
     } catch (error) {
       console.error("❌ Failed to remove favorite", error);
-      alert("Failed to remove favorite");
+      Swal.fire({
+        title: t("arttoyCard.error.title"),
+        text: t("arttoyCard.error.remove.favorite"),
+        icon: "error",
+        confirmButtonColor: '#0CACF3',
+      });
     }
   };
 
@@ -185,7 +191,7 @@ export default function ArtToyCard({
               <Image
                 src={imageUrl}
                 onLoad={() => handleImageLoad(imageUrl)}
-                alt={`Generated Art Toy`}
+                alt={t("arttoyCard.image.alt.text")}
                 width={300}
                 height={300}
                 className="w-42 h-42 object-cover rounded-md"

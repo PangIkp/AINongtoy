@@ -5,8 +5,11 @@ import React from "react";
 import { useRef, useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useTranslation } from "react-i18next"; // Import useTranslation
+import "../../i18n"; // Import i18n
 
 export default function OrderDetail() {
+  const { t } = useTranslation(); // ใช้ useTranslation
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);
   const contactRef = useRef<HTMLDivElement>(null!);
@@ -39,7 +42,7 @@ export default function OrderDetail() {
   if (!orderDetail) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
-        <p className="text-2xl">Loading order details...</p>
+        <p className="text-2xl">{t("orderDetail.loading")}</p> {/* ใช้การแปล */}
       </div>
     );
   }
@@ -61,8 +64,7 @@ export default function OrderDetail() {
       />
       <div className="w-full my-[5rem] place-items-center">
         <div className="max-w-[1024px] w-full h-full pt-24 flex flex-col gap-12">
-          <h1 className="text-4xl font-semibold">Order Details</h1>
-          {/* <OrderSummary /> */}
+          <h1 className="text-4xl font-semibold">{t("orderDetail.title")}</h1> {/* ใช้การแปล */}
           <section className="bg-[#202133] border border-[#202133] rounded-xl">
             <div className="flex justify-between border-b border-white p-10 ">
               <div className="flex gap-7 ">
@@ -71,30 +73,32 @@ export default function OrderDetail() {
                   src={orderDetail.imageUrl}
                 />
                 <div className="flex flex-col justify-center gap-2">
-                  <p className="font-semibold">{orderDetail.name}</p>
-                  <p className="text-sm text-[#B3B0B0]">
-                    Size : {orderDetail.size}
+                  <p className="font-semibold">
+                    {orderDetail.name === "Unnamed Art Toy"
+                      ? t(`artToy.names.${orderDetail.name}`, "Unnamed Art Toy")
+                      : orderDetail.name}
                   </p>
                   <p className="text-sm text-[#B3B0B0]">
-                    Quantity : {orderDetail.quantity}
+                    {t("order.size")}: {String(t(`artToy.sizeOptions.${orderDetail.size}`, orderDetail.size))}
                   </p>
-                  {/* <p className="text-xl font-semibold">{orderDetail.total} </p> */}
+                  <p className="text-sm text-[#B3B0B0]">
+                    {t("order.quantity")}: {orderDetail.quantity}
+                  </p>
                 </div>
               </div>
               <div
-                className={`${
-                  statusColors[orderDetail.status] || "text-white"
-                }`}
+                className={`${statusColors[orderDetail.status] || "text-white"
+                  }`}
               >
-                <p className="text-sm">{orderDetail.status}</p>
+                <p className="text-sm">{String(t(`order.status.${orderDetail.status}`, orderDetail.status))}</p>
               </div>
             </div>
 
             <div className="flex h-1/2 justify-between p-10 ">
               <div className="leading-[2rem]">
-                <p>Subtotal</p>
-                <p>Shipping</p>
-                <p>Total price</p>
+                <p>{t("order.subtotal")}</p>
+                <p>{t("order.shipping")}</p>
+                <p>{t("order.totalPrice")}</p>
               </div>
 
               <div className="leading-[2rem] text-right">
@@ -107,18 +111,18 @@ export default function OrderDetail() {
           <section className="bg-[#202133] border border-[#202133] rounded-xl">
             <div>
               <h1 className="text-lg font-semibold px-10 py-5 border-b border-white">
-                Order Number : OR90123456
+                {t("orderDetail.orderNumber")}: OR90123456
               </h1>
             </div>
             <div className="flex justify-between p-10 ">
               <div className="leading-[2rem]">
-                <p>Payment Method</p>
-                <p>Order Placed Time</p>
-                <p>Shipping Time</p>
-                <p>Delivered Time</p>
+                <p>{t("order.paymentMethod.title")}</p>
+                <p>{t("order.orderPlacedTime")}</p>
+                <p>{t("order.shippingTime")}</p>
+                <p>{t("order.deliveredTime")}</p>
               </div>
               <div className="leading-[2rem] text-right">
-                <p>Mobile Banking</p>
+                <p>{t("order.paymentMethod.mobileBanking")}</p>
                 <div className="flex gap-3 ">
                   <div className="text-right">
                     <p>
@@ -144,31 +148,30 @@ export default function OrderDetail() {
           <section className="bg-[#202133] border border-[#202133] rounded-xl">
             <div>
               <h1 className="text-lg font-semibold px-10 py-5 border-b border-white">
-                Tracking Number : TH123456789XYZ
+                {t("orderDetail.trackingNumber")}: TH123456789XYZ
               </h1>
             </div>
 
             <div className="p-10">
-              <p className="mb-2">Address</p>
+              <p className="mb-2">{t("order.address")}</p>
               <p className="text-sm text-[#B3B0B0]">
                 {orderDetail.address
                   ? (() => {
-                      try {
-                        const addressObject = JSON.parse(orderDetail.address);
-                        return `${addressObject.subdistrict}, ${addressObject.district}, ${addressObject.province}, ${addressObject.postalCode},${addressObject.detail}`;
-                      } catch (error) {
-                        return "Invalid address format";
-                      }
-                    })()
-                  : "No address provided"}
+                    try {
+                      const addressObject = JSON.parse(orderDetail.address);
+                      return `${addressObject.subdistrict}, ${addressObject.district}, ${addressObject.province}, ${addressObject.postalCode},${addressObject.detail}`;
+                    } catch (error) {
+                      return t("order.invalidAddressFormat");
+                    }
+                  })()
+                  : t("order.noAddressProvided")}
               </p>
 
               <div className="mt-4">
-                <p>Phone number</p>
+                <p>{t("order.phoneNumber")}</p>
                 <p className="text-sm text-[#B3B0B0]">
-                  {phoneNumber || "No phone number provided"}
+                  {phoneNumber || t("order.noPhoneNumberProvided")}
                 </p>{" "}
-                {/* ใช้ phone จาก localStorage */}
               </div>
             </div>
           </section>

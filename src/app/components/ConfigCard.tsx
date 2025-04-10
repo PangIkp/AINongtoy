@@ -10,12 +10,15 @@ import useHydration from "../../../useHydration";
 import { deleteArtToy } from "@/api/arttoyAPI";
 import { getArtToyById } from "@/api/arttoyAPI";
 import Swal from "sweetalert2";
+import { useTranslation } from "react-i18next"; // Import useTranslation
+import "../../i18n"; // Import i18n
 
 interface ConfigCardProps {
   onConfigCountChange: (count: number) => void; // Callback สำหรับส่งจำนวนข้อมูล
 }
 
 function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
+  const { t } = useTranslation(); // Initialize useTranslation
   const isHydrated = useHydration();
   const router = useRouter();
   const [artToys, setArtToys] = useState<ArtToy[]>([]); // ใช้ state เก็บข้อมูลจาก database
@@ -34,8 +37,8 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
         if (!token) {
           Swal.fire({
             icon: "error",
-            title: "Error",
-            text: "You are not logged in.",
+            title: t("Swal.configCard.error.title"), // ใช้การแปล
+            text: t("Swal.configCard.error.notLoggedIn"), // ใช้การแปล
             timer: 1500,
             showConfirmButton: false,
           });
@@ -50,7 +53,7 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
           },
         });
         if (!response.ok) {
-          throw new Error("Failed to fetch ArtToys");
+          throw new Error(t("error.fetchFailed")); // ใช้การแปล
         }
         let data: ArtToy[] = await response.json(); // แปลง JSON เป็น array ของ ArtToy
 
@@ -60,11 +63,11 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
             ? toy
             : {
               _id: "default-arttoy",
-              name: "Default ArtToy",
-              size: "Small",
-              material: "PLA",
-              painting: "Hand-painting",
-              assembly: "Fixed Pose",
+              name: t("defaultArtToy.name"), // ใช้การแปล
+              size: t("defaultArtToy.size"), // ใช้การแปล
+              material: t("defaultArtToy.material"), // ใช้การแปล
+              painting: t("defaultArtToy.painting"), // ใช้การแปล
+              assembly: t("defaultArtToy.assembly"), // ใช้การแปล
               quantity: 1,
               price: 500,
               imageUrl: "/Images/AINongtoy/WhiteMiku.png",
@@ -76,11 +79,10 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
         // ส่งจำนวนข้อมูลกลับไปยัง Configuration
         onConfigCountChange(data.length);
       } catch (error: any) {
-        console.error("Error fetching ArtToys:", error);
         Swal.fire({
           icon: "error",
-          title: "Error",
-          text: error.message || "Failed to fetch ArtToys",
+          title: t("Swal.configCard.error.title"), // ใช้การแปล
+          text: error.message || t("Swal.configCard.error.fetchFailed"), // ใช้การแปล
           timer: 1500,
           showConfirmButton: false,
         });
@@ -90,20 +92,17 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
     };
 
     fetchArtToys();
-  }, [forceFetchData, onConfigCountChange]);
+  }, [forceFetchData, onConfigCountChange, t]);
 
   const handleEdit = useCallback(
     async (artToy: ArtToy) => {
       if (!isClient) return;
 
-      console.log("Selected ArtToy:", artToy);
-
       if (!artToy._id) {
-        console.error("ArtToy object is missing '_id' property:", artToy);
         Swal.fire({
           icon: "error",
-          title: "Error",
-          text: "Invalid ArtToy data",
+          title: t("error.title"), // ใช้การแปล
+          text: t("error.invalidData"), // ใช้การแปล
           timer: 1500,
           showConfirmButton: false,
         });
@@ -115,8 +114,8 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
         if (!token) {
           Swal.fire({
             icon: "error",
-            title: "Error",
-            text: "You are not logged in.",
+            title: t("Swal.configCard.error.title"), // ใช้การแปล
+            text: t("Swal.configCard.error.notLoggedIn"), // ใช้การแปล
             timer: 1500,
             showConfirmButton: false,
           });
@@ -124,13 +123,12 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
         }
 
         const artToyData = await getArtToyById(artToy._id, token);
-        console.log("Fetched ArtToy Data:", artToyData);
 
         if (!artToyData) {
           Swal.fire({
             icon: "error",
-            title: "Error",
-            text: "Failed to fetch ArtToy details",
+            title: t("Swal.configCard.error.title"), // ใช้การแปล
+            text: t("Swal.configCard.error.fetchFailed"), // ใช้การแปล
             timer: 1500,
             showConfirmButton: false,
           });
@@ -145,17 +143,16 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
           )}&image=${encodeURIComponent(artToyData.imageUrl)}`
         );
       } catch (error: any) {
-        console.error("Error fetching ArtToy details:", error);
         Swal.fire({
           icon: "error",
-          title: "Error",
-          text: error.message || "Failed to load ArtToy details",
+          title: t("Swal.configCard.error.title"), // ใช้การแปล
+          text: error.message || t("Swal.configCard.error.fetchFailed"), // ใช้การแปล
           timer: 1500,
           showConfirmButton: false,
         });
       }
     },
-    [router, isClient, setArtToyData]
+    [router, isClient, setArtToyData, t]
   );
 
   const handleDelete = async (id: any) => {
@@ -163,8 +160,8 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
     if (!token) {
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: "You are not logged in.",
+        title: t("Swal.configCard.error.title"), // ใช้การแปล
+        text: t("Swal.configCard.error.notLoggedIn"), // ใช้การแปล
         timer: 1500,
         showConfirmButton: false,
       });
@@ -174,8 +171,8 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
     if (!artToyData) {
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: "Invalid ArtToy data",
+        title: t("Swal.configCard.error.title"), // ใช้การแปล
+        text: t("Swal.configCard.error.invalidData"), // ใช้การแปล
         timer: 1500,
         showConfirmButton: false,
       });
@@ -184,22 +181,19 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
 
     try {
       const response = await deleteArtToy(id, token);
-      console.log("API Response:", response);
-
       Swal.fire({
         icon: "success",
-        title: "Success",
-        text: "ArtToy deleted successfully",
+        title: t("Swal.configCard.success.title"), // ใช้การแปล
+        text: t("Swal.configCard.success.deleted"), // ใช้การแปล
         timer: 1500,
         showConfirmButton: false,
       });
       setForceFetchData(!forceFetchData);
     } catch (error: any) {
-      console.error("Error:", error);
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: error.message || "Failed to delete ArtToy",
+        title: t("Swal.configCard.error.title"), // ใช้การแปล
+        text: error.message || t("Swal.configCard.error.deleteFailed"), // ใช้การแปล
         timer: 1500,
         showConfirmButton: false,
       });
@@ -223,7 +217,6 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log("Clicked ArtToy ID:", artToy._id);
                   handleDelete(artToy._id);
                 }}
                 className="z-10 absolute top-2 right-2 bg-[#51536D] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-500 hover:text-white transition duration-200"
@@ -234,37 +227,35 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
               {artToy.imageUrl && (
                 <img
                   src={artToy.imageUrl}
-                  alt="Art Toy"
+                  alt={t("artToy.alt")} // ใช้การแปล
                   className="w-full h-auto object-cover rounded-md mb-4"
                 />
               )}
-              <h2 className="text-[18px] font-semibold mb-2">{artToy.name}</h2>
-              <div className="text-[13px] grid grid-cols-[1fr_2fr] gap-x-4 gap-y-2">
+              <h2 className="text-[18px] font-semibold mb-2">
+                {artToy.name === "Unnamed Art Toy" ? t(`artToy.names.${artToy.name}`) : artToy.name}
+              </h2>
+              <div className="text-[13px] grid grid-cols-[1fr_1fr] gap-x-4 gap-y-2">
                 <p>
-                  <strong className="font-medium">Size :</strong> {artToy.size}
+                  <strong className="font-medium">{t("artToy.size")}:</strong> {t(`artToy.sizeOptions.${artToy.size}`)}
                 </p>
                 <p>
-                  <strong className="font-medium">Painting :</strong>{" "}
-                  {artToy.painting}
+                  <strong className="font-medium">{t("artToy.painting")}:</strong> {t(`artToy.paintingOptions.${artToy.painting}`)}
                 </p>
                 <p>
-                  <strong className="font-medium">Material :</strong>{" "}
-                  {artToy.material}
+                  <strong className="font-medium">{t("artToy.material")}:</strong> {t(`artToy.materialOptions.${artToy.material}`)}
                 </p>
                 <p>
-                  <strong className="font-medium">Assembly :</strong>{" "}
-                  {artToy.assembly}
+                  <strong className="font-medium">{t("artToy.assembly")}:</strong> {t(`artToy.assemblyOptions.${artToy.assembly}`)}
                 </p>
                 <p>
-                  <strong className="font-medium">Quantity :</strong>{" "}
-                  {artToy.quantity}
+                  <strong className="font-medium">{t("artToy.quantity")}:</strong> {artToy.quantity}
                 </p>
               </div>
             </div>
           ))
         ) : (
           <p className="text-center text-gray-500 col-span-3 min-h-[623px]">
-            There are no recorded items.
+            {t("artToy.noItems")} {/* ใช้การแปล */}
           </p>
         )}
     </div>
