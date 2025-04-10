@@ -7,8 +7,12 @@ import { checkUserExists, updateUserProfile } from "../../api/userAPI"; // Impor
 import PasswordInput from "../components/PasswordInput"; // Import PasswordInput component
 import emailjs from "emailjs-com"; // Import EmailJS
 import { Loader } from "lucide-react"; // Import Loader
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 
 const ForgotPassword = () => {
+    const { t } = useTranslation(); // ใช้ useTranslation
+
     const aboutRef = useRef<HTMLDivElement>(null!);
     const partnerRef = useRef<HTMLDivElement>(null!);
     const contactRef = useRef<HTMLDivElement>(null!);
@@ -51,7 +55,11 @@ const ForgotPassword = () => {
     const sendEmail = async (email: string, otp: string) => {
         if (!email) {
             console.error("Recipient email is empty.");
-            Swal.fire("Warning", "Recipient email is empty. Please provide a valid email.", "warning");
+            Swal.fire({
+                icon: "warning",
+                title: t("forgotPassword.warningTitle"),
+                text: t("forgotPassword.emailEmpty"),
+            });
             return;
         }
 
@@ -77,21 +85,37 @@ const ForgotPassword = () => {
                 templateParams,
                 "e319Tvcr3ubaWTQj6" // Replace with your EmailJS User ID
             );
-            Swal.fire("Success", "OTP sent to your email", "success");
+            Swal.fire({
+                icon: "success",
+                title: t("forgotPassword.successTitle"),
+                text: t("forgotPassword.otpSent"),
+            });
         } catch (error) {
             console.error("Error sending email:", error);
-            Swal.fire("Error", "Failed to send OTP. Please try again later.", "error");
+            Swal.fire({
+                icon: "error",
+                title: t("forgotPassword.errorTitle"),
+                text: t("forgotPassword.otpSendFailed"),
+            });
         }
     };
 
     const sendOtp = async () => {
         if (!email) {
-            Swal.fire("Warning", "Please enter your email", "warning");
+            Swal.fire({
+                icon: "warning",
+                title: t("forgotPassword.warningTitle"),
+                text: t("forgotPassword.enterEmail"),
+            });
             return;
         }
 
         if (!isValidEmail(email)) {
-            Swal.fire("Warning", "Invalid email format", "warning");
+            Swal.fire({
+                icon: "warning",
+                title: t("forgotPassword.warningTitle"),
+                text: t("forgotPassword.invalidEmailFormat"),
+            });
             return;
         }
 
@@ -102,7 +126,11 @@ const ForgotPassword = () => {
             const { exists } = await checkUserExists({ email });
 
             if (!exists.email.exists) {
-                Swal.fire("Warning", "Invalid email. Please check and try again.", "warning");
+                Swal.fire({
+                    icon: "warning",
+                    title: t("forgotPassword.warningTitle"),
+                    text: t("forgotPassword.invalidEmail"),
+                });
                 return;
             }
 
@@ -118,10 +146,18 @@ const ForgotPassword = () => {
 
             // หากส่ง OTP สำเร็จ ให้เปลี่ยนสถานะ
             setIsEmailSent(true);
-            Swal.fire("Success", "OTP sent to your email", "success");
+            Swal.fire({
+                icon: "success",
+                title: t("forgotPassword.successTitle"),
+                text: t("forgotPassword.otpSent"),
+            });
         } catch (error) {
             console.error("Error checking email existence or sending OTP:", error);
-            Swal.fire("Error", "Failed to send OTP. Please try again later.", "error");
+            Swal.fire({
+                icon: "error",
+                title: t("forgotPassword.errorTitle"),
+                text: t("forgotPassword.otpSendFailed"),
+            });
         } finally {
             setIsSendingOtp(false); // หยุดแสดง Loader
         }
@@ -129,52 +165,84 @@ const ForgotPassword = () => {
 
     const verifyOtp = () => {
         if (!otp) {
-            Swal.fire("Warning", "OTP cannot be empty", "warning");
+            Swal.fire({
+                icon: "warning",
+                title: t("forgotPassword.warningTitle"),
+                text: t("forgotPassword.otpEmpty"),
+            });
             return;
         }
         if (otp === generatedOtp) {
             setIsOtpVerified(true);
             setGeneratedOtp(""); // ลบ OTP ทิ้งหลังจากยืนยันสำเร็จ
-            Swal.fire("Success", "OTP verified successfully", "success");
+            Swal.fire({
+                icon: "success",
+                title: t("forgotPassword.successTitle"),
+                text: t("forgotPassword.otpVerified"),
+            });
         } else {
-            Swal.fire("Warning", "Invalid OTP", "warning");
+            Swal.fire({
+                icon: "warning",
+                title: t("forgotPassword.warningTitle"),
+                text: t("forgotPassword.invalidOtp"),
+            });
         }
     };
 
     const resetPassword = async () => {
         if (!userId) {
-            Swal.fire("Warning", "User not found. Please try again.", "warning");
+            Swal.fire({
+                icon: "warning",
+                title: t("forgotPassword.warningTitle"),
+                text: t("forgotPassword.userNotFound"),
+            });
             window.location.href = "/login";
             return;
         }
 
         if (!newPassword || !confirmPassword) {
-            Swal.fire("Warning", "Please fill in all fields", "warning");
+            Swal.fire({
+                icon: "warning",
+                title: t("forgotPassword.warningTitle"),
+                text: t("forgotPassword.fillAllFields"),
+            });
             return;
         }
 
         if (!isValidPassword(newPassword)) {
-            Swal.fire(
-                "Warning",
-                "Password: 6+ chars, include upper, lower, and a number.",
-                "warning"
-            );
+            Swal.fire({
+                icon: "warning",
+                title: t("forgotPassword.warningTitle"),
+                text: t("forgotPassword.invalidPassword"),
+            });
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            Swal.fire("Warning", "Passwords do not match", "warning");
+            Swal.fire({
+                icon: "warning",
+                title: t("forgotPassword.warningTitle"),
+                text: t("forgotPassword.passwordsDoNotMatch"),
+            });
             return;
         }
 
         try {
             // ใช้ API updateUserProfile เพื่ออัปเดตรหัสผ่าน
             await updateUserProfile(userId, { password: newPassword });
-            Swal.fire("Success", "Password reset successfully", "success");
+            Swal.fire({
+                icon: "success",
+                title: t("forgotPassword.successTitle"),
+                text: t("forgotPassword.passwordResetSuccess"),
+            });
             window.location.href = "/login";
         } catch (error) {
             console.error("Error resetting password:", error);
-            Swal.fire("Error", "Failed to reset password. Please try again later.", "error");
+            Swal.fire({
+                icon: "error",
+                title: t("forgotPassword.errorTitle"),
+                text: t("forgotPassword.resetPasswordFailed"),
+            });
         }
     };
 
@@ -213,13 +281,13 @@ const ForgotPassword = () => {
                             </div>
                         ) :
                             <div>
-                                <h1 className="text-4xl font-semibold mb-3">Forgot Password</h1>
+                                <h1 className="text-4xl font-semibold mb-3">{t("forgotPassword.title")}</h1>
                                 {!isOtpVerified ? (
                                     <>
                                         <p className="font-extralight">
                                             {isEmailSent
-                                                ? "Enter the OTP sent to your email"
-                                                : "Enter your email to receive OTP"}
+                                                ? t("forgotPassword.enterOtp")
+                                                : t("forgotPassword.enterEmail")}
                                         </p>
                                         {!isEmailSent ? (
                                             // แสดงส่วนกรอกอีเมลและปุ่มส่ง OTP
@@ -228,7 +296,7 @@ const ForgotPassword = () => {
                                                     <input
                                                         className="block mb-2"
                                                         type="email"
-                                                        placeholder="Email"
+                                                        placeholder={t("forgotPassword.emailPlaceholder")}
                                                         maxLength={100}
                                                         value={email}
                                                         onChange={(e) => setEmail(e.target.value)}
@@ -240,15 +308,15 @@ const ForgotPassword = () => {
                                                             sendOtp();
                                                         }}
                                                     >
-                                                        {isSendingOtp ? <Loader className="animate-spin text-[#0CACF3]" size={20} /> : "Send OTP"}
+                                                        {isSendingOtp ? <Loader className="animate-spin text-[#0CACF3]" size={20} /> : t("forgotPassword.sendOtpButton")}
                                                     </button>
                                                 </form>
 
                                                 <div>
                                                     {email && !isValidEmail(email) ? (
-                                                        <p className="text-yellow-500 text-sm mt-4">Invalid email format. Please enter a valid email.</p>
+                                                        <p className="text-yellow-500 text-sm mt-4">{t("forgotPassword.invalidEmailFormat")}</p>
                                                     ) : (
-                                                        <p className="text-transparent text-sm mt-4">Invalid email format. Please enter a valid email.</p>
+                                                        <p className="text-transparent text-sm mt-4">{t("forgotPassword.invalidEmailFormat")}</p>
                                                     )}
                                                 </div>
 
@@ -273,7 +341,7 @@ const ForgotPassword = () => {
                                                         ))}
                                                     </div>
                                                     <button type="button" className="h-[40px]" onClick={verifyOtp}>
-                                                        Verify OTP
+                                                        {t("forgotPassword.verifyOtpButton")}
                                                     </button>
                                                 </form>
                                             </>
@@ -281,13 +349,13 @@ const ForgotPassword = () => {
                                     </>
                                 ) : (
                                     <>
-                                        <p className="font-extralight">Enter your new password</p>
+                                        <p className="font-extralight">{t("forgotPassword.enterNewPassword")}</p>
                                         <form className="flex flex-col justify-between gap-4 w-full h-[70%] pt-5">
                                             <PasswordInput
                                                 id="newPassword"
                                                 name="newPassword"
-                                                label="New Password"
-                                                placeholder="Min length is 6 chars."
+                                                label={t("forgotPassword.newPasswordLabel")}
+                                                placeholder={t("forgotPassword.newPasswordPlaceholder")}
                                                 value={newPassword}
                                                 onChange={(e) => setNewPassword(e.target.value)}
                                                 required
@@ -295,8 +363,8 @@ const ForgotPassword = () => {
                                             <PasswordInput
                                                 id="confirmPassword"
                                                 name="confirmPassword"
-                                                label="Confirm Password"
-                                                placeholder="Min length is 6 chars."
+                                                label={t("forgotPassword.confirmPasswordLabel")}
+                                                placeholder={t("forgotPassword.confirmPasswordPlaceholder")}
                                                 value={confirmPassword}
                                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                                 required
@@ -306,20 +374,20 @@ const ForgotPassword = () => {
                                                 className="h-[40px] mt-2"
                                                 onClick={resetPassword}
                                             >
-                                                Reset Password
+                                                {t("forgotPassword.resetPasswordButton")}
                                             </button>
                                         </form>
 
                                         <div>
                                             {newPassword && confirmPassword && newPassword !== confirmPassword ? (
-                                                <p className="text-yellow-500 text-sm mt-4 h-[60px]">Passwords: do not match.</p>
+                                                <p className="text-yellow-500 text-sm mt-4 h-[60px]">{t("forgotPassword.passwordsDoNotMatch")}</p>
                                             ) : newPassword && !isValidPassword(newPassword) ? (
                                                 <p className="text-yellow-500 text-sm mt-4 h-[60px]">
-                                                    Password: 6+ chars, include upper, lower, and a number.
+                                                    {t("forgotPassword.invalidPassword")}
                                                 </p>
                                             ) : (
                                                 <p className="text-transparent text-sm mt-4 h-[60px]">
-                                                    Password: 6+ chars, include upper, lower, and a number.
+                                                    {t("forgotPassword.invalidPassword")}
                                                 </p>
                                             )}
                                         </div>

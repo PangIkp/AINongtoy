@@ -11,8 +11,11 @@ import Swal from "sweetalert2";
 import { Loader } from "lucide-react"; // เพิ่มการ import Loader
 import emailjs from "emailjs-com"; // เพิ่มการ import emailjs
 import { checkUserExists } from "../../api/userAPI";
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 
 const Signup = () => {
+  const { t } = useTranslation(); // ใช้ useTranslation
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);
   const contactRef = useRef<HTMLDivElement>(null!);
@@ -63,45 +66,50 @@ const Signup = () => {
     if (name === "firstName") {
       newErrors.firstName =
         value && !nameRegex.test(value)
-          ? "FirstName: Alphabetic, 4-40 chars."
+          ? t("signup.firstNameError")
           : null;
     }
 
     if (name === "lastName") {
       newErrors.lastName =
         value && !nameRegex.test(value)
-          ? "LastName: Alphabetic, 4-40 chars."
+          ? t("signup.lastNameError")
           : null;
     }
 
     if (name === "username") {
       newErrors.username =
         value && !usernameRegex.test(value)
-          ? "Username: 4-20 chars, start with letter, allow '.', '_', and numbers."
+          ? t("signup.usernameError")
           : null;
     }
 
     if (name === "phoneNumber") {
       newErrors.phoneNumber =
         value && !phoneRegex.test(value)
-          ? "Phone: 10 digits, start with 0."
+          ? t("signup.phoneNumberError")
           : null;
     }
 
     if (name === "email") {
-      newErrors.email = value && !emailRegex.test(value) ? "Email: Invalid." : null;
+      newErrors.email =
+        value && !emailRegex.test(value)
+          ? t("signup.emailError")
+          : null;
     }
 
     if (name === "password") {
       newErrors.password =
         value && !passwordRegex.test(value)
-          ? "Password: 6+ chars, include upper, lower, and a number."
+          ? t("signup.passwordError")
           : null;
     }
 
     if (name === "confirmpassword") {
       newErrors.confirmpassword =
-        value && value !== formData.password ? "Passwords: do not match." : null;
+        value && value !== formData.password
+          ? t("signup.confirmPasswordError")
+          : null;
     }
 
     setErrors(newErrors);
@@ -125,7 +133,11 @@ const Signup = () => {
   const sendOtp = async (email: string) => {
     if (!email) {
       console.error("Recipient email is empty.");
-      Swal.fire("Warning", "Recipient email is empty. Please provide a valid email.", "warning");
+      Swal.fire({
+        icon: "warning",
+        title: t("signup.warningTitle"),
+        text: t("signup.warningText"),
+      });
       return;
     }
 
@@ -157,8 +169,8 @@ const Signup = () => {
 
       Swal.fire({
         icon: "success",
-        title: "OTP Sent",
-        text: "OTP has been sent to your email.",
+        title: t("signup.otpSentTitle"),
+        text: t("signup.otpSentText"),
       });
 
       setIsEmailSent(true); // Update the state to indicate the email was sent successfully
@@ -166,8 +178,8 @@ const Signup = () => {
       console.error("Error sending email:", error);
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: "Failed to send OTP. Please try again later.",
+        title: t("signup.errorTitle"),
+        text: t("signup.errorText"),
       });
     }
   };
@@ -185,13 +197,21 @@ const Signup = () => {
       !formData.password ||
       !formData.confirmpassword
     ) {
-      Swal.fire("Warning", "Please fill in all required fields.", "warning");
+      Swal.fire({
+        icon: "warning",
+        title: t("signup.warningTitle"),
+        text: t("signup.fillRequiredFields"),
+      });
       return;
     }
 
     // ตรวจสอบว่ามีข้อผิดพลาดหรือไม่
     if (Object.values(errors).some((error) => error !== null)) {
-      Swal.fire("Warning", "Please fix the errors in the form.", "warning");
+      Swal.fire({
+        icon: "warning",
+        title: t("signup.warningTitle"),
+        text: t("signup.fixErrors"),
+      });
       return;
     }
 
@@ -205,15 +225,27 @@ const Signup = () => {
       });
       console.log("exists:", exists);
       if (exists.username.exists) {
-        Swal.fire("Warning", "Username already exists.", "warning");
+        Swal.fire({
+          icon: "warning",
+          title: t("signup.warningTitle"),
+          text: t("signup.usernameExists"),
+        });
         return;
       }
       if (exists.email.exists) {
-        Swal.fire("Warning", "Email already exists.", "warning");
+        Swal.fire({
+          icon: "warning",
+          title: t("signup.warningTitle"),
+          text: t("signup.emailExists"),
+        });
         return;
       }
       if (exists.phoneNumber.exists) {
-        Swal.fire("Warning", "Phone number already exists.", "warning");
+        Swal.fire({
+          icon: "warning",
+          title: t("signup.warningTitle"),
+          text: t("signup.phoneExists"),
+        });
         return;
       }
 
@@ -250,7 +282,11 @@ const Signup = () => {
 
   const verifyOtp = async () => {
     if (!otp) {
-      Swal.fire("Warning", "OTP cannot be empty", "warning");
+      Swal.fire({
+        icon: "warning",
+        title: t("signup.warningTitle"),
+        text: t("signup.otpEmpty"),
+      });
       return;
     }
 
@@ -273,8 +309,8 @@ const Signup = () => {
 
         Swal.fire({
           icon: "success",
-          title: "Success",
-          text: response.data.message || "Registered successfully!",
+          title: t("signup.successTitle"),
+          text: response.data.message || t("signup.registeredSuccessfully"),
           timer: 2000,
           showConfirmButton: false,
         });
@@ -285,23 +321,25 @@ const Signup = () => {
         if (err.response?.data?.errors) {
           Swal.fire({
             icon: "error",
-            title: "Error",
+            title: t("signup.errorTitle"),
             text: err.response.data.errors.join(", "),
           });
         } else {
           Swal.fire({
             icon: "error",
-            title: "Error",
-            text:
-              err.response?.data?.message ||
-              "Something went wrong. Please try again.",
+            title: t("signup.errorTitle"),
+            text: err.response?.data?.message || t("signup.genericError"),
           });
         }
       } finally {
         setLoading(false); // หยุดโหลด
       }
     } else {
-      Swal.fire("Warning", "Invalid OTP", "warning");
+      Swal.fire({
+        icon: "warning",
+        title: t("signup.warningTitle"),
+        text: t("signup.invalidOtp"),
+      });
     }
   };
 
@@ -329,11 +367,11 @@ const Signup = () => {
               <>
                 {!isEmailSent ? (
                   <>
-                    <h1 className="text-4xl font-semibold mb-3">Create an account</h1>
+                    <h1 className="text-4xl font-semibold mb-3">{t("signup.createAccount")}</h1>
                     <p className="font-extralight">
-                      Already have an account ?
+                      {t("signup.alreadyHaveAccount")}{" "}
                       <a href="/login" className="hover:text-[#0AACF0] underline">
-                        Log in
+                        {t("signup.login")}
                       </a>
                     </p>
                     <form
@@ -342,7 +380,7 @@ const Signup = () => {
                     >
                       <div className="grid grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 gap-x-5">
                         <label htmlFor="firstName">
-                          <p>First name <span className="text-red-600">*</span> </p>
+                          <p>{t("signup.firstName")} <span className="text-red-600">*</span></p>
                           <input
                             type="text"
                             name="firstName"
@@ -350,10 +388,10 @@ const Signup = () => {
                             value={formData.firstName}
                             onChange={handleChange}
                           />
-                          <p className="text-xs mt-1 text-yellow-500 h-4">{errors.firstName}</p>
+                          <p className="text-xs my-1 text-yellow-500 h-4">{errors.firstName}</p>
                         </label>
                         <label htmlFor="lastName">
-                          <p>Last name <span className="text-red-600">*</span> </p>
+                          <p>{t("signup.lastName")} <span className="text-red-600">*</span></p>
                           <input
                             type="text"
                             name="lastName"
@@ -361,24 +399,24 @@ const Signup = () => {
                             value={formData.lastName}
                             onChange={handleChange}
                           />
-                          <p className="text-xs mt-1 text-yellow-500 h-4">{errors.lastName}</p>
+                          <p className="text-xs my-1 text-yellow-500 h-4">{errors.lastName}</p>
                         </label>
                       </div>
 
                       <label htmlFor="email">
-                        <p>Email <span className="text-red-600">*</span> </p>
+                        <p>{t("signup.email")} <span className="text-red-600">*</span></p>
                         <input
                           type="email"
                           name="email"
                           value={formData.email}
                           onChange={handleChange}
                         />
-                        <p className="text-xs mt-1 text-yellow-500 h-4">{errors.email}</p>
+                        <p className="text-xs my-1 text-yellow-500 h-4">{errors.email}</p>
                       </label>
 
                       <div className="grid grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 gap-x-5">
                         <label htmlFor="username">
-                          <p>Username <span className="text-red-600">*</span> </p>
+                          <p>{t("signup.username")} <span className="text-red-600">*</span></p>
                           <input
                             type="text"
                             name="username"
@@ -386,10 +424,10 @@ const Signup = () => {
                             value={formData.username}
                             onChange={handleChange}
                           />
-                          <p className="text-xs mt-1 text-yellow-500 h-8">{errors.username}</p>
+                          <p className="text-xs my-1 text-yellow-500 h-8">{errors.username}</p>
                         </label>
                         <label htmlFor="phoneNumber">
-                          <p>Phone number <span className="text-red-600">*</span> </p>
+                          <p>{t("signup.phoneNumber")} <span className="text-red-600">*</span></p>
                           <input
                             type="text"
                             name="phoneNumber"
@@ -397,7 +435,7 @@ const Signup = () => {
                             value={formData.phoneNumber}
                             onChange={handleChange}
                           />
-                          <p className="text-xs mt-1 text-yellow-500 h-4">{errors.phoneNumber}</p>
+                          <p className="text-xs my-1 text-yellow-500 h-4">{errors.phoneNumber}</p>
                         </label>
                       </div>
 
@@ -406,7 +444,7 @@ const Signup = () => {
                           <PasswordInput
                             id="password"
                             name="password"
-                            label="Password"
+                            label={t("signup.passwordLabel")}
                             value={formData.password}
                             onChange={handleChange}
                             required
@@ -418,7 +456,7 @@ const Signup = () => {
                           <PasswordInput
                             id="cpassword"
                             name="confirmpassword"
-                            label="Confirm password"
+                            label={t("signup.confirmPasswordLabel")}
                             value={formData.confirmpassword}
                             onChange={handleChange}
                             required
@@ -427,14 +465,14 @@ const Signup = () => {
                         </div>
                       </div>
                       <button className="h-[40px]" type="submit">
-                        Sign Up
+                        {t("signup.signUpButton")}
                       </button>
                     </form>
                   </>
                 ) : (
                   <form className="flex flex-col justify-between gap-4 w-full h-[70%] pt-5">
-                    <h1 className="text-4xl font-semibold">Verify email</h1>
-                    <p className="font-extralight">Enter the OTP sent to your email</p>
+                    <h1 className="text-4xl font-semibold">{t("signup.verifyEmail")}</h1>
+                    <p className="font-extralight">{t("signup.enterOtp")}</p>
                     <div className="flex justify-around gap-2 mb-2">
                       <label htmlFor="otp" className="hidden">a</label>
                       {Array.from({ length: 6 }).map((_, index) => (
@@ -451,7 +489,7 @@ const Signup = () => {
                       ))}
                     </div>
                     <button type="button" className="h-[40px]" onClick={verifyOtp}>
-                      Verify OTP
+                      {t("signup.verifyOtpButton")}
                     </button>
                   </form>
                 )}

@@ -9,8 +9,11 @@ import ArttoyCard from "../components/ArttoyCard";
 import Search from "../components/Search";
 import { usePollinationsImage } from "@pollinations/react";
 import { useMainStore } from "@/mainstore";
+import { useTranslation } from "react-i18next";
+import "../../i18n"; // เพิ่มการนำเข้า i18n
 
 export default function Arttoy() {
+  const { t } = useTranslation(); // ใช้ useTranslation
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);
   const contactRef = useRef<HTMLDivElement>(null!);
@@ -65,8 +68,8 @@ export default function Arttoy() {
 
         {/* Center Text */}
         <div className="absolute text-white text-[clamp(30px,5vw,45px)] font-semibold flex flex-col items-center text-center">
-          <p>Create Unique Art Toys – Turn your ideas</p>
-          <p>ideas into 3D reality with AI</p>
+          <p>{t("arttoy.headerLine1")}</p>
+          <p>{t("arttoy.headerLine2")}</p>
         </div>
       </div>
 
@@ -81,7 +84,9 @@ export default function Arttoy() {
           <div className="p-10">
             {/* Show loading indicator until all images are loaded */}
             {loadedImages < totalImages && (
-              <p className="text-white text-center">Loading images... ({loadedImages}/{totalImages})</p>
+              <p className="text-white text-center">
+                {t("arttoy.loadingImages")} ({loadedImages}/{totalImages})
+              </p>
             )}
 
             {/* Render images with onLoad handler */}

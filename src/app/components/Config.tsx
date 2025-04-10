@@ -9,13 +9,16 @@ import { createArtToy, getArtToys, updateArtToy } from "@/api/arttoyAPI";
 import { getUser } from "@/api/authAPI";
 import Swal from "sweetalert2";
 import { Loader } from "lucide-react"; // เพิ่มการ import Loader
+import { useTranslation } from "react-i18next"; // Import useTranslation
+import "../../i18n"; // Import i18n
 
 const Config = () => {
-  const [name, setName] = useState("Unnamed Art Toy");
-  const [size, setSize] = useState("Small");
-  const [material, setMaterial] = useState("PLA");
-  const [painting, setPainting] = useState("Hand-painting");
-  const [assembly, setAssembly] = useState("Fixed Pose");
+  const { t } = useTranslation(); // Initialize useTranslation
+  const [name, setName] = useState(t("defaultArtToy.name")); // ใช้การแปล
+  const [size, setSize] = useState(t("defaultArtToy.size")); // ใช้การแปล
+  const [material, setMaterial] = useState(t("defaultArtToy.material")); // ใช้การแปล
+  const [painting, setPainting] = useState(t("defaultArtToy.painting")); // ใช้การแปล
+  const [assembly, setAssembly] = useState(t("defaultArtToy.assembly")); // ใช้การแปล
   const [quantity, setQuantity] = useState(1);
   const [fetchId, setFetchId] = useState("");
   const [isLoading, setIsLoading] = useState(true); // เพิ่ม state สำหรับ loader
@@ -36,7 +39,7 @@ const Config = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       Swal.fire({
-        title: "You are not logged in.",
+        title: t("error.notLoggedIn"), // ใช้การแปล
         icon: "error",
         timer: 1500,
         showConfirmButton: false,
@@ -49,15 +52,12 @@ const Config = () => {
       try {
         setIsLoading(true); // เปิด loader ก่อนเริ่มโหลดข้อมูล
         const user = await getUser(token);
-        console.log("User Data:", user);
-        const userId = user.data._id; // Assuming user object has an id property
+        const userId = user.data._id;
 
         const artToys = await getArtToys(token);
-        console.log("Fetched ArtToys:", artToys);
         const userArtToys = artToys.filter(
           (toy: any) => toy.user === userId && toy.imageUrl === imageUrl
-        ); // Assuming art toy object has a userId and imageUrl property
-        console.log("User ArtToys:", userArtToys);
+        );
 
         if (userArtToys.length > 0) {
           setIsNew(false);
@@ -71,8 +71,8 @@ const Config = () => {
         }
       } catch (error: any) {
         Swal.fire({
-          title: "Error fetching Art Toy data",
-          text: error.message || "Failed to fetch Art Toy data",
+          title: t("Swal.config.error.fetchFailed"), // ใช้การแปล
+          text: error.message || t("Swal.config.error.defaultMessage"), // ใช้การแปล
           icon: "error",
           timer: 1500,
           showConfirmButton: false,
@@ -83,7 +83,7 @@ const Config = () => {
     };
 
     fetchArtToyData();
-  }, []);
+  }, [imageUrl, t]);
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -114,7 +114,7 @@ const Config = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       Swal.fire({
-        title: "You are not logged in.",
+        title: t("Swal.config.error.notLoggedIn"), // ใช้การแปล
         icon: "error",
         timer: 1500,
         showConfirmButton: false,
@@ -129,18 +129,16 @@ const Config = () => {
       } else {
         response = await updateArtToy(fetchId, updatedArtToy, token);
       }
-      console.log("API Response:", response);
       Swal.fire({
-        title: "Successfully recorded!",
-        text: "Your Art Toy has been saved.",
+        title: t("Swal.config.success.title"), // ใช้การแปล
+        text: t("Swal.config.success.saved"), // ใช้การแปล
         icon: "success",
-        confirmButtonText: "OK",
+        confirmButtonText: t("Swal.config.success.ok"), // ใช้การแปล
       });
     } catch (error: any) {
-      console.error("Error:", error);
       Swal.fire({
-        title: "Error",
-        text: error.message || "Failed to save Art Toy data",
+        title: t("Swal.config.error.title"), // ใช้การแปล
+        text: error.message || t("Swal.config.error.defaultMessage"), // ใช้การแปล
         icon: "error",
         timer: 1500,
         showConfirmButton: false,
@@ -176,7 +174,7 @@ const Config = () => {
           <div className="md:w-full lg:w-1/2">
             <img
               src={imageUrl}
-              alt="Selected Art Toy"
+              alt={t("artToy.selectedAlt")} // ใช้การแปล
               className="rounded-lg w-full"
             />
             <div className="mt-8 mb-6 p-2 w-full rounded-lg border border-gray-500">
@@ -194,7 +192,9 @@ const Config = () => {
                   />
                 ) : (
                   <>
-                    <p className="font-semibold">{name}</p>
+                    <p className="font-semibold">
+                      {name === "Unnamed Art Toy" ? t(`artToy.names.${name}`) : name}
+                    </p>
                   </>
                 )}
 
@@ -203,18 +203,18 @@ const Config = () => {
                     onClick={() => setIsEditing(true)}
                     className="text-[13px] p-0 bg-transparent hover:bg-transparent font-medium text-gray-400 hover:underline"
                   >
-                    Edit
+                    {t("artToy.button.edit")} {/* ใช้การแปล */}
                   </button>
                 )}
               </div>
-              <p className="text-sm text-gray-400">{artToyData.prompt}</p>
+              <p className="text-sm text-gray-400">{t('artToy.prompts.customizeName')}</p>
             </div>
           </div>
 
           {/* Right - Configurations */}
           <div className="w-full">
             {/* Size */}
-            <h3 className="font-semibold mb-1">Size</h3>
+            <h3 className="font-semibold mb-1">{t("artToy.size")}</h3> {/* ใช้การแปล */}
             <div className="flex justify-between gap-2 sm:flex-nowrap flex-wrap">
               {["Small", "Medium", "Large"].map((s) => (
                 <button
@@ -223,13 +223,13 @@ const Config = () => {
                     }`}
                   onClick={() => setSize(s)}
                 >
-                  {s}
+                  {t(`artToy.sizeOptions.${s}`)} {/* ใช้การแปล */}
                 </button>
               ))}
             </div>
 
             {/* Material */}
-            <h3 className="font-semibold mt-4 mb-1">Material</h3>
+            <h3 className="font-semibold mt-4 mb-1">{t("artToy.material")}</h3> {/* ใช้การแปล */}
             <div className="flex justify-between gap-2 sm:flex-nowrap flex-wrap">
               {["PLA", "Resin", "PVC", "Metal"].map((m) => (
                 <button
@@ -238,13 +238,13 @@ const Config = () => {
                     }`}
                   onClick={() => setMaterial(m)}
                 >
-                  {m}
+                  {t(`artToy.materialOptions.${m}`)} {/* ใช้การแปล */}
                 </button>
               ))}
             </div>
 
             {/* Painting */}
-            <h3 className="font-semibold mt-4 mb-1">Painting</h3>
+            <h3 className="font-semibold mt-4 mb-1">{t("artToy.painting")}</h3> {/* ใช้การแปล */}
             <div className="flex justify-between gap-2 sm:flex-nowrap flex-wrap">
               {["Hand-painting", "Airbrush", "Pad Printing"].map((p) => (
                 <button
@@ -253,13 +253,13 @@ const Config = () => {
                     }`}
                   onClick={() => setPainting(p)}
                 >
-                  {p}
+                  {t(`artToy.paintingOptions.${p}`)} {/* ใช้การแปล */}
                 </button>
               ))}
             </div>
 
             {/* Assembly */}
-            <h3 className="font-semibold mt-4 mb-1">Assembly</h3>
+            <h3 className="font-semibold mt-4 mb-1">{t("artToy.assembly")}</h3> {/* ใช้การแปล */}
             <div className="flex justify-between gap-2 sm:flex-nowrap flex-wrap">
               {["Fixed Pose", "Articulated Joints", "Magnet Joints"].map((a) => (
                 <button
@@ -268,13 +268,13 @@ const Config = () => {
                     }`}
                   onClick={() => setAssembly(a)}
                 >
-                  {a}
+                  {t(`artToy.assemblyOptions.${a}`)} {/* ใช้การแปล */}
                 </button>
               ))}
             </div>
 
             {/* Quantity */}
-            <h3 className="font-semibold mt-4 mb-1">Quantity</h3>
+            <h3 className="font-semibold mt-4 mb-1">{t("artToy.quantity")}</h3> {/* ใช้การแปล */}
             <div className="flex items-center justify-between sm:flex-nowrap flex-wrap gap-y-4">
               <div className="space-x-4">
                 <button
@@ -293,7 +293,7 @@ const Config = () => {
               </div>
 
               <p className="font-semibold">
-                Total price : {price.toLocaleString()} ฿
+                {t("artToy.totalPrice")} : {price.toLocaleString()} ฿ {/* ใช้การแปล */}
               </p>
             </div>
 
@@ -303,10 +303,10 @@ const Config = () => {
                 className="w-full py-2 bg-[#51536D] hover:bg-[#3E4058] rounded-lg"
                 onClick={handleSave}
               >
-                Save
+                {t("artToy.button.save")} {/* ใช้การแปล */}
               </button>
               <button className="w-full" onClick={handleCheckout}>
-                Checkout
+                {t("artToy.button.checkout")} {/* ใช้การแปล */}
               </button>
             </div>
           </div>

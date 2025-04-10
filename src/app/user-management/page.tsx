@@ -15,8 +15,11 @@ import dayjs from "dayjs";
 import UserModal from "../components/UserModal";
 import Swal from "sweetalert2";
 import ModalForm from "../components/ModalForm";
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 
 export default function UserManagement() {
+  const { t } = useTranslation(); // ใช้ useTranslation เพื่อเรียกฟังก์ชัน t
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
   const [token, setToken] = useState<string>("");
@@ -64,13 +67,13 @@ export default function UserManagement() {
     if (!token) return;
 
     const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      title: t("userM.confirm_delete_title"),
+      text: t("userM.confirm_delete_text"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: t("userM.confirm_delete_button"),
       reverseButtons: true,
     });
 
@@ -79,10 +82,10 @@ export default function UserManagement() {
         await deleteUserForAdmin(token, id);
         // Update UI by removing the user from the state
         setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
-        Swal.fire("Deleted!", "The user has been deleted.", "success");
+        Swal.fire(t("userM.deleted_title"), t("userM.deleted_message"), "success");
       } catch (error) {
         console.error("Error deleting user:", error);
-        Swal.fire("Error!", "Failed to delete the user.", "error");
+        Swal.fire(t("userM.error_title"), t("userM.delete_failed"), "error");
       }
     }
   };
@@ -178,10 +181,10 @@ export default function UserManagement() {
 
         // Show success message
         await Swal.fire({
-          title: "Success!",
-          text: "User details have been updated successfully.",
+          title: t("userM.update_success_title"),
+          text: t("userM.update_success_message"),
           icon: "success",
-          confirmButtonText: "OK",
+          confirmButtonText: t("userM.ok_button"),
         });
       }
     } catch (error) {
@@ -189,22 +192,23 @@ export default function UserManagement() {
 
       // Show error message
       await Swal.fire({
-        title: "Error!",
-        text: "Failed to update user details. Please try again.",
+        title: t("userM.update_error_title"),
+        text: t("userM.update_error_message"),
         icon: "error",
-        confirmButtonText: "OK",
+        confirmButtonText: t("userM.ok_button"),
       });
     }
   };
 
   const columns: EditableColumnType[] = [
     {
-      title: "User ID",
+      title: t("userM.user_id"), // ใช้ t() เพื่อแปลข้อความ
       dataIndex: "_id",
       key: "_id",
     },
+
     {
-      title: <div className="flex items-center gap-2">Created at</div>,
+      title: t("userM.created_at"),
       dataIndex: "createdAt",
       key: "createdAt",
       render: (text: string) => dayjs(text).format("DD/MM/YYYY HH:mm"),
@@ -212,7 +216,7 @@ export default function UserManagement() {
     },
 
     {
-      title: <div className="flex items-center gap-2">First name</div>,
+      title: t("userM.first_name"),
       dataIndex: "firstName",
       key: "firstName",
       editable: true,
@@ -220,7 +224,7 @@ export default function UserManagement() {
     },
 
     {
-      title: <div className="flex items-center gap-2">Last name</div>,
+      title: t("userM.last_name"),
       dataIndex: "lastName",
       key: "lastName",
       editable: true,
@@ -228,7 +232,7 @@ export default function UserManagement() {
     },
 
     {
-      title: <div className="flex items-center gap-2">Username</div>,
+      title: t("userM.username"),
       dataIndex: "username",
       key: "username",
       editable: true,
@@ -236,35 +240,35 @@ export default function UserManagement() {
     },
 
     {
-      title: <div className="flex items-center gap-2">Email</div>,
+      title: t("userM.email"),
       dataIndex: "email",
       key: "email",
       sorter: (a, b) => a.email.localeCompare(b.email),
     },
 
     {
-      title: <div className="flex items-center gap-2">Phone</div>,
+      title: t("userM.phone"),
       dataIndex: "phoneNumber",
       key: "phoneNumber",
       editable: true,
     },
 
     {
-      title: <div className="flex items-center gap-2">Role</div>,
+      title: t("userM.role"),
       dataIndex: "role",
       key: "role",
       sorter: (a, b) => a.role.localeCompare(b.role),
     },
 
     {
-      title: "Status",
+      title: t("userM.status"),
       dataIndex: "status",
       key: "status",
       editable: true,
       sorter: (a, b) => a.status.localeCompare(b.status),
     },
     {
-      title: "Actions",
+      title: t("userM.actions"),
       key: "actions",
       render: (_: any, record: any) => {
         const editing = isEditing(record);
@@ -278,7 +282,7 @@ export default function UserManagement() {
               }}
               onClick={() => form.submit()}
             >
-              Save
+              {t("userM.save")} {/* แปลข้อความ Save */}
             </Button>
             <Button
               style={{
@@ -291,7 +295,7 @@ export default function UserManagement() {
                 setEditingKey(null);
               }}
             >
-              Cancel
+              {t("userM.cancel")} {/* แปลข้อความ Cancel */}
             </Button>
           </div>
         ) : (
@@ -304,7 +308,7 @@ export default function UserManagement() {
                   label: (
                     <div className="menu-item-content">
                       <Eye size={16} />
-                      <span className="ml-2">View</span>{" "}
+                      <span className="ml-2">{t("userM.view")}</span>{" "}
                     </div>
                   ),
                   onClick: () => handleViewUser(record),
@@ -314,7 +318,7 @@ export default function UserManagement() {
                   label: (
                     <div className="menu-item-content">
                       <Edit size={16} />
-                      <span className="ml-2">Edit</span>{" "}
+                      <span className="ml-2">{t("userM.edit")}</span>{" "}
                     </div>
                   ),
                   onClick: () => handleEdit(record),
@@ -324,7 +328,7 @@ export default function UserManagement() {
                   label: (
                     <div className="menu-item-content">
                       <Trash size={16} />
-                      <span className="ml-2">Delete</span>{" "}
+                      <span className="ml-2">{t("userM.delete")}</span>{" "}
                     </div>
                   ),
                   danger: true,
@@ -377,7 +381,7 @@ export default function UserManagement() {
         className={`flex-1 p-6 transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[140px]"
           }`}
       >
-        <h1 className="text-3xl font-bold mb-4">Users</h1>
+        <h1 className="text-3xl font-bold mb-4">{t("userM.users")}</h1>
         {isLoading ? ( // แสดง Loader ระหว่างโหลด
           <div className="flex justify-center items-center h-[80vh]">
             <Loader className="animate-spin text-[#0CACF3]" size={48} />
@@ -386,7 +390,7 @@ export default function UserManagement() {
           <>
             <div className="flex justify-between w-full">
               <Input.Search
-                placeholder="Search User ID"
+                placeholder={t("userM.search_user_id")}
                 allowClear
                 onChange={(e) => setSearchText(e.target.value)}
                 style={{ width: 300, marginBottom: 16 }}
@@ -397,7 +401,7 @@ export default function UserManagement() {
                 onClick={handleCreate}
               >
                 <Plus className="h-4 w-4" />
-                Create user
+                {t("userM.create_user")}
               </button>
             </div>
 

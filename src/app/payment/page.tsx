@@ -13,8 +13,11 @@ import { createOrder } from "@/api/orderAPI";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { Loader } from "lucide-react"; // Import Loader
+import { useTranslation } from "react-i18next"; // Import useTranslation
+import "../../i18n"; // Import i18n
 
 export default function Payment() {
+  const { t } = useTranslation(); // ใช้ useTranslation
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);
   const contactRef = useRef<HTMLDivElement>(null!);
@@ -64,7 +67,8 @@ export default function Payment() {
     const token = localStorage.getItem("token");
     if (!token) {
       Swal.fire({
-        title: "You are not logged in.",
+        title: t("payment.addressRequired"),
+        text: t("payment.addressRequiredText"),
         icon: "error",
         timer: 1500,
         showConfirmButton: false,
@@ -73,11 +77,11 @@ export default function Payment() {
     }
 
     const orderData = {
-      name: artToyData?.name || "Unknown Item",
-      size: artToyData?.size || "Standard",
-      material: artToyData?.material || "Plastic",
-      painting: artToyData?.painting || "No Painting",
-      assembly: artToyData?.assembly || "Pre-Assembled",
+      name: artToyData?.name || t("order.unknownItem"),
+      size: artToyData?.size || t("order.standard"),
+      material: artToyData?.material || t("order.plastic"),
+      painting: artToyData?.painting || t("order.noPainting"),
+      assembly: artToyData?.assembly || t("order.preAssembled"),
       quantity: artToyData?.quantity || 1,
       price: artToyData?.price || 0,
       shipping: shippingFee || 50,
@@ -98,8 +102,8 @@ export default function Payment() {
             subdistrict: address[0].subdistrict,
             postalCode: address[0].postalCode,
           })
-          : "Not provided",
-      payment: paymentImage || "No payment proof uploaded",
+          : t("order.notProvided"),
+      payment: paymentImage || t("order.noPaymentProof"),
       imageUrl: artToyData?.imageUrl || "default-image.jpg",
     };
 
@@ -107,10 +111,10 @@ export default function Payment() {
       const response = await createOrder(token, orderData);
 
       Swal.fire({
-        title: "Order Confirmed!",
-        text: "Your order has been placed successfully.",
+        title: t("payment.orderConfirmed"),
+        text: t("payment.orderSuccess"),
         icon: "success",
-        confirmButtonText: "OK",
+        confirmButtonText: t("payment.ok"),
       }).then(() => {
         // Clear artToyData from state and localStorage
         setArtToyData(null);
@@ -120,10 +124,9 @@ export default function Payment() {
         router.push("/order");
       });
     } catch (error: any) {
-      console.error("Checkout error:", error);
       Swal.fire({
-        title: "Error",
-        text: error.response?.data?.message || "Failed to place order.",
+        title: t("payment.errorTitle"),
+        text: error.response?.data?.message || t("payment.errorText"),
         icon: "error",
         timer: 1500,
         showConfirmButton: false,
@@ -175,15 +178,15 @@ export default function Payment() {
         ) : (
           <div className="max-w-[1080px] w-full h-full pt-24 flex flex-col gap-7 p-3">
             <header>
-              <h1 className="text-4xl font-semibold mb-4">Payment</h1>
-              <p className="font-thin">Review your order</p>
+              <h1 className="text-4xl font-semibold mb-4">{t("payment.title")}</h1>
+              <p className="font-thin">{t("payment.reviewOrder")}</p>
             </header>
             <ProductDetailsSection {...artToyData} shippingFee={shippingFee} />
             <form action="">
               <section className="w-full h-full grid lg:grid-cols-2 lg:gird-rows-1 gird-rows-2 grid-cols-1 gap-4">
                 <section className="w-full h-full flex flex-col gap-3">
                   <div className="bg-[#202133] border border-[#202133] rounded-xl p-4">
-                    <h2 className="mb-1 text-[16px] font-semibold">Address</h2>
+                    <h2 className="mb-1 text-[16px] font-semibold">{t("payment.address")}</h2>
                     {address && address.length > 0 ? (
                       <div
                         className="w-full h-30 py-2 bg-[#202133] border border-[#828399] rounded-lg place-items-start font-thin text-xs leading-5 cursor-pointer hover:bg-[#0578AB] px-2"
@@ -207,14 +210,12 @@ export default function Payment() {
                         href="/editProfile"
                       >
                         <IoIosAddCircle className="text-white text-xl" />
-                        <p className="text-white">Add Address</p>
+                        <p className="text-white">{t("payment.addAddress")}</p>
                       </a>
                     )}
                   </div>
                   <div className="bg-[#202133] border border-[#202133] rounded-xl p-4">
-                    <h2 className="mb-1 text-[16px] font-semibold">
-                      Shipping Option
-                    </h2>
+                    <h2 className="mb-1 text-[16px] font-semibold">{t("payment.shippingOption")}</h2>
                     <div className="flex flex-col gap-2">
                       <div
                         className={`flex items-center border ${shippingFee === 50
@@ -236,7 +237,7 @@ export default function Payment() {
                           className="w-full text-[14px] flex justify-between cursor-pointer"
                           htmlFor="standard"
                         >
-                          <p>Standard Delivery (Delivery time 3 - 7 days)</p>
+                          <p>{t('payment.standard')} ({t("payment.standardDeliveryTime")})</p>
                           <p>50 ฿</p>
                         </label>
                       </div>
@@ -263,7 +264,7 @@ export default function Payment() {
                           className="w-full text-[14px] flex justify-between cursor-pointer"
                           htmlFor="ems"
                         >
-                          <p>EMS Delivery ( Delivery time 1 - 2 days )</p>
+                          <p>{t('payment.ems')} ({t("payment.emsDeliveryTime")})</p>
                           <p>70 ฿</p>
                         </label>
                       </div>
@@ -282,7 +283,7 @@ export default function Payment() {
                 className="w-full sm:w-1/2 bg-[#51536D] h-[40px]"
                 onClick={CancelButton}
               >
-                Cancel
+                {t("payment.cancel")}
               </button>
 
               <button
@@ -290,18 +291,18 @@ export default function Payment() {
                 onClick={() => {
                   if (!selectedAddress && (!address || address.length === 0)) {
                     Swal.fire({
-                      title: "Address Required",
-                      text: "Please select or add an address before confirming.",
+                      title: t("payment.addressRequired"),
+                      text: t("payment.addressRequiredText"),
                       icon: "warning",
-                      confirmButtonText: "OK",
+                      confirmButtonText: t("payment.ok"),
                     });
                     return;
                   } else if (!paymentImage) {
                     Swal.fire({
-                      title: "Upload Required",
-                      text: "Please upload a payment proof image before confirming.",
+                      title: t("payment.uploadRequired"),
+                      text: t("payment.uploadRequiredText"),
                       icon: "warning",
-                      confirmButtonText: "OK",
+                      confirmButtonText: t("payment.ok"),
                     });
                     return;
                   }
@@ -309,7 +310,7 @@ export default function Payment() {
                 }}
                 disabled={loading}
               >
-                {loading ? "Processing..." : "Confirm"}
+                {loading ? "Processing..." : t("payment.confirm")}
               </button>
             </div>
           </div>
@@ -321,7 +322,7 @@ export default function Payment() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className=" bg-[#202133] border border-[#202133] rounded-xl p-4">
             <div className="flex justify-between">
-              <h2>Select Address</h2>
+              <h2>{t("payment.selectAddress")}</h2>
               <button onClick={handleClosePopUp}>X</button>
             </div>
             <div className="flex flex-col gap-4 my-4">
@@ -348,7 +349,7 @@ export default function Payment() {
                 className="w-full h-[40px] gap-1 py-2 border border-[#828399] rounded-lg flex justify-center items-center leading-5 cursor-pointer bg-[#0CACF3] hover:bg-[#0578AB] px-2"
                 href="/editProfile"
               >
-                <p className="text-white">Edit Address</p>
+                <p className="text-white">{t("payment.editAddress")}</p>
               </a>
             </div>
           </div>
