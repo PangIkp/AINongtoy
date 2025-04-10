@@ -252,7 +252,7 @@ const Signup = () => {
       // เรียกฟังก์ชันส่ง OTP
       await sendOtp(formData.email);
     } catch (err) {
-      console.error("❌ Error:", err);
+      console.error("Error:", err);
     } finally {
       setLoading(false); // หยุดโหลดหลังจากการดำเนินการเสร็จสิ้น
     }
@@ -316,7 +316,7 @@ const Signup = () => {
         });
         router.push("/login");
       } catch (err: any) {
-        console.error("❌ Error:", err.response?.data?.message || err.message);
+        console.error("Error:", err.response?.data?.message || err.message);
 
         if (err.response?.data?.errors) {
           Swal.fire({
