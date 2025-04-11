@@ -563,7 +563,7 @@
         "creation_failed": "Error creating user."
     },
     "orderM": {
-        "title": "Order Management",
+        "title": "Order",
         "searchPlaceholder": "Search Order ID",
         "deleteConfirmTitle": "Are you sure?",
         "deleteConfirmText": "You won't be able to revert this!",
@@ -706,7 +706,7 @@
         }
     },
     "keywordManagement": {
-        "title": "Keyword Management",
+        "title": "Keyword",
         "confirmDeleteTitle": "Are you sure?",
         "confirmDeleteText": "You won't be able to revert this!",
         "confirmDeleteConfirm": "Yes, delete it!",
