@@ -110,7 +110,7 @@ export default function Sidebar({
 
           <SidebarItem
             icon={<Sparkles size={20} />}
-            label="Keyword"
+            label="Keywords"
             to="/keyword-management"
             isCollapsed={isCollapsed}
           />
