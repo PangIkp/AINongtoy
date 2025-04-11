@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import React from "react";
 import Link from "next/link";
 import {
@@ -113,7 +113,7 @@ export default function Sidebar({
 
           <SidebarItem
             icon={<Sparkles size={20} />}
-            label="Keyword"
+            label="Keywords"
             to="/keyword-management"
             isCollapsed={isCollapsed}
           />

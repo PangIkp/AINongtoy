@@ -92,7 +92,8 @@
             "Dark & Gothic": "Dark & Gothic",
             "Vintage": "Vintage",
             "Earth tones": "Earth tones",
-            "Rainbow color": "Rainbow color"
+            "Rainbow color": "Rainbow color",
+            "Warm & Cozy": "Warm & Cozy"
         }
     },
     "Search": {
@@ -490,7 +491,7 @@
         "Users": "Users",
         "Orders": "Orders",
         "Dashboard": "Dashboard",
-        "Logout": "Logout",
+        "Logout": "Log out",
         "LanguageSwitcher": {
             "EN": "EN",
             "TH": "TH"

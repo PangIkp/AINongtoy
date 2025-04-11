@@ -257,6 +257,7 @@ export default function Dashboard() {
               <div className="sm:w-1/4 w-full p-4">
                 {/* 🟢 Dropdown สำหรับเลือกแผนภูมิ */}
                 <label htmlFor="abc" className="hidden">abc</label>
+                {/* Dropdown สำหรับเลือกแผนภูมิ */}
                 <select
                   id="abc"
                   className="mb-4 p-2 w-1/2 mx-auto block bg-[#2F2F2F] text-white border border-[#5B5B5B] rounded"

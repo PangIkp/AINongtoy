@@ -39,7 +39,7 @@ const OrderItemList: React.FC<OrderItemListProps> = ({ orders }) => {
 
       localStorage.setItem("selectedOrder", JSON.stringify(orderDetail));
       router.push("/order_detail");
-    } catch (error) {
+    } catch {
       Swal.fire({
         icon: "error",
         title: t("orderDetail.errorTitle"),
