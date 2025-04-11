@@ -125,7 +125,36 @@
             "save": "Save",
             "form": "Address Form",
             "delete": "Delete",
-            "add": "Add Address"
+            "add": "Add Address",
+            "confirmDeleteTitle": "Are you sure?",
+            "confirmDeleteText": "Do you really want to delete this address?",
+            "confirmDeleteConfirm": "Yes, delete it!",
+            "deleteSuccessTitle": "Success",
+            "deleteSuccessText": "Address deleted successfully!",
+            "deleteErrorTitle": "Error",
+            "deleteErrorText": "Failed to delete address.",
+            "warningTitle": "Warning",
+            "warningText": "Please fill out all address fields completely.",
+            "updateSuccessTitle": "Success",
+            "updateSuccessText": "Addresses updated successfully!",
+            "updateErrorTitle": "Error",
+            "updateErrorText": "Failed to update addresses."
+        },
+        "validation": {
+            "name": "Alphabetic, 4-40 chars.",
+            "phone": "Phone: 10 digits, start with 0.",
+            "title": "Validation Error",
+            "correctFields": "Please correct the highlighted fields."
+        },
+        "success": {
+            "title": "Success",
+            "profileUpdated": "Profile updated successfully!"
+        },
+        "error": {
+            "title": "Error",
+            "profileUpdateFailed": "Failed to update profile.",
+            "userIdMissing": "User ID is missing.",
+            "fetchUserDataFailed": "Failed to fetch user data."
         }
     },
     "profile": {
@@ -522,8 +551,8 @@
             "admin": "Admin"
         },
         "statuses": {
-            "active": "Active",
-            "banned": "Banned"
+            "active": "active",
+            "banned": "banned"
         },
         "deleted_title": "Deleted!",
         "deleted_message": "The user has been deleted.",

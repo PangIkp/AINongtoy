@@ -97,11 +97,11 @@ export default function Page() {
     const validateInput = (field: string, value: string) => {
         if (field === 'firstName' || field === 'lastName') {
             if (!nameRegex.test(value)) {
-                return 'Alphabetic, 4-40 chars.';
+                return t('editProfile.validation.name'); // ใช้การแปล
             }
         } else if (field === 'phoneNumber') {
             if (!phoneRegex.test(value)) {
-                return 'Phone: 10 digits, start with 0.';
+                return t('editProfile.validation.phone'); // ใช้การแปล
             }
         }
         return '';
@@ -122,8 +122,8 @@ export default function Page() {
             });
             Swal.fire({
                 icon: 'warning',
-                title: 'Validation Error',
-                text: 'Please correct the highlighted fields.',
+                title: t('editProfile.validation.title'), // ใช้การแปล
+                text: t('editProfile.validation.correctFields'), // ใช้การแปล
                 timer: 1500,
                 showConfirmButton: false,
             });
@@ -147,8 +147,8 @@ export default function Page() {
                 setIsEditing(false);
                 Swal.fire({
                     icon: 'success',
-                    title: 'Success',
-                    text: 'Profile updated successfully!',
+                    title: t('editProfile.success.title'), // ใช้การแปล
+                    text: t('editProfile.success.profileUpdated'), // ใช้การแปล
                     timer: 1500,
                     showConfirmButton: false,
                     willClose: () => {
@@ -158,8 +158,8 @@ export default function Page() {
             } catch (error: any) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
-                    text: error.message || 'Failed to update profile',
+                    title: t('editProfile.error.title'), // ใช้การแปล
+                    text: error.message || t('editProfile.error.profileUpdateFailed'), // ใช้การแปล
                     timer: 1500,
                     showConfirmButton: false,
                 });
@@ -167,8 +167,8 @@ export default function Page() {
         } else {
             Swal.fire({
                 icon: 'error',
-                title: 'Error',
-                text: 'User ID is missing',
+                title: t('editProfile.error.title'), // ใช้การแปล
+                text: t('editProfile.error.userIdMissing'), // ใช้การแปล
                 timer: 1500,
                 showConfirmButton: false,
             });
@@ -249,14 +249,14 @@ export default function Page() {
         const isEmptyAddress = !addressToDelete.detail && !addressToDelete.province && !addressToDelete.district && !addressToDelete.subdistrict && !addressToDelete.postalCode;
 
         const result = await Swal.fire({
-            title: 'Are you sure?',
-            text: "Do you really want to delete this address?",
+            title: t('editProfile.address.confirmDeleteTitle'), // ใช้การแปล
+            text: t('editProfile.address.confirmDeleteText'), // ใช้การแปล
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!',
-            reverseButtons: true
+            confirmButtonText: t('editProfile.address.confirmDeleteConfirm'), // ใช้การแปล
+            reverseButtons: true,
         });
 
         if (result.isConfirmed) {
@@ -278,16 +278,16 @@ export default function Page() {
                     }
                     Swal.fire({
                         icon: 'success',
-                        title: 'Success',
-                        text: 'Address deleted successfully!',
+                        title: t('editProfile.address.deleteSuccessTitle'), // ใช้การแปล
+                        text: t('editProfile.address.deleteSuccessText'), // ใช้การแปล
                         timer: 1500,
                         showConfirmButton: false,
                     });
                 } catch (error: any) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: error.message || 'Failed to delete address',
+                        title: t('editProfile.address.deleteErrorTitle'), // ใช้การแปล
+                        text: error.message || t('editProfile.address.deleteErrorText'), // ใช้การแปล
                         timer: 1500,
                         showConfirmButton: false,
                     });
@@ -295,8 +295,8 @@ export default function Page() {
             } else {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
-                    text: 'User ID is missing',
+                    title: t('editProfile.error.title'), // ใช้การแปล
+                    text: t('editProfile.error.userIdMissing'), // ใช้การแปล
                     timer: 1500,
                     showConfirmButton: false,
                 });
@@ -328,8 +328,8 @@ export default function Page() {
         if (incompleteAddress) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Warning',
-                text: 'Please fill out all address fields completely.',
+                title: t('editProfile.address.warningTitle'), // ใช้การแปล
+                text: t('editProfile.address.warningText'), // ใช้การแปล
                 timer: 1500,
                 showConfirmButton: false,
             });
@@ -349,8 +349,8 @@ export default function Page() {
                 setIsEditingAddress(false);
                 Swal.fire({
                     icon: 'success',
-                    title: 'Success',
-                    text: 'Addresses updated successfully!',
+                    title: t('editProfile.address.updateSuccessTitle'), // ใช้การแปล
+                    text: t('editProfile.address.updateSuccessText'), // ใช้การแปล
                     timer: 1500,
                     showConfirmButton: false,
                     willClose: () => {
@@ -360,8 +360,8 @@ export default function Page() {
             } catch (error: any) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
-                    text: error.message || 'Failed to update addresses',
+                    title: t('editProfile.address.updateErrorTitle'), // ใช้การแปล
+                    text: error.message || t('editProfile.address.updateErrorText'), // ใช้การแปล
                     timer: 1500,
                     showConfirmButton: false,
                 });
@@ -369,8 +369,8 @@ export default function Page() {
         } else {
             Swal.fire({
                 icon: 'error',
-                title: 'Error',
-                text: 'User ID is missing',
+                title: t('editProfile.error.title'), // ใช้การแปล
+                text: t('editProfile.error.userIdMissing'), // ใช้การแปล
                 timer: 1500,
                 showConfirmButton: false,
             });
@@ -481,8 +481,8 @@ export default function Page() {
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: response.message || 'Failed to fetch user data',
+                        title: t('editProfile.error.title'), // ใช้การแปล
+                        text: response.message || t('editProfile.error.fetchUserDataFailed'), // ใช้การแปล
                         timer: 1500,
                         showConfirmButton: false,
                     });
@@ -490,8 +490,8 @@ export default function Page() {
             } catch (error: any) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
-                    text: error.message || 'Failed to fetch user data',
+                    title: t('editProfile.error.title'), // ใช้การแปล
+                    text: error.message || t('editProfile.error.fetchUserDataFailed'), // ใช้การแปล
                     timer: 1500,
                     showConfirmButton: false,
                 });

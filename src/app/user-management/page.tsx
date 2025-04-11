@@ -144,8 +144,8 @@ export default function UserManagement() {
               </div>
             ) : dataIndex === "status" ? (
               <Select>
-                <Select.Option value="active">active</Select.Option>
-                <Select.Option value="banned">banned</Select.Option>
+                <Select.Option value="active">{t("userM.statuses.active")}</Select.Option> {/* ใช้การแปล */}
+                <Select.Option value="banned">{t("userM.statuses.banned")}</Select.Option> {/* ใช้การแปล */}
               </Select>
             ) : (
               <Input />
