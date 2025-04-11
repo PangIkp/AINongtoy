@@ -113,7 +113,7 @@ export default function Sidebar({
 
           <SidebarItem
             icon={<Sparkles size={20} />}
-            label="Keywords"
+            label={t("Sidebar.Keywords")} // ใช้การแปล
             to="/keyword-management"
             isCollapsed={isCollapsed}
           />

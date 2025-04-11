@@ -20,8 +20,12 @@ import { useState, useEffect } from "react";
 import { Loader } from "lucide-react"; // เพิ่มการ import
 import Sidebar from "../components/Sidebar";
 import { getAllOrdersForAdmin } from "@/api/orderAPI";
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 
 export default function Dashboard() {
+  const { t } = useTranslation(); // ใช้ useTranslation
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [orders, setOrders] = useState<any[]>([]);
@@ -101,9 +105,9 @@ export default function Dashboard() {
   }, []);
 
   const chartData = [
-    { name: "Paid", value: paidCount },
-    { name: "Unpaid", value: unpaidCount },
-    { name: "Refunded", value: refundedCount },
+    { name: t("dashboard.chartData.paid"), value: paidCount }, // ใช้การแปล
+    { name: t("dashboard.chartData.unpaid"), value: unpaidCount }, // ใช้การแปล
+    { name: t("dashboard.chartData.refunded"), value: refundedCount }, // ใช้การแปล
   ];
 
   const getColorForIndex = (index: number) => {
@@ -185,7 +189,7 @@ export default function Dashboard() {
         className={`flex-1 p-6 overflow-y-auto transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[155px]"
           }`}
       >
-        <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
+        <h1 className="text-3xl font-bold mb-4">{t("dashboard.title")}</h1> {/* ใช้การแปล */}
 
         {isLoading ? (
           <div className="flex justify-center items-center h-[80vh]">
@@ -195,19 +199,19 @@ export default function Dashboard() {
           <>
             {/* แสดงค่าที่ดึงจาก API */}
             <div className="grid sm:grid-cols-5 gap-4 mb-8 ">
-              <Card title="Total Orders (Paid)" value={paidCount.toString()} />
+              <Card title={t("dashboard.totalOrders")} value={paidCount.toString()} />
               <Card
-                title="Total Purchase Amount"
+                title={t("dashboard.totalAmount")}
                 value={`${totalAmount.toLocaleString()} ฿`}
               />
               <Card
-                title="Avg. Order Value"
+                title={t("dashboard.avgOrderValue")}
                 value={`${Number(
                   (totalAmount / (orders.length || 1)).toFixed(2)
                 ).toLocaleString()} ฿`}
               />
-              <Card title="Order Quantity" value={totalQuantity.toString()} />
-              <Card title="Refunds" value={refunds.toString()} />
+              <Card title={t("dashboard.totalQuantity")} value={totalQuantity.toString()} />
+              <Card title={t("dashboard.refunds")} value={refunds.toString()} />
             </div>
 
             <div className="mb-8 flex sm:flex-row flex-col items-center justify-between space-x-4">
@@ -240,7 +244,7 @@ export default function Dashboard() {
                     <YAxis tick={{ fontSize: 12 }} />
                     <Tooltip />
                     <Legend
-                      formatter={() => "Total orders"} // เปลี่ยนชื่อ Legend
+                      formatter={() => t("dashboard.legend.totalOrders")} // ใช้การแปล
                     />
                     <Line
                       type="monotone"
@@ -264,9 +268,9 @@ export default function Dashboard() {
                   value={selectedChart}
                   onChange={(e) => setSelectedChart(e.target.value)}
                 >
-                  <option value="Material">Material</option>
-                  <option value="Assembly">Assembly</option>
-                  <option value="Painting">Painting</option>
+                  <option value="Material">{t("dashboard.select.material")}</option> {/* ใช้การแปล */}
+                  <option value="Assembly">{t("dashboard.select.assembly")}</option> {/* ใช้การแปล */}
+                  <option value="Painting">{t("dashboard.select.painting")}</option> {/* ใช้การแปล */}
                 </select>
 
                 <div className="flex flex-col items-center justify-center">
@@ -274,7 +278,10 @@ export default function Dashboard() {
                   <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
                       <Tooltip
-                        formatter={(value, name) => [`${value} orders`, name]}
+                        formatter={(value, name) => [
+                          `${value} ${t("dashboard.tooltip.orders")}`,
+                          typeof name === "string" ? t(`dashboard.chartData.${name.toLowerCase()}`) : name,
+                        ]}
                       />
 
                       <Pie
@@ -296,7 +303,7 @@ export default function Dashboard() {
 
                       <Legend
                         payload={dataToDisplay.map((entry, index) => ({
-                          value: entry.name,
+                          value: t(`dashboard.chartData.${entry.name.toLowerCase()}`), // ใช้การแปล
                           type: "circle",
                           color: COLORS[index % COLORS.length],
                         }))}
@@ -304,7 +311,7 @@ export default function Dashboard() {
                     </PieChart>
                   </ResponsiveContainer>
                   <h2 className="text-[16px] font-medium mb-4">
-                    {selectedChart} Orders Overview
+                    {t(`dashboard.overview.${selectedChart}`)} {/* ใช้การแปล */}
                   </h2>
                 </div>
               </div>
@@ -318,7 +325,7 @@ export default function Dashboard() {
                       <YAxis tick={{ fontSize: 12 }} />
                       <Tooltip />
                       <Legend
-                        formatter={() => "Total Quantity"} // เปลี่ยนชื่อ Legend
+                        formatter={() => t("dashboard.legend.totalQuantity")} // ใช้การแปล
                       />
                       <Line
                         type="monotone"

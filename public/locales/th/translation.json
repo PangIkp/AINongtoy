@@ -175,17 +175,10 @@
             }
         }
     },
-    "defaultArtToy": {
-        "name": "ArtToy เริ่มต้น",
-        "size": "เล็ก",
-        "material": "PLA",
-        "painting": "การทาสีด้วยมือ",
-        "assembly": "ท่าทางคงที่"
-    },
     "artToy": {
         "alt": "ของเล่นอาร์ต",
         "names": {
-            "Unnamed Art Toy": "อาร์ตทอยที่ไม่มีชื่อ   "
+            "Unnamed Art Toy": "ไม่ได้ตั้งชื่อ"
         },
         "prompts": {
             "customizeName": "ตั้งชื่อให้อาร์ตทอยของคุณ"
@@ -467,6 +460,7 @@
     "Sidebar": {
         "Users": "ผู้ใช้",
         "Orders": "คำสั่งซื้อ",
+        "Keywords": "คำสำคัญ",
         "Dashboard": "แดชบอร์ด",
         "Logout": "ออกจากระบบ",
         "LanguageSwitcher": {
@@ -544,5 +538,207 @@
         "user_created": "สร้างผู้ใช้สำเร็จ!",
         "creation_failed": "เกิดข้อผิดพลาดในการสร้างผู้ใช้.",
         "deleted_title": "ลบสำเร็จ!"
+    },
+    "orderM": {
+        "title": "จัดการคำสั่งซื้อ",
+        "searchPlaceholder": "ค้นหา Order ID",
+        "deleteConfirmTitle": "คุณแน่ใจหรือไม่?",
+        "deleteConfirmText": "คุณจะไม่สามารถย้อนกลับได้!",
+        "deleteSuccess": "ลบคำสั่งซื้อสำเร็จแล้ว",
+        "deleteError": "ไม่สามารถลบคำสั่งซื้อได้",
+        "editSuccess": "อัปเดตคำสั่งซื้อสำเร็จแล้ว",
+        "editError": "ไม่สามารถอัปเดตคำสั่งซื้อได้",
+        "deleteSuccessTitle": "สำเร็จ!",
+        "deleteErrorTitle": "ข้อผิดพลาด!",
+        "cancelButton": "ยกเลิก",
+        "deleteConfirmButton": "ใช่, ลบเลย!",
+        "saveSuccessTitle": "สำเร็จ!",
+        "saveSuccessText": "อัปเดตคำสั่งซื้อสำเร็จแล้ว",
+        "saveErrorTitle": "ข้อผิดพลาด!",
+        "saveErrorText": "ไม่สามารถอัปเดตคำสั่งซื้อได้",
+        "status": {
+            "pending": "รอดำเนินการ",
+            "processing": "กำลังดำเนินการ",
+            "shipped": "จัดส่งแล้ว",
+            "delivered": "ส่งมอบแล้ว",
+            "cancelled": "ยกเลิกแล้ว"
+        },
+        "paymentStatus": {
+            "unpaid": "ยังไม่ได้ชำระเงิน",
+            "paid": "ชำระเงินแล้ว",
+            "refunded": "คืนเงินแล้ว"
+        },
+        "columns": {
+            "orderId": "รหัสคำสั่งซื้อ",
+            "createdAt": "วันที่สร้าง",
+            "customer": "ลูกค้า",
+            "name": "ชื่อ",
+            "quantity": "จำนวน",
+            "total": "ยอดรวม",
+            "paymentStatus": "การยืนยัน",
+            "status": "สถานะ",
+            "actions": "การกระทำ"
+        },
+        "actions": {
+            "save": "บันทึก",
+            "cancel": "ยกเลิก",
+            "view": "ดู",
+            "edit": "แก้ไข",
+            "delete": "ลบ"
+        }
+    },
+    "orderModal": {
+        "title": "รายละเอียดคำสั่งซื้อ",
+        "orderId": "รหัสคำสั่งซื้อ",
+        "createdAt": "วันที่สร้าง",
+        "customer": "ลูกค้า",
+        "phoneNumber": "เบอร์โทรศัพท์",
+        "name": "ชื่อ",
+        "size": "ขนาด",
+        "material": "วัสดุ",
+        "painting": "การทาสี",
+        "assembly": "การประกอบ",
+        "artToy": "อาร์ตทอย",
+        "price": "ราคา",
+        "shipping": "การจัดส่ง",
+        "total": "ยอดรวม",
+        "address": "ที่อยู่",
+        "invalidAddress": "รูปแบบที่อยู่ไม่ถูกต้อง",
+        "noAddress": "ไม่มีที่อยู่",
+        "confirmation": "การยืนยัน",
+        "paymentImage": "การชำระเงิน",
+        "noPaymentImage": "ไม่มีภาพการชำระเงิน",
+        "unnamedArtToy": "ไม่ได้ตั้งชื่อ",
+        "status": "สถานะ",
+        "statuss": {
+            "Pending": "รอดำเนินการ",
+            "Processing": "กำลังดำเนินการ",
+            "Shipped": "จัดส่งแล้ว",
+            "Delivered": "ส่งมอบแล้ว",
+            "Cancelled": "ยกเลิกแล้ว"
+        },
+        "paymentStatus": {
+            "Unpaid": "ยังไม่ได้ชำระเงิน",
+            "Paid": "ชำระเงินแล้ว",
+            "Refunded": "คืนเงินแล้ว"
+        },
+        "assemblyOptions": {
+            "Fixed Pose": "ข้อต่อคงที่",
+            "Articulated Joints": "ข้อต่อเคลื่อนไหวได้",
+            "Magnet Joints": "ข้อต่อแม่เหล็ก"
+        },
+        "paintingOptions": {
+            "Hand-painting": "ลงสีด้วยมือ",
+            "Airbrush": "พ่นสี",
+            "Pad Printing": "พิมพ์แพด"
+        },
+        "materialOptions": {
+            "PLA": "พลาสติกชีวภาพ",
+            "Resin": "เรซิน",
+            "PVC": "พลาสติก",
+            "Metal": "โลหะ"
+        },
+        "sizeOptions": {
+            "Small": "เล็ก",
+            "Medium": "กลาง",
+            "Large": "ใหญ่"
+        }
+    },
+    "dashboard": {
+        "title": "แดชบอร์ด",
+        "totalOrders": "คำสั่งซื้อทั้งหมด (ชำระเงินแล้ว)",
+        "totalAmount": "ยอดซื้อทั้งหมด",
+        "avgOrderValue": "มูลค่าคำสั่งซื้อเฉลี่ย",
+        "totalQuantity": "จำนวนสินค้า",
+        "refunds": "การคืนเงิน",
+        "chartData": {
+            "paid": "ชำระเงินแล้ว",
+            "unpaid": "ยังไม่ได้ชำระเงิน",
+            "refunded": "คืนเงินแล้ว",
+            "hand-painting": "ลงสีด้วยมือ",
+            "airbrush": "พ่นสี",
+            "pla": "พลาสติกชีวภาพ",
+            "resin": "เรซิน",
+            "pvc": "พลาสติก",
+            "fixed pose": "ข้อต่อคงที่",
+            "magnet joints": "ข้อต่อแม่เหล็ก",
+            "articulated joints": "ข้อต่อเคลื่อนไหวได้"
+        },
+        "legend": {
+            "totalQuantity": "ปริมาณทั้งหมด",
+            "totalOrders": "คำสั่งซื้อทั้งหมด"
+        },
+        "overview": {
+            "Material": "ภาพรวมคำสั่งซื้อวัสดุ",
+            "Assembly": "ภาพรวมคำสั่งซื้อการประกอบ",
+            "Painting": "ภาพรวมคำสั่งซื้อการทาสี"
+        },
+        "tooltip": {
+            "orders": "คำสั่งซื้อ"
+        },
+        "select": {
+            "material": "วัสดุ",
+            "assembly": "การประกอบ",
+            "painting": "การทาสี"
+        }
+    },
+    "keywordManagement": {
+        "title": "การจัดการคำสำคัญ",
+        "confirmDeleteTitle": "คุณแน่ใจหรือไม่?",
+        "confirmDeleteText": "คุณจะไม่สามารถย้อนกลับได้!",
+        "confirmDeleteConfirm": "ใช่, ลบเลย!",
+        "deleteSuccessTitle": "ลบสำเร็จ!",
+        "deleteSuccessText": "คำสำคัญถูกลบเรียบร้อยแล้ว",
+        "deleteErrorTitle": "ข้อผิดพลาด!",
+        "deleteErrorText": "ไม่สามารถลบคำสำคัญได้",
+        "updateSuccessTitle": "สำเร็จ!",
+        "updateSuccessText": "คำสำคัญได้รับการอัปเดตเรียบร้อยแล้ว",
+        "updateErrorTitle": "ข้อผิดพลาด!",
+        "updateErrorText": "ไม่สามารถอัปเดตคำสำคัญได้",
+        "createKeyword": "สร้างคำสำคัญ",
+        "columns": {
+            "keywordId": "รหัสคำสำคัญ",
+            "createdAt": "สร้างเมื่อ",
+            "updatedAt": "อัปเดตเมื่อ",
+            "createdBy": "สร้างโดย",
+            "name": "ชื่อ",
+            "type": "ประเภท",
+            "actions": "การกระทำ"
+        },
+        "actions": {
+            "save": "บันทึก",
+            "cancel": "ยกเลิก",
+            "view": "ดู",
+            "edit": "แก้ไข",
+            "delete": "ลบ"
+        },
+        "select": {
+            "color": "สี",
+            "character": "ตัวละคร"
+        }
+    },
+    "keywordModal": {
+        "title": "รายละเอียดคำสำคัญ",
+        "userId": "รหัสผู้ใช้",
+        "createdAt": "สร้างเมื่อ",
+        "email": "อีเมล"
+    },
+    "keywordForm": {
+        "fields": {
+            "name": "ชื่อ",
+            "type": "ประเภท",
+            "selectType": "เลือกประเภท",
+            "color": "สี",
+            "character": "ตัวละคร",
+            "submit": "บันทึก"
+        },
+        "errors": {
+            "nameRequired": "กรุณากรอกชื่อ",
+            "typeRequired": "กรุณาเลือกประเภท"
+        },
+        "successTitle": "สำเร็จ",
+        "successText": "สร้างคำสำคัญสำเร็จ!",
+        "errorTitle": "ข้อผิดพลาด",
+        "errorText": "เกิดข้อผิดพลาดในการสร้างคำสำคัญ"
     }
 }

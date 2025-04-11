@@ -4,6 +4,8 @@ import React from "react";
 import { useState } from "react";
 import { createKeywordForAdmin } from "@/api/keywordAPI";
 import Swal from "sweetalert2";
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 
 interface KeywordFormProps {
   isFormVisible: boolean;
@@ -12,14 +14,13 @@ interface KeywordFormProps {
   fetchAdminKeywords: () => void;
 }
 
-
 const KeywordForm: React.FC<KeywordFormProps> = ({
   isFormVisible,
   handleCloseModal,
   token,
   fetchAdminKeywords,
 }) => {
-
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -51,11 +52,11 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
     const newErrors = { name: "", type: "" };
 
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required.";
+      newErrors.name = t("keywordForm.errors.nameRequired");
       isValid = false;
     }
     if (!formData.type.trim()) {
-      newErrors.type = "Type is required.";
+      newErrors.type = t("keywordForm.errors.typeRequired");
       isValid = false;
     }
 
@@ -66,16 +67,16 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
       const createdKeyword = await createKeywordForAdmin(token, formData);
       Swal.fire({
         icon: "success",
-        title: "Success",
-        text: "Keyword created successfully!",
+        title: t("keywordForm.successTitle"),
+        text: t("keywordForm.successText"),
       });
       handleCloseModal();
       fetchAdminKeywords();
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: "Error creating keyword.",
+        title: t("keywordForm.errorTitle"),
+        text: t("keywordForm.errorText"),
       });
     }
   };
@@ -93,7 +94,7 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
 
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 text-[14px] text-white">
           <div>
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name">{t("keywordForm.fields.name")}</label>
             <input
               type="text"
               id="name"
@@ -108,7 +109,7 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
           </div>
 
           <div>
-            <label htmlFor="type" >Type</label>
+            <label htmlFor="type">{t("keywordForm.fields.type")}</label>
             <select
               id="type"
               name="type"
@@ -117,10 +118,10 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
               className="mt-2 p-2 border w-full bg-[#2F2F2F] text-[12px] text-white border-[#5B5B5B]"
             >
               <option value="" disabled>
-                Select type
-              </option>{" "}
-              <option value="admin">Color</option>
-              <option value="user">Character</option>
+                {t("keywordForm.fields.selectType")}
+              </option>
+              <option value="Color">{t("keywordForm.fields.color")}</option>
+              <option value="Character">{t("keywordForm.fields.character")}</option>
             </select>
             {errors.type && (
               <p className="text-red-500 text-xs mt-1">{errors.type}</p>
@@ -129,7 +130,7 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
 
           <div className="col-span-2 flex justify-end mt-4">
             <button type="submit" className="text-white p-2 rounded w-full">
-              Submit
+              {t("keywordForm.fields.submit")}
             </button>
           </div>
         </form>

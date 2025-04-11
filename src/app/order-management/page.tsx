@@ -19,6 +19,7 @@ import "../../i18n";
 import { useTranslation } from "react-i18next";
 
 export default function OrderManagement() {
+  const { t } = useTranslation(); // ใช้ useTranslation
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [orders, setOrders] = useState<any[]>([]);
   const [token, setToken] = useState<string | null>(null);
@@ -61,13 +62,14 @@ export default function OrderManagement() {
     if (!token) return;
 
     const confirmResult = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      title: t("orderM.deleteConfirmTitle"), // ใช้การแปล
+      text: t("orderM.deleteConfirmText"), // ใช้การแปล
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: t("orderM.cancelButton"), // ใช้การแปล
+      confirmButtonText: t("orderM.deleteConfirmButton"), // ใช้การแปล
       reverseButtons: true,
     });
 
@@ -76,10 +78,10 @@ export default function OrderManagement() {
     try {
       await deleteOrderByAdmin(token, id);
       setOrders((prevOrders) => prevOrders.filter((order) => order._id !== id));
-      Swal.fire("Deleted!", "The order has been deleted.", "success");
+      Swal.fire(t("orderM.deleteSuccessTitle"), t("orderM.deleteSuccess"), "success"); // ใช้การแปล
     } catch (error) {
       console.error("Error deleting order:", error);
-      Swal.fire("Error!", "Failed to delete the order.", "error");
+      Swal.fire(t("orderM.deleteErrorTitle"), t("orderM.deleteError"), "error"); // ใช้การแปล
     }
   };
 
@@ -116,18 +118,17 @@ export default function OrderManagement() {
           >
             {dataIndex === "status" ? (
               <Select>
-                <Select.Option value="Pending">Pending</Select.Option>
-                <Select.Option value="Processing">Processing</Select.Option>
-                <Select.Option value="Shipped">Shipped</Select.Option>
-                <Select.Option value="Delivered">Delivered</Select.Option>
-                <Select.Option value="Cancelled">Cancelled</Select.Option>{" "}
-                {/* Fixed the duplicate value */}
+                <Select.Option value="Pending">{t("orderM.status.pending")}</Select.Option>
+                <Select.Option value="Processing">{t("orderM.status.processing")}</Select.Option>
+                <Select.Option value="Shipped">{t("orderM.status.shipped")}</Select.Option>
+                <Select.Option value="Delivered">{t("orderM.status.delivered")}</Select.Option>
+                <Select.Option value="Cancelled">{t("orderM.status.cancelled")}</Select.Option>
               </Select>
             ) : dataIndex === "paymentStatus" ? (
               <Select>
-                <Select.Option value="Unpaid">Unpaid</Select.Option>
-                <Select.Option value="Paid">Paid</Select.Option>
-                <Select.Option value="Refunded">Refunded</Select.Option>
+                <Select.Option value="Unpaid">{t("orderM.paymentStatus.unpaid")}</Select.Option>
+                <Select.Option value="Paid">{t("orderM.paymentStatus.paid")}</Select.Option>
+                <Select.Option value="Refunded">{t("orderM.paymentStatus.refunded")}</Select.Option>
               </Select>
             ) : (
               <Input />
@@ -156,72 +157,78 @@ export default function OrderManagement() {
       setEditOrder(null);
       setEditingKey(null); // ออกจากโหมดแก้ไข
 
-      Swal.fire("Success!", "The order has been updated successfully.", "success");
+      Swal.fire({
+        title: t("orderM.saveSuccessTitle"), // ใช้การแปล
+        text: t("orderM.saveSuccessText"), // ใช้การแปล
+        icon: "success",
+      });
     } catch (error) {
       console.error("Error updating order:", error);
-      Swal.fire("Error!", "Failed to update the order.", "error");
+      Swal.fire({
+        title: t("orderM.saveErrorTitle"), // ใช้การแปล
+        text: t("orderM.saveErrorText"), // ใช้การแปล
+        icon: "error",
+      });
     }
   };
 
   const columns: EditableColumnType[] = [
     {
-      title: "Order ID",
+      title: t("orderM.columns.orderId"), // ใช้การแปล
       dataIndex: "_id",
       key: "_id",
     },
     {
-      title: <div className="flex items-center gap-2">Created at</div>,
+      title: <div className="flex items-center gap-2">{t("orderM.columns.createdAt")}</div>, // ใช้การแปล
       dataIndex: "createdAt",
       key: "createdAt",
       render: (text: string) => dayjs(text).format("DD/MM/YYYY HH:mm"),
       sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
     },
     {
-      title: "Customer",
+      title: t("orderM.columns.customer"), // ใช้การแปล
       dataIndex: "user",
       key: "user",
       render: (user: any) => `${user?.firstName ?? "-"} ${user?.lastName ?? ""}`,
     },
-
     {
-      title: <div className="flex items-center gap-2">Name</div>,
+      title: <div className="flex items-center gap-2">{t("orderM.columns.name")}</div>, // ใช้การแปล
       dataIndex: "name",
       key: "name",
       editable: true,
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: "Qty",
+      title: t("orderM.columns.quantity"), // ใช้การแปล
       dataIndex: "quantity",
       key: "quantity",
       editable: true,
       sorter: (a, b) => a.quantity - b.quantity,
     },
     {
-      title: "Total",
+      title: t("orderM.columns.total"), // ใช้การแปล
       dataIndex: "total",
       key: "total",
       editable: true,
       sorter: (a, b) => a.total - b.total,
-      render: (text: number) => text.toLocaleString()
+      render: (text: number) => text.toLocaleString(),
     },
     {
-      title: "Confirmation",
+      title: t("orderM.columns.paymentStatus"), // ใช้การแปล
       dataIndex: "paymentStatus",
       key: "paymentStatus",
       editable: true,
       sorter: (a, b) => a.paymentStatus.localeCompare(b.paymentStatus),
     },
-
     {
-      title: "Status",
+      title: t("orderM.columns.status"), // ใช้การแปล
       dataIndex: "status",
       key: "status",
       editable: true,
       sorter: (a, b) => a.status.localeCompare(b.status),
     },
     {
-      title: "Actions",
+      title: t("orderM.columns.actions"), // ใช้การแปล
       key: "actions",
       render: (_: any, record: any) => {
         const editing = isEditing(record);
@@ -235,7 +242,7 @@ export default function OrderManagement() {
               }}
               onClick={() => form.submit()}
             >
-              Save
+              {t("orderM.actions.save")} {/* ใช้การแปล */}
             </Button>
             <Button
               style={{
@@ -248,7 +255,7 @@ export default function OrderManagement() {
                 setEditingKey(null);
               }}
             >
-              Cancel
+              {t("orderM.actions.cancel")} {/* ใช้การแปล */}
             </Button>
           </div>
         ) : (
@@ -261,8 +268,7 @@ export default function OrderManagement() {
                   label: (
                     <div className="menu-item-content">
                       <Eye size={16} />
-                      <span className="ml-2">View</span>{" "}
-                      {/* Add a margin-left to create space between the icon and text */}
+                      <span className="ml-2">{t("orderM.actions.view")}</span> {/* ใช้การแปล */}
                     </div>
                   ),
                   onClick: () => handleViewOrder(record),
@@ -272,8 +278,7 @@ export default function OrderManagement() {
                   label: (
                     <div className="menu-item-content">
                       <Edit size={16} />
-                      <span className="ml-2">Edit</span>{" "}
-                      {/* Add a margin-left to create space between the icon and text */}
+                      <span className="ml-2">{t("orderM.actions.edit")}</span> {/* ใช้การแปล */}
                     </div>
                   ),
                   onClick: () => handleEdit(record),
@@ -283,8 +288,7 @@ export default function OrderManagement() {
                   label: (
                     <div className="menu-item-content">
                       <Trash size={16} />
-                      <span className="ml-2">Delete</span>{" "}
-                      {/* Add a margin-left to create space between the icon and text */}
+                      <span className="ml-2">{t("orderM.actions.delete")}</span> {/* ใช้การแปล */}
                     </div>
                   ),
                   danger: true,
@@ -336,7 +340,7 @@ export default function OrderManagement() {
         className={`flex-1 p-6 transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[140px]"
           }`}
       >
-        <h1 className="text-3xl font-bold mb-4">Orders</h1>
+        <h1 className="text-3xl font-bold mb-4">{t("orderM.title")}</h1> {/* ใช้การแปล */}
         {isLoading ? (
           <div className="flex justify-center items-center h-[80vh]">
             <Loader className="animate-spin text-[#0CACF3]" size={48} />
@@ -344,7 +348,7 @@ export default function OrderManagement() {
         ) : (
           <>
             <Input.Search
-              placeholder="Search Order ID"
+              placeholder={t("orderM.searchPlaceholder")} // ใช้การแปล
               allowClear
               onChange={(e) => setSearchText(e.target.value)}
               style={{ width: 300, marginBottom: 16 }}

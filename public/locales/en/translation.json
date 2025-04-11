@@ -175,13 +175,6 @@
             }
         }
     },
-    "defaultArtToy": {
-        "name": "Default ArtToy",
-        "size": "Small",
-        "material": "PLA",
-        "painting": "Hand-painting",
-        "assembly": "Fixed Pose"
-    },
     "artToy": {
         "alt": "Art Toy",
         "names": {
@@ -490,6 +483,7 @@
     "Sidebar": {
         "Users": "Users",
         "Orders": "Orders",
+        "Keywords": "Keywords",
         "Dashboard": "Dashboard",
         "Logout": "Log out",
         "LanguageSwitcher": {
@@ -567,5 +561,207 @@
         "success": "Success",
         "user_created": "User created successfully!",
         "creation_failed": "Error creating user."
+    },
+    "orderM": {
+        "title": "Order Management",
+        "searchPlaceholder": "Search Order ID",
+        "deleteConfirmTitle": "Are you sure?",
+        "deleteConfirmText": "You won't be able to revert this!",
+        "deleteSuccess": "The order has been deleted successfully.",
+        "deleteError": "Failed to delete the order.",
+        "editSuccess": "The order has been updated successfully.",
+        "editError": "Failed to update the order.",
+        "deleteSuccessTitle": "Success!",
+        "deleteErrorTitle": "Error!",
+        "cancelButton": "Cancel",
+        "deleteConfirmButton": "Delete",
+        "saveSuccessTitle": "Success!",
+        "saveSuccessText": "The order has been updated successfully.",
+        "saveErrorTitle": "Error!",
+        "saveErrorText": "Failed to update the order.",
+        "status": {
+            "pending": "Pending",
+            "processing": "Processing",
+            "shipped": "Shipped",
+            "delivered": "Delivered",
+            "cancelled": "Cancelled"
+        },
+        "paymentStatus": {
+            "unpaid": "Unpaid",
+            "paid": "Paid",
+            "refunded": "Refunded"
+        },
+        "columns": {
+            "orderId": "Order ID",
+            "createdAt": "Created at",
+            "customer": "Customer",
+            "name": "Name",
+            "quantity": "Qty",
+            "total": "Total",
+            "paymentStatus": "Confirmation",
+            "status": "Status",
+            "actions": "Actions"
+        },
+        "actions": {
+            "save": "Save",
+            "cancel": "Cancel",
+            "view": "View",
+            "edit": "Edit",
+            "delete": "Delete"
+        }
+    },
+    "orderModal": {
+        "title": "Order Details",
+        "orderId": "Order ID",
+        "createdAt": "Created At",
+        "customer": "Customer",
+        "phoneNumber": "Phone Number",
+        "name": "Name",
+        "size": "Size",
+        "material": "Material",
+        "painting": "Painting",
+        "assembly": "Assembly",
+        "artToy": "Art Toy",
+        "price": "Price",
+        "shipping": "Shipping",
+        "total": "Total",
+        "address": "Address",
+        "invalidAddress": "Invalid address format",
+        "noAddress": "No address provided",
+        "confirmation": "Confirmation",
+        "paymentImage": "Payment Status",
+        "noPaymentImage": "No payment image available",
+        "unnamedArtToy": "Unnamed Art Toy",
+        "status": "Status",
+        "statuss": {
+            "Pending": "Pending",
+            "Processing": "Processing",
+            "Shipped": "Shipped",
+            "Delivered": "Delivered",
+            "Cancelled": "Cancelled"
+        },
+        "paymentStatus": {
+            "Unpaid": "Unpaid",
+            "Paid": "Paid",
+            "Refunded": "Refunded"
+        },
+        "assemblyOptions": {
+            "Fixed Pose": "Fixed Pose",
+            "Articulated Joints": "Articulated Joints",
+            "Magnet Joints": "Magnet Joints"
+        },
+        "paintingOptions": {
+            "Hand-painting": "Hand-painting",
+            "Airbrush": "Airbrush",
+            "Pad Printing": "Pad Printing"
+        },
+        "materialOptions": {
+            "PLA": "PLA",
+            "Resin": "Resin",
+            "PVC": "PVC",
+            "Metal": "Metal"
+        },
+        "sizeOptions": {
+            "Small": "Small",
+            "Medium": "Medium",
+            "Large": "Large"
+        }
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "totalOrders": "Total Orders (Paid)",
+        "totalAmount": "Total Purchase Amount",
+        "avgOrderValue": "Avg. Order Value",
+        "totalQuantity": "Order Quantity",
+        "refunds": "Refunds",
+        "chartData": {
+            "paid": "Paid",
+            "unpaid": "Unpaid",
+            "refunded": "Refunded",
+            "hand-painting": "Hand Painting",
+            "airbrush": "Airbrush",
+            "pla": "PLA",
+            "resin": "Resin",
+            "pvc": "PVC",
+            "fixed pose": "Fixed Pose",
+            "magnet joints": "Magnet Joints",
+            "articulated joints": "Articulated Joints"
+        },
+        "legend": {
+            "totalQuantity": "Total Quantity",
+            "totalOrders": "Total Orders"
+        },
+        "overview": {
+            "Material": "Material Orders Overview",
+            "Assembly": "Assembly Orders Overview",
+            "Painting": "Painting Orders Overview"
+        },
+        "tooltip": {
+            "orders": "orders"
+        },
+        "select": {
+            "material": "Material",
+            "assembly": "Assembly",
+            "painting": "Painting"
+        }
+    },
+    "keywordManagement": {
+        "title": "Keyword Management",
+        "confirmDeleteTitle": "Are you sure?",
+        "confirmDeleteText": "You won't be able to revert this!",
+        "confirmDeleteConfirm": "Yes, delete it!",
+        "deleteSuccessTitle": "Deleted!",
+        "deleteSuccessText": "The keyword has been deleted.",
+        "deleteErrorTitle": "Error!",
+        "deleteErrorText": "Failed to delete the keyword.",
+        "updateSuccessTitle": "Success!",
+        "updateSuccessText": "The keyword has been updated successfully.",
+        "updateErrorTitle": "Error!",
+        "updateErrorText": "Failed to update the keyword.",
+        "createKeyword": "Create keyword",
+        "columns": {
+            "keywordId": "Keyword ID",
+            "createdAt": "Created At",
+            "updatedAt": "Updated At",
+            "createdBy": "Created By",
+            "name": "Name",
+            "type": "Type",
+            "actions": "Actions"
+        },
+        "actions": {
+            "save": "Save",
+            "cancel": "Cancel",
+            "view": "View",
+            "edit": "Edit",
+            "delete": "Delete"
+        },
+        "select": {
+            "color": "Color",
+            "character": "Character"
+        }
+    },
+    "keywordModal": {
+        "title": "Keyword Details",
+        "userId": "User ID",
+        "createdAt": "Created At",
+        "email": "Email"
+    },
+    "keywordForm": {
+        "fields": {
+            "name": "Name",
+            "type": "Type",
+            "selectType": "Select type",
+            "color": "Color",
+            "character": "Character",
+            "submit": "Submit"
+        },
+        "errors": {
+            "nameRequired": "Name is required.",
+            "typeRequired": "Type is required."
+        },
+        "successTitle": "Success",
+        "successText": "Keyword created successfully!",
+        "errorTitle": "Error",
+        "errorText": "Error creating keyword."
     }
 }

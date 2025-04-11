@@ -14,11 +14,11 @@ import "../../i18n"; // Import i18n
 
 const Config = () => {
   const { t } = useTranslation(); // Initialize useTranslation
-  const [name, setName] = useState(t("defaultArtToy.name")); // ใช้การแปล
-  const [size, setSize] = useState(t("defaultArtToy.size")); // ใช้การแปล
-  const [material, setMaterial] = useState(t("defaultArtToy.material")); // ใช้การแปล
-  const [painting, setPainting] = useState(t("defaultArtToy.painting")); // ใช้การแปล
-  const [assembly, setAssembly] = useState(t("defaultArtToy.assembly")); // ใช้การแปล
+  const [name, setName] = useState(t("Unnamed Art Toy"));
+  const [size, setSize] = useState(t("Small"));
+  const [material, setMaterial] = useState(t("PLA"));
+  const [painting, setPainting] = useState(t("Hand-painting"));
+  const [assembly, setAssembly] = useState(t("Fixed Pose"));
   const [quantity, setQuantity] = useState(1);
   const [fetchId, setFetchId] = useState("");
   const [isLoading, setIsLoading] = useState(true); // เพิ่ม state สำหรับ loader

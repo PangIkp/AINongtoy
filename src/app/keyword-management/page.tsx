@@ -16,8 +16,12 @@ import dayjs from "dayjs";
 import KeywordModal from "../components/KeywordModal";
 import Swal from "sweetalert2";
 import KeywordForm from "../components/KeywordForm";
+import { useTranslation } from "react-i18next"; // เพิ่มการนำเข้า
+import "../../i18n"; // เพิ่มการนำเข้า
 
 export default function KeywordManagement() {
+  const { t } = useTranslation(); // ใช้ useTranslation
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [keywords, setKeywords] = useState<any[]>([]);
   const [token, setToken] = useState<string>("");
@@ -66,13 +70,13 @@ export default function KeywordManagement() {
     if (!token) return;
 
     const confirmResult = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      title: t("keywordManagement.confirmDeleteTitle"), // ใช้การแปล
+      text: t("keywordManagement.confirmDeleteText"), // ใช้การแปล
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: t("keywordManagement.confirmDeleteConfirm"), // ใช้การแปล
       reverseButtons: true,
     });
 
@@ -83,10 +87,18 @@ export default function KeywordManagement() {
       setKeywords((prevKeywords) =>
         prevKeywords.filter((keyword) => keyword._id !== id)
       );
-      Swal.fire("Deleted!", "The keyword has been deleted.", "success");
+      Swal.fire(
+        t("keywordManagement.deleteSuccessTitle"), // ใช้การแปล
+        t("keywordManagement.deleteSuccessText"), // ใช้การแปล
+        "success"
+      );
     } catch (error) {
       console.error("Error deleting order:", error);
-      Swal.fire("Error!", "Failed to delete the keyword.", "error");
+      Swal.fire(
+        t("keywordManagement.deleteErrorTitle"), // ใช้การแปล
+        t("keywordManagement.deleteErrorText"), // ใช้การแปล
+        "error"
+      );
     }
   };
 
@@ -125,8 +137,8 @@ export default function KeywordManagement() {
           >
             {dataIndex === "type" ? (
               <Select>
-                <Select.Option value="Color">Color</Select.Option>
-                <Select.Option value="Character">Character</Select.Option>
+                <Select.Option value="Color">{t("keywordManagement.select.color")}</Select.Option> {/* ใช้การแปล */}
+                <Select.Option value="Character">{t("keywordManagement.select.character")}</Select.Option> {/* ใช้การแปล */}
               </Select>
             ) : (
               <Input />
@@ -156,24 +168,28 @@ export default function KeywordManagement() {
       setEditingKey(null); // ออกจากโหมดแก้ไข
 
       Swal.fire(
-        "Success!",
-        "The keyword has been updated successfully.",
+        t("keywordManagement.updateSuccessTitle"), // ใช้การแปล
+        t("keywordManagement.updateSuccessText"), // ใช้การแปล
         "success"
       );
     } catch (error) {
       console.error("Error updating keyword :", error);
-      Swal.fire("Error!", "Failed to update the keyword.", "error");
+      Swal.fire(
+        t("keywordManagement.updateErrorTitle"), // ใช้การแปล
+        t("keywordManagement.updateErrorText"), // ใช้การแปล
+        "error"
+      );
     }
   };
 
   const columns: EditableColumnType[] = [
     {
-      title: "Keyword ID",
+      title: t("keywordManagement.columns.keywordId"), // ใช้การแปล
       dataIndex: "_id",
       key: "_id",
     },
     {
-      title: <div className="flex items-center gap-2">Created at</div>,
+      title: t("keywordManagement.columns.createdAt"), // ใช้การแปล
       dataIndex: "createdAt",
       key: "createdAt",
       render: (text: string) => dayjs(text).format("DD/MM/YYYY HH:mm"),
@@ -181,7 +197,7 @@ export default function KeywordManagement() {
     },
 
     {
-      title: <div className="flex items-center gap-2">Updated at</div>,
+      title: t("keywordManagement.columns.updatedAt"), // ใช้การแปล
       dataIndex: "updatedAt",
       key: "updatedAt",
       render: (text: string) => dayjs(text).format("DD/MM/YYYY HH:mm"),
@@ -189,7 +205,7 @@ export default function KeywordManagement() {
     },
 
     {
-      title: "Created By",
+      title: t("keywordManagement.columns.createdBy"), // ใช้การแปล
       dataIndex: "createdBy",
       key: "createdBy",
       render: (createdBy: any) => (
@@ -202,7 +218,7 @@ export default function KeywordManagement() {
     },
 
     {
-      title: <div className="flex items-center gap-2">Name</div>,
+      title: t("keywordManagement.columns.name"), // ใช้การแปล
       dataIndex: "name",
       key: "name",
       editable: true,
@@ -210,7 +226,7 @@ export default function KeywordManagement() {
     },
 
     {
-      title: <div className="flex items-center gap-2">Type</div>,
+      title: t("keywordManagement.columns.type"), // ใช้การแปล
       dataIndex: "type",
       key: "type",
       editable: true,
@@ -218,7 +234,7 @@ export default function KeywordManagement() {
     },
 
     {
-      title: "Actions",
+      title: t("keywordManagement.columns.actions"), // ใช้การแปล
       key: "actions",
       render: (_: any, record: any) => {
         const editing = isEditing(record);
@@ -232,7 +248,7 @@ export default function KeywordManagement() {
               }}
               onClick={() => form.submit()}
             >
-              Save
+              {t("keywordManagement.actions.save")} {/* ใช้การแปล */}
             </Button>
             <Button
               style={{
@@ -245,7 +261,7 @@ export default function KeywordManagement() {
                 setEditingKey(null);
               }}
             >
-              Cancel
+              {t("keywordManagement.actions.cancel")} {/* ใช้การแปล */}
             </Button>
           </div>
         ) : (
@@ -258,8 +274,7 @@ export default function KeywordManagement() {
                   label: (
                     <div className="menu-item-content">
                       <Eye size={16} />
-                      <span className="ml-2">View</span>{" "}
-                      {/* Add a margin-left to create space between the icon and text */}
+                      <span className="ml-2">{t("keywordManagement.actions.view")}</span>
                     </div>
                   ),
                   onClick: () => handleViewOrder(record),
@@ -269,8 +284,7 @@ export default function KeywordManagement() {
                   label: (
                     <div className="menu-item-content">
                       <Edit size={16} />
-                      <span className="ml-2">Edit</span>{" "}
-                      {/* Add a margin-left to create space between the icon and text */}
+                      <span className="ml-2">{t("keywordManagement.actions.edit")}</span>
                     </div>
                   ),
                   onClick: () => handleEdit(record),
@@ -280,8 +294,7 @@ export default function KeywordManagement() {
                   label: (
                     <div className="menu-item-content">
                       <Trash size={16} />
-                      <span className="ml-2">Delete</span>{" "}
-                      {/* Add a margin-left to create space between the icon and text */}
+                      <span className="ml-2">{t("keywordManagement.actions.delete")}</span>
                     </div>
                   ),
                   danger: true,
@@ -331,11 +344,10 @@ export default function KeywordManagement() {
     <div className="text-white bg-[#212121] h-screen overflow-x-auto">
       <Sidebar setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
       <div
-        className={`flex-1 p-6 transition-all duration-300 ${
-          isCollapsed ? "ml-16" : "ml-[140px]"
-        }`}
+        className={`flex-1 p-6 transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[140px]"
+          }`}
       >
-        <h1 className="text-3xl font-bold mb-4">Keywords</h1>
+        <h1 className="text-3xl font-bold mb-4">{t("keywordManagement.title")}</h1> {/* ใช้การแปล */}
         {isLoading ? (
           <div className="flex justify-center items-center h-[80vh]">
             <Loader className="animate-spin text-[#0CACF3]" size={48} />
@@ -355,7 +367,7 @@ export default function KeywordManagement() {
                 onClick={handleCreate}
               >
                 <Plus className="h-4 w-4" />
-                Create keyword
+                {t("keywordManagement.createKeyword")} {/* ใช้การแปล */}
               </button>
             </div>
 

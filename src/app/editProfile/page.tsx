@@ -16,18 +16,21 @@ import '../../i18n'; // Import i18n for translations
 interface Province {
     id: number;
     name_en: string;
+    name_th: string; // เพิ่ม name_th
     amphure: Amphure[];
 }
 
 interface Amphure {
     id: number;
     name_en: string;
+    name_th: string; // เพิ่ม name_th
     tambon: Tambon[];
 }
 
 interface Tambon {
     id: number;
     name_en: string;
+    name_th: string; // เพิ่ม name_th
     zip_code: number;
 }
 
@@ -49,7 +52,12 @@ interface Address {
 
 
 export default function Page() {
-    const { t } = useTranslation(); // ใช้ useTranslation เพื่อเรียกฟังก์ชัน t สำหรับแปลข้อความ
+    const { t, i18n } = useTranslation(); // เพิ่ม i18n เพื่อเช็คภาษา
+
+    const getLabel = (name_en: string, name_th: string) => {
+        return i18n.language === 'th' ? name_th : name_en; // แสดง name_th ถ้าภาษาเป็นไทย
+    };
+
     // navbar
     const aboutRef = useRef<HTMLDivElement>(null!);
     const partnerRef = useRef<HTMLDivElement>(null!);
@@ -751,7 +759,13 @@ export default function Page() {
                                                             id="province_id"
                                                             value={
                                                                 results[index]?.provinceId
-                                                                    ? { value: results[index]?.provinceId.toString(), label: data?.find((province) => province.id === Number(results[index]?.provinceId))?.name_en || '' }
+                                                                    ? {
+                                                                        value: results[index]?.provinceId.toString(),
+                                                                        label: getLabel(
+                                                                            data?.find((province) => province.id === Number(results[index]?.provinceId))?.name_en || '',
+                                                                            data?.find((province) => province.id === Number(results[index]?.provinceId))?.name_th || ''
+                                                                        ),
+                                                                    }
                                                                     : null
                                                             }
                                                             onChange={(selectedOption) =>
@@ -759,7 +773,7 @@ export default function Page() {
                                                             }
                                                             options={data?.map((province) => ({
                                                                 value: province.id.toString(),
-                                                                label: province.name_en,
+                                                                label: getLabel(province.name_en, province.name_th), // ใช้ getLabel
                                                             }))}
                                                             isDisabled={!isEditingAddress}
                                                             isClearable
@@ -812,9 +826,12 @@ export default function Page() {
                                                                 results[index]?.amphureId
                                                                     ? {
                                                                         value: results[index]?.amphureId.toString(),
-                                                                        label: data
-                                                                            ?.find((province) => province.id === Number(results[index]?.provinceId))
-                                                                            ?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))?.name_en || ''
+                                                                        label: getLabel(
+                                                                            data?.find((province) => province.id === Number(results[index]?.provinceId))
+                                                                                ?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))?.name_en || '',
+                                                                            data?.find((province) => province.id === Number(results[index]?.provinceId))
+                                                                                ?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))?.name_th || ''
+                                                                        ),
                                                                     }
                                                                     : null
                                                             }
@@ -825,7 +842,7 @@ export default function Page() {
                                                                 ?.find((province) => province.id === Number(results[index]?.provinceId))
                                                                 ?.amphure.map((amphure) => ({
                                                                     value: amphure.id.toString(),
-                                                                    label: amphure.name_en,
+                                                                    label: getLabel(amphure.name_en, amphure.name_th), // ใช้ getLabel
                                                                 }))}
                                                             isDisabled={!isEditingAddress}
                                                             isClearable
@@ -877,10 +894,14 @@ export default function Page() {
                                                                 results[index]?.tambonId
                                                                     ? {
                                                                         value: results[index]?.tambonId.toString(),
-                                                                        label: data
-                                                                            ?.find((province) => province.id === Number(results[index]?.provinceId))
-                                                                            ?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))
-                                                                            ?.tambon.find((tambon) => tambon.id === Number(results[index]?.tambonId))?.name_en || ''
+                                                                        label: getLabel(
+                                                                            data?.find((province) => province.id === Number(results[index]?.provinceId))
+                                                                                ?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))
+                                                                                ?.tambon.find((tambon) => tambon.id === Number(results[index]?.tambonId))?.name_en || '',
+                                                                            data?.find((province) => province.id === Number(results[index]?.provinceId))
+                                                                                ?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))
+                                                                                ?.tambon.find((tambon) => tambon.id === Number(results[index]?.tambonId))?.name_th || ''
+                                                                        ),
                                                                     }
                                                                     : null
                                                             }
@@ -892,7 +913,7 @@ export default function Page() {
                                                                 ?.amphure.find((amphure) => amphure.id === Number(results[index]?.amphureId))
                                                                 ?.tambon.map((tambon) => ({
                                                                     value: tambon.id.toString(),
-                                                                    label: tambon.name_en,
+                                                                    label: getLabel(tambon.name_en, tambon.name_th), // ใช้ getLabel
                                                                 }))}
                                                             isDisabled={!isEditingAddress}
                                                             isClearable
