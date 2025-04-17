@@ -11,6 +11,7 @@ interface ProductDetailsProps {
   quantity: number;
   price: number;
   shippingFee: number;
+  totalPrice: number;
 }
 
 const ProductDetailsSection: React.FC<ProductDetailsProps> = ({
@@ -24,6 +25,7 @@ const ProductDetailsSection: React.FC<ProductDetailsProps> = ({
   shippingFee,
 }) => {
   const { t } = useTranslation(); // ใช้ useTranslation
+  const totalPrice = (price + shippingFee);
 
   return (
     <div className="w-full h-full bg-[#202133] border border-[#202133] rounded-xl p-8">
@@ -33,6 +35,7 @@ const ProductDetailsSection: React.FC<ProductDetailsProps> = ({
           src={imageUrl}
           alt={t("product.imageAlt")} // ใช้การแปล
         />
+        
         <div className="flex flex-col w-full justify-between">
           <div className="flex flex-col gap-7">
             <h2 className="text-2xl font-semibold">{t("product.details")}</h2> {/* ใช้การแปล */}
@@ -57,7 +60,7 @@ const ProductDetailsSection: React.FC<ProductDetailsProps> = ({
 
             <div className="flex justify-between">
               <h2 className="text-[16px] font-semibold">{t("product.totalPrice")}</h2>
-              <p className="text-[16px] font-semibold">{(price + shippingFee).toLocaleString()} ฿</p>
+              <p className="text-[16px] font-semibold">{totalPrice.toLocaleString()} ฿</p>
             </div>
           </div>
         </div>

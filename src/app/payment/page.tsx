@@ -23,11 +23,13 @@ export default function Payment() {
   const contactRef = useRef<HTMLDivElement>(null!);
   const [artToyData, setArtToyData] = useState<ArtToy | null>(null);
   const [shippingFee, setShippingCost] = useState(50);
-  const [paymentImage, setPaymentImage] = useState<string | null>(null); const userData = getUserData();
+  const [paymentImage, setPaymentImage] = useState<string | null>(null);
+  const userData = getUserData();
   const fname = userData?.firstName;
   const lname = userData?.lastName;
   const phone = userData?.phoneNumber;
   const address = userData?.address;
+  const totalPrice = (artToyData?.price || 0) + shippingFee;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<any>(null);
@@ -85,24 +87,25 @@ export default function Payment() {
       quantity: artToyData?.quantity || 1,
       price: artToyData?.price || 0,
       shipping: shippingFee || 50,
-      total: (artToyData?.price || 0) * (artToyData?.quantity || 1) + shippingFee,
+      total:
+        (artToyData?.price || 0) * (artToyData?.quantity || 1) + shippingFee,
       address: selectedAddress
         ? JSON.stringify({
-          detail: selectedAddress.detail,
-          province: selectedAddress.province,
-          district: selectedAddress.district,
-          subdistrict: selectedAddress.subdistrict,
-          postalCode: selectedAddress.postalCode,
-        })
+            detail: selectedAddress.detail,
+            province: selectedAddress.province,
+            district: selectedAddress.district,
+            subdistrict: selectedAddress.subdistrict,
+            postalCode: selectedAddress.postalCode,
+          })
         : address.length > 0
-          ? JSON.stringify({
+        ? JSON.stringify({
             detail: address[0].detail,
             province: address[0].province,
             district: address[0].district,
             subdistrict: address[0].subdistrict,
             postalCode: address[0].postalCode,
           })
-          : t("order.notProvided"),
+        : t("order.notProvided"),
       payment: paymentImage || t("order.noPaymentProof"),
       imageUrl: artToyData?.imageUrl || "default-image.jpg",
     };
@@ -133,7 +136,6 @@ export default function Payment() {
       });
     }
   };
-
 
   // ดึงข้อมูลจาก localStorage เมื่อโหลดหน้า Payment
   useEffect(() => {
@@ -171,22 +173,30 @@ export default function Payment() {
         contactRef={contactRef}
       />
       <main className="w-full my-[5rem] place-items-center">
-        {(!artToyData || loading) ? ( // Show loader if data is loading
+        {!artToyData || loading ? ( // Show loader if data is loading
           <div className="flex justify-center items-center h-screen">
             <Loader className="animate-spin text-[#0CACF3]" size={50} />
           </div>
         ) : (
           <div className="max-w-[1080px] w-full h-full pt-24 flex flex-col gap-7 p-3">
             <header>
-              <h1 className="text-4xl font-semibold mb-4">{t("payment.title")}</h1>
+              <h1 className="text-4xl font-semibold mb-4">
+                {t("payment.title")}
+              </h1>
               <p className="font-thin">{t("payment.reviewOrder")}</p>
             </header>
-            <ProductDetailsSection {...artToyData} shippingFee={shippingFee} />
+            <ProductDetailsSection
+              {...artToyData}
+              shippingFee={shippingFee}
+              totalPrice={totalPrice}
+            />{" "}
             <form action="">
               <section className="w-full h-full grid lg:grid-cols-2 lg:gird-rows-1 gird-rows-2 grid-cols-1 gap-4">
                 <section className="w-full h-full flex flex-col gap-3">
                   <div className="bg-[#202133] border border-[#202133] rounded-xl p-4">
-                    <h2 className="mb-1 text-[16px] font-semibold">{t("payment.address")}</h2>
+                    <h2 className="mb-1 text-[16px] font-semibold">
+                      {t("payment.address")}
+                    </h2>
                     {address && address.length > 0 ? (
                       <div
                         className="w-full h-30 py-2 bg-[#202133] border border-[#828399] rounded-lg place-items-start font-thin text-xs leading-5 cursor-pointer hover:bg-[#0578AB] px-2"
@@ -215,13 +225,16 @@ export default function Payment() {
                     )}
                   </div>
                   <div className="bg-[#202133] border border-[#202133] rounded-xl p-4">
-                    <h2 className="mb-1 text-[16px] font-semibold">{t("payment.shippingOption")}</h2>
+                    <h2 className="mb-1 text-[16px] font-semibold">
+                      {t("payment.shippingOption")}
+                    </h2>
                     <div className="flex flex-col gap-2">
                       <div
-                        className={`flex items-center border ${shippingFee === 50
-                          ? "border-[#0578AB]"
-                          : "border-[#828399]"
-                          } rounded-lg gap-2 px-2 py-4 hover:bg-[#0578AB] cursor-pointer`}
+                        className={`flex items-center border ${
+                          shippingFee === 50
+                            ? "border-[#0578AB]"
+                            : "border-[#828399]"
+                        } rounded-lg gap-2 px-2 py-4 hover:bg-[#0578AB] cursor-pointer`}
                         onClick={() => handleShippingChange(50)}
                       >
                         <input
@@ -237,17 +250,21 @@ export default function Payment() {
                           className="w-full text-[14px] flex justify-between cursor-pointer"
                           htmlFor="standard"
                         >
-                          <p>{t('payment.standard')} ({t("payment.standardDeliveryTime")})</p>
+                          <p>
+                            {t("payment.standard")} (
+                            {t("payment.standardDeliveryTime")})
+                          </p>
                           <p>50 ฿</p>
                         </label>
                       </div>
 
                       {/* EMS Delivery */}
                       <div
-                        className={`flex items-center border ${shippingFee === 70
-                          ? "border-[#0578AB]"
-                          : "border-[#828399]"
-                          } rounded-lg gap-2 px-2 py-4 hover:bg-[#0578AB] cursor-pointer`}
+                        className={`flex items-center border ${
+                          shippingFee === 70
+                            ? "border-[#0578AB]"
+                            : "border-[#828399]"
+                        } rounded-lg gap-2 px-2 py-4 hover:bg-[#0578AB] cursor-pointer`}
                         onClick={() => handleShippingChange(70)}
                       >
                         <input
@@ -264,7 +281,9 @@ export default function Payment() {
                           className="w-full text-[14px] flex justify-between cursor-pointer"
                           htmlFor="ems"
                         >
-                          <p>{t('payment.ems')} ({t("payment.emsDeliveryTime")})</p>
+                          <p>
+                            {t("payment.ems")} ({t("payment.emsDeliveryTime")})
+                          </p>
                           <p>70 ฿</p>
                         </label>
                       </div>
@@ -273,8 +292,10 @@ export default function Payment() {
                 </section>
                 <section className="w-full h-full">
                   {/* <QRCodeSection onImageUpload={(url) => console.log("Uploaded Image URL:", url)} /> */}
-                  <QRCodeSection setPaymentImage={setPaymentImage} />
-
+                  <QRCodeSection
+                    setPaymentImage={setPaymentImage}
+                    totalPrice={totalPrice}
+                  />
                 </section>
               </section>
             </form>
