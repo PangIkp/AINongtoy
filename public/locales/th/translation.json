@@ -138,7 +138,12 @@
             "updateSuccessTitle": "สำเร็จ",
             "updateSuccessText": "อัปเดตที่อยู่สำเร็จ!",
             "updateErrorTitle": "ข้อผิดพลาด",
-            "updateErrorText": "ไม่สามารถอัปเดตที่อยู่ได้."
+            "updateErrorText": "ไม่สามารถอัปเดตที่อยู่ได้.",
+            "provincePlaceholder": "จังหวัด",
+            "districtPlaceholder": "อำเภอ",
+            "subdistrictPlaceholder": "ตำบล",
+            "postalCodePlaceholder": "รหัสไปรษณีย์",
+            "detailPlaceholder": "รายละเอียดที่อยู่ เช่น บ้านเลขที่ ชื่ออพาร์ทเมนต์ คอนโด ชื่อหมู่บ้าน"
         },
         "validation": {
             "name": "ตัวอักษรเท่านั้น, 4-40 ตัวอักษร.",

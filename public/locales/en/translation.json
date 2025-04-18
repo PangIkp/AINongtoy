@@ -138,7 +138,12 @@
             "updateSuccessTitle": "Success",
             "updateSuccessText": "Addresses updated successfully!",
             "updateErrorTitle": "Error",
-            "updateErrorText": "Failed to update addresses."
+            "updateErrorText": "Failed to update addresses.",
+            "provincePlaceholder": "Province",
+            "districtPlaceholder": "District",
+            "subdistrictPlaceholder": "Subdistrict",
+            "postalCodePlaceholder": "Postal Code",
+            "detailPlaceholder": "Address Detail such as House number, Apartment name, Condo, Village name"
         },
         "validation": {
             "name": "Alphabetic, 4-40 chars.",

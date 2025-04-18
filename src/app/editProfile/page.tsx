@@ -778,7 +778,7 @@ export default function Page() {
                                                             isDisabled={!isEditingAddress}
                                                             isClearable
                                                             classNamePrefix="react-select"
-                                                            placeholder="Province"
+                                                            placeholder={t('editProfile.address.provincePlaceholder')}
                                                             filterOption={(option, inputValue) =>
                                                                 option.label.toLowerCase().startsWith(inputValue.toLowerCase())
                                                             }
@@ -847,7 +847,7 @@ export default function Page() {
                                                             isDisabled={!isEditingAddress}
                                                             isClearable
                                                             classNamePrefix="react-select"
-                                                            placeholder="District"
+                                                            placeholder={t('editProfile.address.districtPlaceholder')}
                                                             filterOption={(option, inputValue) =>
                                                                 option.label.toLowerCase().startsWith(inputValue.toLowerCase())
                                                             }
@@ -918,7 +918,7 @@ export default function Page() {
                                                             isDisabled={!isEditingAddress}
                                                             isClearable
                                                             classNamePrefix="react-select"
-                                                            placeholder="Subdistrict"
+                                                            placeholder={t('editProfile.address.subdistrictPlaceholder')}
                                                             filterOption={(option, inputValue) =>
                                                                 option.label.toLowerCase().startsWith(inputValue.toLowerCase())
                                                             }
@@ -983,7 +983,7 @@ export default function Page() {
                                                             isDisabled={!isEditingAddress}
                                                             isClearable
                                                             classNamePrefix="react-select"
-                                                            placeholder="Postal Code"
+                                                            placeholder={t('editProfile.address.postalCodePlaceholder')}
                                                             filterOption={(option, inputValue) =>
                                                                 option.label.toLowerCase().startsWith(inputValue.toLowerCase())
                                                             }
@@ -1024,7 +1024,7 @@ export default function Page() {
                                                     <label htmlFor="address" className='col-span-1 sm:col-span-2 relative'>
                                                         <textarea
                                                             className={`resize-none border-transparent  ${!isEditingAddress ? 'bg-[#51536D]' : 'text-[#333333]'}`}
-                                                            placeholder='Address Detail such as House number, Apartment name, Condo, Village name '
+                                                            placeholder={t('editProfile.address.detailPlaceholder')}
                                                             rows={4}
                                                             maxLength={200}
                                                             value={results[index]?.detail || ''}
