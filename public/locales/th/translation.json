@@ -125,7 +125,41 @@
             "save": "บันทึก",
             "form": "ฟอร์มที่อยู่",
             "delete": "ลบ",
-            "add": "เพิ่มที่อยู่"
+            "add": "เพิ่มที่อยู่",
+            "confirmDeleteTitle": "คุณแน่ใจหรือไม่?",
+            "confirmDeleteText": "คุณต้องการลบที่อยู่นี้จริงหรือ?",
+            "confirmDeleteConfirm": "ใช่, ลบเลย!",
+            "deleteSuccessTitle": "สำเร็จ",
+            "deleteSuccessText": "ลบที่อยู่สำเร็จ!",
+            "deleteErrorTitle": "ข้อผิดพลาด",
+            "deleteErrorText": "ไม่สามารถลบที่อยู่ได้.",
+            "warningTitle": "คำเตือน",
+            "warningText": "กรุณากรอกข้อมูลที่อยู่ให้ครบถ้วน.",
+            "updateSuccessTitle": "สำเร็จ",
+            "updateSuccessText": "อัปเดตที่อยู่สำเร็จ!",
+            "updateErrorTitle": "ข้อผิดพลาด",
+            "updateErrorText": "ไม่สามารถอัปเดตที่อยู่ได้.",
+            "provincePlaceholder": "จังหวัด",
+            "districtPlaceholder": "อำเภอ",
+            "subdistrictPlaceholder": "ตำบล",
+            "postalCodePlaceholder": "รหัสไปรษณีย์",
+            "detailPlaceholder": "รายละเอียดที่อยู่ เช่น บ้านเลขที่ ชื่ออพาร์ทเมนต์ คอนโด ชื่อหมู่บ้าน"
+        },
+        "validation": {
+            "name": "ตัวอักษรเท่านั้น, 4-40 ตัวอักษร.",
+            "phone": "เบอร์โทร: 10 หลัก, เริ่มต้นด้วย 0.",
+            "title": "ข้อผิดพลาดในการตรวจสอบ",
+            "correctFields": "กรุณาแก้ไขช่องที่มีปัญหา."
+        },
+        "success": {
+            "title": "สำเร็จ",
+            "profileUpdated": "อัปเดตโปรไฟล์สำเร็จ!"
+        },
+        "error": {
+            "title": "ข้อผิดพลาด",
+            "profileUpdateFailed": "ไม่สามารถอัปเดตโปรไฟล์ได้.",
+            "userIdMissing": "ไม่มีรหัสผู้ใช้.",
+            "fetchUserDataFailed": "ไม่สามารถดึงข้อมูลผู้ใช้ได้."
         }
     },
     "profile": {
