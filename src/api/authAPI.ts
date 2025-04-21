@@ -46,15 +46,61 @@ export const login = async (username: string, password: string) => {
   }
 };
 
+export const loginWithGoogle = async ({
+  email,
+  firstName,
+  lastName,
+}: {
+  email: string;
+  firstName: string;
+  lastName: string;
+}) => {
+  try {
+    const response = await fetch(`${API_URL}/google-login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, firstName, lastName }),
+    });
+
+    const data = await response.json();
+    console.log("Google Login API Response:", data);
+
+    if (!response.ok) {
+      throw new Error(data.message || "Google login failed");
+    }
+
+    // ตรวจสอบสถานะว่าเป็น banned หรือไม่
+    const status = data.data?.status?.toLowerCase();
+    if (status === "banned") {
+      throw new Error("Your account has been banned. Please contact support.");
+    }
+
+    localStorage.setItem("user", JSON.stringify(data.data)); // เก็บข้อมูล user
+    localStorage.setItem("token", data.token); // เก็บ token
+
+    console.log("Stored user in localStorage:", localStorage.getItem("user"));
+    console.log("Stored token in localStorage:", localStorage.getItem("token"));
+
+    return data;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
 // http://localhost:3001/api/v1/auth/about
 export const getUser = async (token: string) => {
   try {
-    const response = await fetch("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/auth/about", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ส่ง token สำหรับการตรวจสอบสิทธิ์
-      },
-    });
+    const response = await fetch(
+      "https://nongtoybackend-rby6pw6h.b4a.run/api/v1/auth/about",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ส่ง token สำหรับการตรวจสอบสิทธิ์
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Failed to create ArtToy");

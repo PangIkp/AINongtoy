@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { login } from "@/api/authAPI";
+import { login,loginWithGoogle } from "@/api/authAPI";
 import PasswordInput from "../components/PasswordInput";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
@@ -14,6 +14,23 @@ import { Loader } from "lucide-react"; // เพิ่มการ import Loader
 dotenv.config();
 import { useTranslation } from "react-i18next";
 import "../../i18n";
+import { initializeApp, getApps } from "firebase/app";
+import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider } from "firebase/auth";
+
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+};
+
+// ป้องกันการ initialize ซ้ำ
+if (getApps().length === 0) {
+  initializeApp(firebaseConfig);
+}
+
 
 const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY || "";
 
@@ -27,6 +44,7 @@ const Login = () => {
   const [lastName, setLastName] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
   const { t } = useTranslation(); // ใช้ useTranslation
+  const auth = getAuth();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -55,13 +73,19 @@ const Login = () => {
     const encryptedPassword = Cookies.get("password");
 
     if (encryptedUsername) {
-      const decryptedUsername = CryptoJS.AES.decrypt(encryptedUsername, SECRET_KEY).toString(CryptoJS.enc.Utf8);
+      const decryptedUsername = CryptoJS.AES.decrypt(
+        encryptedUsername,
+        SECRET_KEY
+      ).toString(CryptoJS.enc.Utf8);
       setUsername(decryptedUsername);
       setRememberMe(true);
     }
 
     if (encryptedPassword) {
-      const decryptedPassword = CryptoJS.AES.decrypt(encryptedPassword, SECRET_KEY).toString(CryptoJS.enc.Utf8);
+      const decryptedPassword = CryptoJS.AES.decrypt(
+        encryptedPassword,
+        SECRET_KEY
+      ).toString(CryptoJS.enc.Utf8);
       setPassword(decryptedPassword);
     }
   }, []);
@@ -70,9 +94,9 @@ const Login = () => {
     e.preventDefault();
     if (!username || !password) {
       Swal.fire({
-        icon: 'warning',
-        title: t('login.warningTitle'),
-        text: t('login.warningText'),
+        icon: "warning",
+        title: t("login.warningTitle"),
+        text: t("login.warningText"),
       });
       return;
     }
@@ -81,12 +105,17 @@ const Login = () => {
       const data = await login(username, password);
       if (data.data.role === "admin") {
         window.location.href = "/user-management"; // เปลี่ยนเส้นทางไปที่หน้า user-management
-      }
-      else window.location.href = "/"; // เปลี่ยนเส้นทางไปที่หน้า home
+      } else window.location.href = "/"; // เปลี่ยนเส้นทางไปที่หน้า home
 
       if (rememberMe) {
-        const encryptedUsername = CryptoJS.AES.encrypt(username, SECRET_KEY).toString();
-        const encryptedPassword = CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
+        const encryptedUsername = CryptoJS.AES.encrypt(
+          username,
+          SECRET_KEY
+        ).toString();
+        const encryptedPassword = CryptoJS.AES.encrypt(
+          password,
+          SECRET_KEY
+        ).toString();
 
         Cookies.set("username", encryptedUsername, { expires: 30 });
         Cookies.set("password", encryptedPassword, { expires: 30 });
@@ -94,14 +123,16 @@ const Login = () => {
         Cookies.remove("username");
         Cookies.remove("password");
       }
-
     } catch (error: any) {
       // ใช้ t เพื่อแปลข้อความ error.message
-      const translatedMessage = t(`login.errors.${error.message}`, error.message);
+      const translatedMessage = t(
+        `login.errors.${error.message}`,
+        error.message
+      );
 
       Swal.fire({
-        icon: 'error',
-        title: String(t('login.errorTitle')), // แปลงเป็น string
+        icon: "error",
+        title: String(t("login.errorTitle")), // แปลงเป็น string
         text: String(translatedMessage), // แปลงเป็น string
       });
     }
@@ -117,6 +148,89 @@ const Login = () => {
     }
   };
 
+  // Google Login Handler
+  const handleGoogleLogin = async () => {
+    try {
+      console.log("🔐 เริ่ม Google Login");
+      const result = await signInWithPopup(auth, new GoogleAuthProvider());
+  
+      const user = result.user;
+      console.log("✅ Login สำเร็จ:", user);
+  
+      setGoogleUser({
+        uid: user.uid,
+        email: user.email,
+        name: user.displayName,
+        photo: user.photoURL,
+      });
+  
+      // เมื่อ Login สำเร็จแล้ว จะเรียกฟังก์ชัน loginWithGoogle เพื่อลงทะเบียนหรือบันทึกข้อมูลลงในฐานข้อมูล
+      const googleToken = await user.getIdToken(); // รับ Google ID token
+  
+      // เรียก API เพื่อบันทึกข้อมูลในฐานข้อมูล
+      if (user.email) {
+        const displayName = user.displayName || "";
+        const response = await loginWithGoogle({
+          email: user.email,
+          firstName: displayName.split(" ")[0] || "",
+          lastName: displayName.split(" ")[1] || "",
+        });
+        console.log("Google login data saved:", response);
+      } else {
+        throw new Error("User email is null");
+      }
+  
+      // เมื่อข้อมูลบันทึกสำเร็จแล้ว คุณสามารถทำการเปลี่ยนเส้นทางไปยังหน้าอื่นๆ
+      window.location.href = "/";
+      
+    } catch (err) {
+      console.error("❌ Login ผิดพลาด:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Google Login Failed",
+        text: "เกิดข้อผิดพลาดในการล็อกอินด้วย Google, กรุณาลองใหม่อีกครั้ง",
+      });
+    }
+  };
+  
+  
+  useEffect(() => {
+    const checkRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        console.log("Google Redirect Result:", result);
+  
+        if (result) {
+          const user = result.user;
+          console.log("✅ Google Login Successful");
+          console.log("👤 UID:", user.uid);
+          console.log("📧 Email:", user.email);
+          console.log("🧍 Display Name:", user.displayName);
+          setGoogleUser({
+            uid: user.uid,
+            email: user.email,
+            name: user.displayName,
+            photo: user.photoURL,
+          });
+        } else {
+          console.log("ℹ️ No redirect result found.");
+        }
+      } catch (error) {
+        console.error("Error handling redirect result:", error);
+      }
+    };
+  
+    checkRedirectResult();
+  }, []); // 👈 ทำให้ run แค่ตอน mount หน้า
+  
+
+  const [googleUser, setGoogleUser] = useState<any>(null);
+
+  
+  
+  
+  
+  
   return (
     <div>
       <Navbar
@@ -126,7 +240,6 @@ const Login = () => {
         contactRef={contactRef}
       />
       <div className="w-full h-[90vh] mt-[5rem]">
-
         <div className="relative w-full h-full flex items-center justify-center">
           {isLoading ? (
             <div className="flex justify-center items-center">
@@ -134,11 +247,17 @@ const Login = () => {
             </div>
           ) : (
             <>
-              <img src="/Images/AINongtoy/mainbg.png" alt="" className="w-full h-full object-cover" />
+              <img
+                src="/Images/AINongtoy/mainbg.png"
+                alt=""
+                className="w-full h-full object-cover"
+              />
               <div className="absolute max-w-[375px] w-full p-4">
                 <div>
-                  <h1 className="text-4xl font-semibold mb-3">{t('login.welcomeBack')}</h1>
-                  <p className="font-extralight">{t('login.enterDetails')}</p>
+                  <h1 className="text-4xl font-semibold mb-3">
+                    {t("login.welcomeBack")}
+                  </h1>
+                  <p className="font-extralight">{t("login.enterDetails")}</p>
                 </div>
                 <div>
                   <form
@@ -146,13 +265,13 @@ const Login = () => {
                     className="flex flex-col justify-between gap-4 w-full h-[70%] pt-5"
                   >
                     <label className="hidden" htmlFor="username">
-                      <p>{t('login.username')}</p>
+                      <p>{t("login.username")}</p>
                     </label>
                     <input
                       className="block"
                       type="text"
                       id="username"
-                      placeholder={t('login.username')}
+                      placeholder={t("login.username")}
                       maxLength={40}
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
@@ -161,10 +280,11 @@ const Login = () => {
                     <PasswordInput
                       id="password"
                       name="password"
-                      placeholder={t('login.password')}
+                      placeholder={t("login.password")}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
+                    
 
                     <div className="flex justify-between text-[13px]">
                       <label
@@ -180,25 +300,37 @@ const Login = () => {
                             onChange={(e) => setRememberMe(e.target.checked)}
                           />
                         </div>
-                        {t('login.rememberMe')}
+                        {t("login.rememberMe")}
                       </label>
                       <a href="/forgotpassword" className="text-[#0AACF0]">
-                        {t('login.forgotPassword')}
+                        {t("login.forgotPassword")}
                       </a>
                     </div>
                     <button type="submit" className="h-[40px]">
-                      {t('login.loginButton')}
+                      {t("login.loginButton")}
                     </button>
                     <div className="flex justify-center text-[13px]">
                       <p>
-                        {t('login.notRegistered')}{" "}
+                        {t("login.notRegistered")}{" "}
                         <a href="/signup" className="text-[#0AACF0] underline">
-                          {t('login.signUp')}
+                          {t("login.signUp")}
                         </a>
                       </p>
                     </div>
+                    
+
+                    <button
+                  type="button"
+                  onClick={handleGoogleLogin}
+                  className="h-[40px] mt-4 bg-transparent border border-gray-400 text-white hover:bg-gray-800"
+                  >
+                  Login with Google
+                </button>
                   </form>
                 </div>
+
+                
+               
               </div>
             </>
           )}
