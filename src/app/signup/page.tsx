@@ -38,7 +38,7 @@ const Signup = () => {
   const emailRegex = /^[a-zA-Z][^\s@]*@[a-zA-Z]{2,}(\.[a-zA-Z]{2,}){1,2}$/;
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
   const nameRegex = /^[a-zA-Z]{4,40}$/;
-  const phoneRegex = /^0\d{9}$/;
+  const phoneRegex = /^0[1-9]\d{8}$/;
   const usernameRegex = /^[a-zA-Z](?=[a-zA-Z0-9._]{3,39}$)(?!.*[.].*[.])(?!.*[_].*[_])[a-zA-Z0-9._]*$/;
 
   const [formData, setFormData] = useState({

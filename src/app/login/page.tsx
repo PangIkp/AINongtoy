@@ -16,6 +16,8 @@ import { useTranslation } from "react-i18next";
 import "../../i18n";
 import { initializeApp, getApps } from "firebase/app";
 import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider } from "firebase/auth";
+import { FcGoogle } from "react-icons/fc"; // เพิ่มการ import ไอคอน Google
+import { FaFacebook } from "react-icons/fa"; // เพิ่มการ import ไอคอน Facebook
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -318,14 +320,23 @@ const Login = () => {
                       </p>
                     </div>
 
+                    <div className="flex justify-between gap-2 text-white">
+                      <button
+                        type="button"
+                        onClick={handleGoogleLogin}
+                        className="h-[40px] bg-transparent border border-gray-400  hover:bg-gray-800 flex items-center justify-center gap-2 w-1/2"
+                      >
+                        <FcGoogle size={20} />Google
+                      </button>
 
-                    <button
-                      type="button"
-                      onClick={handleGoogleLogin}
-                      className="h-[40px] mt-4 bg-transparent border border-gray-400 text-white hover:bg-gray-800"
-                    >
-                      Login with Google
-                    </button>
+                      <button
+                        type="button"
+                        className="h-[40px] bg-transparent border border-gray-400 hover:bg-blue-800 flex items-center justify-center gap-2 w-1/2"
+                      >
+                        <FaFacebook size={20} />Facebook
+                      </button>
+                    </div>
+
                   </form>
                 </div>
 

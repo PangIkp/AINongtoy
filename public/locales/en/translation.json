@@ -147,7 +147,7 @@
         },
         "validation": {
             "name": "Alphabetic, 4-40 chars.",
-            "phone": "Phone: 10 digits, start with 0.",
+            "phone": "Phone: 10 digits, start with 0, second digit not 0.",
             "title": "Validation Error",
             "correctFields": "Please correct the highlighted fields."
         },
@@ -418,7 +418,7 @@
         "firstNameError": "FirstName: Alphabetic, 4-40 chars.",
         "lastNameError": "LastName: Alphabetic, 4-40 chars.",
         "usernameError": "Username: 4-20 chars, start with letter, allow '.', '_', and numbers.",
-        "phoneNumberError": "Phone: 10 digits, start with 0.",
+        "phoneNumberError": "Phone: 10 digits, start 0, second not 0.",
         "emailError": "Email: Invalid.",
         "passwordError": "Password: 6+ chars, include upper, lower, and a number.",
         "confirmPasswordError": "Passwords: do not match.",
@@ -797,5 +797,32 @@
         "successText": "Keyword created successfully!",
         "errorTitle": "Error",
         "errorText": "Error creating keyword."
+    },
+    "useToken": {
+        "updatePhoneNumber": {
+            "title": "Update Phone Number",
+            "text": "Your phone number is not valid. Please update your phone number.",
+            "confirmButton": "Update Now"
+        },
+        "errors": {
+            "tokenOrUserMissing": "Token or user data is missing",
+            "tokenValidationFailed": "Token validation failed:",
+            "userIdMissing": "User ID is missing",
+            "fetchingUserData": "Error fetching user data:"
+        },
+        "messages": {
+            "tokenValid": "Token is valid:",
+            "userDataFetched": "User data fetched successfully:",
+            "userStatus": "User status:",
+            "logoutCanceled": "User canceled the logout process."
+        },
+        "accountBanned": {
+            "title": "Account Banned",
+            "text": "Your account has been banned. Please contact support."
+        },
+        "sessionExpired": {
+            "title": "Session Expired",
+            "text": "Your session has expired. Please log in again."
+        }
     }
 }

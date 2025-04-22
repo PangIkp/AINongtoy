@@ -86,7 +86,7 @@ export default function Page() {
     const [lastName, setLastName] = useState<string | undefined>(undefined);
     const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
     const nameRegex = /^[a-zA-Z]{4,40}$/;
-    const phoneRegex = /^0\d{9}$/;
+    const phoneRegex = /^0[1-9]\d{8}$/;
 
     const [errors, setErrors] = useState({
         firstName: '',
