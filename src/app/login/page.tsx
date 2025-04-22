@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { login,loginWithGoogle } from "@/api/authAPI";
+import { login, loginWithGoogle } from "@/api/authAPI";
 import PasswordInput from "../components/PasswordInput";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
@@ -153,20 +153,20 @@ const Login = () => {
     try {
       console.log("🔐 เริ่ม Google Login");
       const result = await signInWithPopup(auth, new GoogleAuthProvider());
-  
+
       const user = result.user;
       console.log("✅ Login สำเร็จ:", user);
-  
+
       setGoogleUser({
         uid: user.uid,
         email: user.email,
         name: user.displayName,
         photo: user.photoURL,
       });
-  
+
       // เมื่อ Login สำเร็จแล้ว จะเรียกฟังก์ชัน loginWithGoogle เพื่อลงทะเบียนหรือบันทึกข้อมูลลงในฐานข้อมูล
       const googleToken = await user.getIdToken(); // รับ Google ID token
-  
+
       // เรียก API เพื่อบันทึกข้อมูลในฐานข้อมูล
       if (user.email) {
         const displayName = user.displayName || "";
@@ -179,10 +179,10 @@ const Login = () => {
       } else {
         throw new Error("User email is null");
       }
-  
+
       // เมื่อข้อมูลบันทึกสำเร็จแล้ว คุณสามารถทำการเปลี่ยนเส้นทางไปยังหน้าอื่นๆ
       window.location.href = "/";
-      
+
     } catch (err) {
       console.error("❌ Login ผิดพลาด:", err);
       Swal.fire({
@@ -192,14 +192,14 @@ const Login = () => {
       });
     }
   };
-  
-  
+
+
   useEffect(() => {
     const checkRedirectResult = async () => {
       try {
         const result = await getRedirectResult(auth);
         console.log("Google Redirect Result:", result);
-  
+
         if (result) {
           const user = result.user;
           console.log("✅ Google Login Successful");
@@ -219,18 +219,18 @@ const Login = () => {
         console.error("Error handling redirect result:", error);
       }
     };
-  
+
     checkRedirectResult();
   }, []); // 👈 ทำให้ run แค่ตอน mount หน้า
-  
+
 
   const [googleUser, setGoogleUser] = useState<any>(null);
 
-  
-  
-  
-  
-  
+
+
+
+
+
   return (
     <div>
       <Navbar
@@ -284,7 +284,7 @@ const Login = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
-                    
+
 
                     <div className="flex justify-between text-[13px]">
                       <label
@@ -317,20 +317,20 @@ const Login = () => {
                         </a>
                       </p>
                     </div>
-                    
+
 
                     <button
-                  type="button"
-                  onClick={handleGoogleLogin}
-                  className="h-[40px] mt-4 bg-transparent border border-gray-400 text-white hover:bg-gray-800"
-                  >
-                  Login with Google
-                </button>
+                      type="button"
+                      onClick={handleGoogleLogin}
+                      className="h-[40px] mt-4 bg-transparent border border-gray-400 text-white hover:bg-gray-800"
+                    >
+                      Login with Google
+                    </button>
                   </form>
                 </div>
 
-                
-               
+
+
               </div>
             </>
           )}
