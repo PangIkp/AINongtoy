@@ -696,7 +696,8 @@
             "pvc": "พลาสติก",
             "fixed pose": "ข้อต่อคงที่",
             "magnet joints": "ข้อต่อแม่เหล็ก",
-            "articulated joints": "ข้อต่อเคลื่อนไหวได้"
+            "articulated joints": "ข้อต่อเคลื่อนไหวได้",
+            "pad printing": "พิมพ์แพด"
         },
         "legend": {
             "totalQuantity": "ปริมาณทั้งหมด",

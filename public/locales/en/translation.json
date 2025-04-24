@@ -719,7 +719,8 @@
             "pvc": "PVC",
             "fixed pose": "Fixed Pose",
             "magnet joints": "Magnet Joints",
-            "articulated joints": "Articulated Joints"
+            "articulated joints": "Articulated Joints",
+            "pad printing": "Pad Printing"
         },
         "legend": {
             "totalQuantity": "Total Quantity",
