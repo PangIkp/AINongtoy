@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { login, loginWithGoogle } from "@/api/authAPI";
+import { login, loginWithGoogle, loginWithFacebook } from "@/api/authAPI";
 import PasswordInput from "../components/PasswordInput";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
@@ -15,7 +15,15 @@ dotenv.config();
 import { useTranslation } from "react-i18next";
 import "../../i18n";
 import { initializeApp, getApps } from "firebase/app";
-import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  signInWithPopup,
+  FacebookAuthProvider,
+  getRedirectResult,
+  GoogleAuthProvider,
+  fetchSignInMethodsForEmail,
+  linkWithCredential,
+} from "firebase/auth";
 import { FcGoogle } from "react-icons/fc"; // เพิ่มการ import ไอคอน Google
 import { FaFacebook } from "react-icons/fa"; // เพิ่มการ import ไอคอน Facebook
 
@@ -32,7 +40,6 @@ const firebaseConfig = {
 if (getApps().length === 0) {
   initializeApp(firebaseConfig);
 }
-
 
 const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY || "";
 
@@ -153,11 +160,11 @@ const Login = () => {
   // Google Login Handler
   const handleGoogleLogin = async () => {
     try {
-      console.log("🔐 เริ่ม Google Login");
+      console.log("Starting Google Login");
       const result = await signInWithPopup(auth, new GoogleAuthProvider());
 
       const user = result.user;
-      console.log("✅ Login สำเร็จ:", user);
+      console.log("Login successful:", user);
 
       setGoogleUser({
         uid: user.uid,
@@ -166,10 +173,10 @@ const Login = () => {
         photo: user.photoURL,
       });
 
-      // เมื่อ Login สำเร็จแล้ว จะเรียกฟังก์ชัน loginWithGoogle เพื่อลงทะเบียนหรือบันทึกข้อมูลลงในฐานข้อมูล
-      const googleToken = await user.getIdToken(); // รับ Google ID token
+      // After successful login, call loginWithGoogle to register or save data to the database
+      const googleToken = await user.getIdToken(); // Get Google ID token
 
-      // เรียก API เพื่อบันทึกข้อมูลในฐานข้อมูล
+      // Call API to save data in the database
       if (user.email) {
         const displayName = user.displayName || "";
         const response = await loginWithGoogle({
@@ -182,19 +189,17 @@ const Login = () => {
         throw new Error("User email is null");
       }
 
-      // เมื่อข้อมูลบันทึกสำเร็จแล้ว คุณสามารถทำการเปลี่ยนเส้นทางไปยังหน้าอื่นๆ
+      // After saving the data, you can redirect to another page
       window.location.href = "/";
-
     } catch (err) {
-      console.error("❌ Login ผิดพลาด:", err);
+      console.error("Login failed:", err);
       Swal.fire({
         icon: "error",
         title: "Google Login Failed",
-        text: "เกิดข้อผิดพลาดในการล็อกอินด้วย Google, กรุณาลองใหม่อีกครั้ง",
+        text: "An error occurred during Google login. Please try again.",
       });
     }
   };
-
 
   useEffect(() => {
     const checkRedirectResult = async () => {
@@ -204,10 +209,10 @@ const Login = () => {
 
         if (result) {
           const user = result.user;
-          console.log("✅ Google Login Successful");
-          console.log("👤 UID:", user.uid);
-          console.log("📧 Email:", user.email);
-          console.log("🧍 Display Name:", user.displayName);
+          console.log("Google Login Successful");
+          console.log("UID:", user.uid);
+          console.log("Email:", user.email);
+          console.log("Display Name:", user.displayName);
           setGoogleUser({
             uid: user.uid,
             email: user.email,
@@ -215,7 +220,7 @@ const Login = () => {
             photo: user.photoURL,
           });
         } else {
-          console.log("ℹ️ No redirect result found.");
+          console.log("ℹNo redirect result found.");
         }
       } catch (error) {
         console.error("Error handling redirect result:", error);
@@ -223,15 +228,55 @@ const Login = () => {
     };
 
     checkRedirectResult();
-  }, []); // 👈 ทำให้ run แค่ตอน mount หน้า
-
+  }, []); 
 
   const [googleUser, setGoogleUser] = useState<any>(null);
 
-
-
-
-
+  // Facebook Login Handler
+  const handleFacebookLogin = async () => {
+    try {
+      console.log("🔐 Starting Facebook Login");
+  
+      // Perform login via Facebook
+      const provider = new FacebookAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      console.log("Login successful:", user);
+  
+      // Handle user data (can be customized as needed)
+      const facebookUser = {
+        uid: user.uid,
+        email: user.email,
+        name: user.displayName,
+        photo: user.photoURL,
+      };
+  
+      // Send user data to the API for saving or registration
+      if (user.email) {
+        const displayName = user.displayName || "";
+        const response = await loginWithFacebook({
+          email: user.email,
+          firstName: displayName.split(" ")[0] || "",
+          lastName: displayName.split(" ")[1] || "",
+        });
+        console.log("Facebook login data saved:", response);
+      } else {
+        throw new Error("User email is null");
+      }
+  
+      // After successfully saving the data, redirect to another page
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Login failed:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Facebook Login Failed",
+        text: "An error occurred during Facebook login. Please try again.",
+      });
+    }
+  };
+  
+  
 
   return (
     <div>
@@ -287,7 +332,6 @@ const Login = () => {
                       onChange={(e) => setPassword(e.target.value)}
                     />
 
-
                     <div className="flex justify-between text-[13px]">
                       <label
                         htmlFor="remember"
@@ -326,22 +370,21 @@ const Login = () => {
                         onClick={handleGoogleLogin}
                         className="h-[40px] bg-transparent border border-gray-400  hover:bg-gray-800 flex items-center justify-center gap-2 w-1/2"
                       >
-                        <FcGoogle size={20} />Google
+                        <FcGoogle size={20} />
+                        Google
                       </button>
 
                       <button
                         type="button"
+                        onClick={handleFacebookLogin}
                         className="h-[40px] bg-transparent border border-gray-400 hover:bg-blue-800 flex items-center justify-center gap-2 w-1/2"
                       >
-                        <FaFacebook size={20} />Facebook
+                        <FaFacebook size={20} />
+                        Facebook
                       </button>
                     </div>
-
                   </form>
                 </div>
-
-
-
               </div>
             </>
           )}

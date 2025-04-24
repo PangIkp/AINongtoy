@@ -89,6 +89,52 @@ export const loginWithGoogle = async ({
   }
 };
 
+export const loginWithFacebook = async ({
+  email,
+  firstName,
+  lastName,
+}: {
+  email: string;
+  firstName: string;
+  lastName: string;
+}) => {
+  try {
+    // ส่งข้อมูลไปที่ API สำหรับ Facebook login
+    const response = await fetch(`${API_URL}/facebook-login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, firstName, lastName }),
+    });
+
+    const data = await response.json();
+    console.log("Facebook Login API Response:", data);
+
+    // ถ้า response ไม่สำเร็จ จะโยน error
+    if (!response.ok) {
+      throw new Error(data.message || "Facebook login failed");
+    }
+
+    // ตรวจสอบสถานะว่าเป็น banned หรือไม่
+    const status = data.data?.status?.toLowerCase();
+    if (status === "banned") {
+      throw new Error("Your account has been banned. Please contact support.");
+    }
+
+    // เก็บข้อมูลผู้ใช้และ token ใน localStorage
+    localStorage.setItem("user", JSON.stringify(data.data)); // เก็บข้อมูล user
+    localStorage.setItem("token", data.token); // เก็บ token
+
+    console.log("Stored user in localStorage:", localStorage.getItem("user"));
+    console.log("Stored token in localStorage:", localStorage.getItem("token"));
+
+    return data;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
 // http://localhost:3001/api/v1/auth/about
 export const getUser = async (token: string) => {
   try {
