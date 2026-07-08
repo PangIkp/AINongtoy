@@ -4,13 +4,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import PasswordInput from "../components/PasswordInput";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Loader } from "lucide-react"; // เพิ่มการ import Loader
 import emailjs from "emailjs-com"; // เพิ่มการ import emailjs
 import { checkUserExists } from "../../api/userAPI";
+import { API_V1_URL } from "@/api/baseUrl";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
 
@@ -118,7 +118,7 @@ const Signup = () => {
   useEffect(() => {
     const fetchUserCount = async () => {
       try {
-        const response = await axios.get("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/user/");
+        const response = await axios.get(`${API_V1_URL}/user/`);
         setUserCount(response.data.count);
       } catch (error) {
         console.error("Error fetching user count:", error);
@@ -303,7 +303,7 @@ const Signup = () => {
         };
 
         const response = await axios.post(
-          "https://nongtoybackend-rby6pw6h.b4a.run/api/v1/user/",
+          `${API_V1_URL}/user/`,
           newUser
         );
 
@@ -498,7 +498,6 @@ const Signup = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

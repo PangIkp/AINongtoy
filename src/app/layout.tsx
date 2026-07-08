@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Copyright from "./components/Copyright";
 
 export const metadata: Metadata = {
   title: "Nongtoy",
@@ -15,6 +16,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         {children}
+        <Copyright />
       </body>
     </html>
   );

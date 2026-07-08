@@ -177,7 +177,7 @@
         "followMessage": "You have {{count}} models to follow",
         "noFollowMessage": "You have no models to follow",
         "favorite": "Favorite",
-        "artToyConfig": "Art Toy Config",
+        "artToyConfig": "Config",
         "order": "Order",
         "configMessage": "You have configured {{count}} models.",
         "noConfigMessage": "You have not configured any models yet.",

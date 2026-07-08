@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import Swal from "sweetalert2";
 import { checkUserExists, updateUserProfile } from "../../api/userAPI"; // Import ฟังก์ชันใหม่
 import PasswordInput from "../components/PasswordInput"; // Import PasswordInput component
@@ -398,7 +397,6 @@ const ForgotPassword = () => {
                     </div>
                 </div>
             </div>
-            <Footer />
         </div>
     );
 };

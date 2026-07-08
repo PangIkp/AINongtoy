@@ -4,7 +4,6 @@
 export const dynamic = "force-dynamic";
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import { login, loginWithGoogle, loginWithFacebook } from "@/api/authAPI";
 import PasswordInput from "../components/PasswordInput";
 import Swal from "sweetalert2";
@@ -15,7 +14,6 @@ import { Loader } from "lucide-react"; // เพิ่มการ import Loader
 dotenv.config();
 import { useTranslation } from "react-i18next";
 import "../../i18n";
-import { initializeApp, getApps } from "firebase/app";
 import {
   getAuth,
   signInWithPopup,
@@ -25,26 +23,23 @@ import {
   fetchSignInMethodsForEmail,
   linkWithCredential,
 } from "firebase/auth";
+import { getFirebaseApp, hasFirebaseConfig } from "@/utils/firebase";
 import { FcGoogle } from "react-icons/fc"; // เพิ่มการ import ไอคอน Google
 import { FaFacebook } from "react-icons/fa"; // เพิ่มการ import ไอคอน Facebook
 
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
-
 const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY || "";
+const firebaseReady = hasFirebaseConfig();
 
 const getClientAuth = () => {
-  if (typeof window === "undefined") {
+  if (typeof window === "undefined" || !firebaseReady) {
     return null;
   }
 
-  const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+  const app = getFirebaseApp();
+  if (!app) {
+    return null;
+  }
+
   return getAuth(app);
 };
 
@@ -165,6 +160,11 @@ const Login = () => {
   // Google Login Handler
   const handleGoogleLogin = async () => {
     if (!auth) {
+      Swal.fire({
+        icon: "warning",
+        title: "Google Login Unavailable",
+        text: "Firebase is not configured for this environment yet.",
+      });
       return;
     }
 
@@ -248,6 +248,11 @@ const Login = () => {
   // Facebook Login Handler
   const handleFacebookLogin = async () => {
     if (!auth) {
+      Swal.fire({
+        icon: "warning",
+        title: "Facebook Login Unavailable",
+        text: "Firebase is not configured for this environment yet.",
+      });
       return;
     }
 
@@ -385,7 +390,8 @@ const Login = () => {
                       <button
                         type="button"
                         onClick={handleGoogleLogin}
-                        className="h-[40px] bg-transparent border border-gray-400  hover:bg-gray-800 flex items-center justify-center gap-2 w-1/2"
+                        disabled={!firebaseReady}
+                        className="h-[40px] bg-transparent border border-gray-400  hover:bg-gray-800 flex items-center justify-center gap-2 w-1/2 disabled:opacity-50"
                       >
                         <FcGoogle size={20} />
                         Google
@@ -394,7 +400,8 @@ const Login = () => {
                       <button
                         type="button"
                         onClick={handleFacebookLogin}
-                        className="h-[40px] bg-transparent border border-gray-400 hover:bg-blue-800 flex items-center justify-center gap-2 w-1/2"
+                        disabled={!firebaseReady}
+                        className="h-[40px] bg-transparent border border-gray-400 hover:bg-blue-800 flex items-center justify-center gap-2 w-1/2 disabled:opacity-50"
                       >
                         <FaFacebook size={20} />
                         Facebook
@@ -407,7 +414,6 @@ const Login = () => {
           )}
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

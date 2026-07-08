@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
@@ -8,7 +7,7 @@ import {
   deleteOrderByAdmin,
   updateOrderByAdmin,
 } from "@/api/orderAPI";
-import { Table, Dropdown, Menu, Input, Form, Select } from "antd";
+import { Table, Dropdown, Input, Form, Select } from "antd";
 import { Ellipsis, Eye, Edit, Trash, Loader } from "lucide-react";
 import { ColumnType } from "antd/es/table";
 import { Button } from "antd";
@@ -43,7 +42,12 @@ export default function OrderManagement() {
 
   useEffect(() => {
     const fetchAdminOrders = async () => {
-      if (!token) return;
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
       try {
         const data = await getAllOrdersForAdmin(token);
         setOrders(data.data || []);
@@ -86,7 +90,7 @@ export default function OrderManagement() {
   };
 
   const filteredOrders = orders.filter((order) =>
-    order._id.toLowerCase().includes(searchText.toLowerCase())
+    String(order?._id ?? "").toLowerCase().includes(searchText.toLowerCase())
   );
 
   const handleEdit = (order: any) => {
@@ -196,7 +200,7 @@ export default function OrderManagement() {
       dataIndex: "name",
       key: "name",
       editable: true,
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: (a, b) => String(a?.name ?? "").localeCompare(String(b?.name ?? "")),
     },
     {
       title: t("orderM.columns.quantity"), // ใช้การแปล
@@ -218,14 +222,15 @@ export default function OrderManagement() {
       dataIndex: "paymentStatus",
       key: "paymentStatus",
       editable: true,
-      sorter: (a, b) => a.paymentStatus.localeCompare(b.paymentStatus),
+      sorter: (a, b) =>
+        String(a?.paymentStatus ?? "").localeCompare(String(b?.paymentStatus ?? "")),
     },
     {
       title: t("orderM.columns.status"), // ใช้การแปล
       dataIndex: "status",
       key: "status",
       editable: true,
-      sorter: (a, b) => a.status.localeCompare(b.status),
+      sorter: (a, b) => String(a?.status ?? "").localeCompare(String(b?.status ?? "")),
     },
     {
       title: t("orderM.columns.actions"), // ใช้การแปล
