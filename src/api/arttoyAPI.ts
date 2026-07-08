@@ -1,13 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ArtToy } from "@/mainstore";
+import { API_V1_URL } from "./baseUrl";
+
+const API_URL = `${API_V1_URL}/arttoy`;
 
 export const getArtToyById = async (id: string, token: string) => {
   try {
-    const response = await fetch(`https://nongtoybackend-rby6pw6h.b4a.run/api/v1/arttoy/${id}`, {
+    const response = await fetch(`${API_URL}/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ส่ง token สำหรับการตรวจสอบสิทธิ์
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -16,19 +19,16 @@ export const getArtToyById = async (id: string, token: string) => {
       throw new Error(errorData.message || "Failed to fetch ArtToy");
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Error fetching ArtToy by ID:", error);
     throw error;
   }
 };
 
-
-// http://localhost:3001/api/v1/arttoy
 export const getArtToys = async (token: string) => {
   try {
-    const response = await fetch("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/arttoy", {
+    const response = await fetch(API_URL, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -41,8 +41,7 @@ export const getArtToys = async (token: string) => {
       throw new Error(errorData.message || "Failed to fetch ArtToys");
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Error fetching ArtToys:", error);
     throw error;
@@ -50,36 +49,34 @@ export const getArtToys = async (token: string) => {
 };
 
 export const createArtToy = async (artToyData: any, token: string) => {
-    try {
-      const response = await fetch("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/arttoy", {
-        method: "POST", // ใช้ POST เพื่อส่งข้อมูล
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ส่ง token สำหรับการตรวจสอบสิทธิ์
-        },
-        body: JSON.stringify(artToyData), // แปลงข้อมูลเป็น JSON ก่อนส่ง
-      });
-  
-      if (!response.ok) {
-        throw new Error("Failed to create ArtToy");
-      }
-  
-      const data = await response.json(); // รับข้อมูลกลับมาจาก API
-      return data;
-    } catch (error) {
-      console.error("Error creating ArtToy:", error);
-      throw error; // แจ้งข้อผิดพลาด
-    }
-  };
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(artToyData),
+    });
 
-// เพิ่มฟังก์ชันสำหรับลบ ArtToy
+    if (!response.ok) {
+      throw new Error("Failed to create ArtToy");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error creating ArtToy:", error);
+    throw error;
+  }
+};
+
 export const deleteArtToy = async (id: string, token?: string) => {
   if (!token) {
     throw new Error("Unauthorized: Token is missing");
   }
 
   try {
-    const response = await fetch(`https://nongtoybackend-rby6pw6h.b4a.run/api/v1/arttoy/${id}`, {
+    const response = await fetch(`${API_URL}/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -98,21 +95,23 @@ export const deleteArtToy = async (id: string, token?: string) => {
   }
 };
 
-
-// ฟังก์ชันอัปเดต ArtToy 
-export const updateArtToy = async (id: string, updatedData?: Partial<ArtToy>, token?: string) => {
+export const updateArtToy = async (
+  id: string,
+  updatedData?: Partial<ArtToy>,
+  token?: string,
+) => {
   if (!token) {
     throw new Error("Unauthorized: Token is missing");
   }
 
   try {
-    const response = await fetch(`https://nongtoybackend-rby6pw6h.b4a.run/api/v1/arttoy/${id}`, {
-      method: "PATCH", // ใช้ PATCH เพื่ออัปเดตเฉพาะฟิลด์ที่ส่งมา
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(updatedData), // ส่งเฉพาะฟิลด์ที่ต้องการอัปเดต
+      body: JSON.stringify(updatedData),
     });
 
     if (!response.ok) {
@@ -126,4 +125,3 @@ export const updateArtToy = async (id: string, updatedData?: Partial<ArtToy>, to
     throw error;
   }
 };
-

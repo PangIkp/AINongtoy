@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
+import { API_V1_URL } from "./baseUrl";
 
-const API_URL = "https://nongtoybackend-rby6pw6h.b4a.run/api/v1/order";
+const API_URL = `${API_V1_URL}/order`;
 
 export const createOrder = async (
   token: string,
@@ -45,23 +46,15 @@ export const getOrdersByUserId = async (token: string) => {
 // ดึงคำสั่งซื้อโดยใช้ `orderId`
 export const getOrderById = async (id: string, token: string) => {
   try {
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: "GET",
+    const res = await axios.get(`${API_URL}/${encodeURIComponent(id)}`, {
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ส่ง token สำหรับการตรวจสอบสิทธิ์
+        Authorization: `Bearer ${token}`,
       },
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to fetch Order");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching Order by ID:", error);
+    return res.data?.data ?? res.data;
+  } catch (error: any) {
+    console.error("Error fetching Order by ID:", error?.response?.data || error);
     throw error;
   }
 };
@@ -71,7 +64,7 @@ export const getOrderById = async (id: string, token: string) => {
 export const getAllOrdersForAdmin = async (token: string) => {
   try {
     console.log("Fetching all orders for admin...");
-    const response = await fetch("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/order/admin/orders", {
+    const response = await fetch(`${API_URL}/admin/orders`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -96,7 +89,7 @@ export const getAllOrdersForAdmin = async (token: string) => {
 export const deleteOrderByAdmin = async (token: string, id: string) => {
   try {
     console.log(`Deleting order with ID: ${id}...`);
-    const response = await fetch(`https://nongtoybackend-rby6pw6h.b4a.run/api/v1/order/admin/orders/${id}`, {
+    const response = await fetch(`${API_URL}/admin/orders/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -121,7 +114,7 @@ export const updateOrderByAdmin = async (token: string, id: string, updateData: 
   try {
     console.log(`Updating order with ID: ${id}...`);
     const res = await axios.patch(
-      `https://nongtoybackend-rby6pw6h.b4a.run/api/v1/order/admin/orders/${id}`,
+      `${API_URL}/admin/orders/${id}`,
       updateData,
       {
         headers: {

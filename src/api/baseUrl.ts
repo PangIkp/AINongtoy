@@ -1,0 +1,6 @@
+const RAW_API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://ainongtoy-backend.onrender.com";
+
+export const API_BASE_URL = RAW_API_BASE_URL.replace(/\/+$/, "");
+
+export const API_V1_URL = `${API_BASE_URL}/api/v1`;
