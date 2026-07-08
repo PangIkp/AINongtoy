@@ -3,54 +3,59 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from "react";
 import { useMainStore } from "@/mainstore";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { createArtToy, getArtToys, updateArtToy } from "@/api/arttoyAPI";
 import { getUser } from "@/api/authAPI";
 import Swal from "sweetalert2";
-import { Loader } from "lucide-react"; // เพิ่มการ import Loader
-import { useTranslation } from "react-i18next"; // Import useTranslation
-import "../../i18n"; // Import i18n
+import {
+  Boxes,
+  Loader,
+  Palette,
+  PencilLine,
+  ReceiptText,
+  Ruler,
+  Wrench,
+} from "lucide-react";
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 
 const Config = () => {
-  const { t } = useTranslation(); // Initialize useTranslation
-  const [name, setName] = useState(t("Unnamed Art Toy"));
-  const [size, setSize] = useState(t("Small"));
-  const [material, setMaterial] = useState(t("PLA"));
-  const [painting, setPainting] = useState(t("Hand-painting"));
-  const [assembly, setAssembly] = useState(t("Fixed Pose"));
+  const { t } = useTranslation();
+  const [name, setName] = useState("Unnamed Art Toy");
+  const [size, setSize] = useState("Small");
+  const [material, setMaterial] = useState("PLA");
+  const [painting, setPainting] = useState("Hand-painting");
+  const [assembly, setAssembly] = useState("Fixed Pose");
   const [quantity, setQuantity] = useState(1);
   const [fetchId, setFetchId] = useState("");
-  const [isLoading, setIsLoading] = useState(true); // เพิ่ม state สำหรับ loader
-  const pricePerUnit = 500; // ปรับราคาได้ตามต้องการ
+  const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const pricePerUnit = 500;
   const searchParams = useSearchParams();
-  const imageUrl =
-    searchParams.get("image") || "/Images/AINongtoy/WhiteMiku.png";
+  const imageUrl = searchParams.get("image") || "/Images/AINongtoy/WhiteMiku.png";
 
-  const { artToyData, setArtToyData, saveArtToy } = useMainStore();
+  const { setArtToyData } = useMainStore();
   const router = useRouter();
 
   const [isNew, setIsNew] = useState(true);
-
-  const [isEditing, setIsEditing] = useState(false);
   const price = quantity * pricePerUnit;
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       Swal.fire({
-        title: t("error.notLoggedIn"), // ใช้การแปล
+        title: t("error.notLoggedIn"),
         icon: "error",
         timer: 1500,
         showConfirmButton: false,
       });
-      setIsLoading(false); // ปิด loader หากไม่มี token
+      setIsLoading(false);
       return;
     }
 
     const fetchArtToyData = async () => {
       try {
-        setIsLoading(true); // เปิด loader ก่อนเริ่มโหลดข้อมูล
+        setIsLoading(true);
         const user = await getUser(token);
         const userId = user.data._id;
 
@@ -71,23 +76,19 @@ const Config = () => {
         }
       } catch (error: any) {
         Swal.fire({
-          title: t("Swal.config.error.fetchFailed"), // ใช้การแปล
-          text: error.message || t("Swal.config.error.defaultMessage"), // ใช้การแปล
+          title: t("Swal.config.error.fetchFailed"),
+          text: error.message || t("Swal.config.error.defaultMessage"),
           icon: "error",
           timer: 1500,
           showConfirmButton: false,
         });
       } finally {
-        setIsLoading(false); // ปิด loader หลังโหลดข้อมูลเสร็จ
+        setIsLoading(false);
       }
     };
 
     fetchArtToyData();
   }, [imageUrl, t]);
-
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-  };
 
   const handleBlurOrEnter = (
     event:
@@ -95,7 +96,6 @@ const Config = () => {
       | React.KeyboardEvent<HTMLInputElement>
   ) => {
     if ("key" in event && event.key !== "Enter") return;
-
     setIsEditing(false);
   };
 
@@ -114,7 +114,7 @@ const Config = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       Swal.fire({
-        title: t("Swal.config.error.notLoggedIn"), // ใช้การแปล
+        title: t("Swal.config.error.notLoggedIn"),
         icon: "error",
         timer: 1500,
         showConfirmButton: false,
@@ -123,22 +123,24 @@ const Config = () => {
     }
 
     try {
-      let response;
       if (isNew) {
-        response = await createArtToy(updatedArtToy, token);
+        await createArtToy(updatedArtToy, token);
       } else {
-        response = await updateArtToy(fetchId, updatedArtToy, token);
+        await updateArtToy(fetchId, updatedArtToy, token);
       }
+
+      setArtToyData(updatedArtToy);
+
       Swal.fire({
-        title: t("Swal.config.success.title"), // ใช้การแปล
-        text: t("Swal.config.success.saved"), // ใช้การแปล
+        title: t("Swal.config.success.title"),
+        text: t("Swal.config.success.saved"),
         icon: "success",
-        confirmButtonText: t("Swal.config.success.ok"), // ใช้การแปล
+        confirmButtonText: t("Swal.config.success.ok"),
       });
     } catch (error: any) {
       Swal.fire({
-        title: t("Swal.config.error.title"), // ใช้การแปล
-        text: error.message || t("Swal.config.error.defaultMessage"), // ใช้การแปล
+        title: t("Swal.config.error.title"),
+        text: error.message || t("Swal.config.error.defaultMessage"),
         icon: "error",
         timer: 1500,
         showConfirmButton: false,
@@ -157,162 +159,223 @@ const Config = () => {
       price,
       imageUrl,
     };
-    localStorage.setItem("artToyData", JSON.stringify(artToyData));
 
+    setArtToyData(artToyData);
+    localStorage.setItem("artToyData", JSON.stringify(artToyData));
     router.push("/payment");
   };
 
+  const optionSections = [
+    {
+      title: t("artToy.size"),
+      value: size,
+      setValue: setSize,
+      icon: Ruler,
+      options: ["Small", "Medium", "Large"],
+      optionLabel: (option: string) => t(`artToy.sizeOptions.${option}`),
+    },
+    {
+      title: t("artToy.material"),
+      value: material,
+      setValue: setMaterial,
+      icon: Boxes,
+      options: ["PLA", "Resin", "PVC", "Metal"],
+      optionLabel: (option: string) => t(`artToy.materialOptions.${option}`),
+    },
+    {
+      title: t("artToy.painting"),
+      value: painting,
+      setValue: setPainting,
+      icon: Palette,
+      options: ["Hand-painting", "Airbrush", "Pad Printing"],
+      optionLabel: (option: string) => t(`artToy.paintingOptions.${option}`),
+    },
+    {
+      title: t("artToy.assembly"),
+      value: assembly,
+      setValue: setAssembly,
+      icon: Wrench,
+      options: ["Fixed Pose", "Articulated Joints", "Magnet Joints"],
+      optionLabel: (option: string) => t(`artToy.assemblyOptions.${option}`),
+    },
+  ];
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[520px] items-center justify-center rounded-[32px] border border-white/10 bg-white/5">
+        <Loader className="animate-spin text-[#0CACF3]" size={50} />
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full h-full text-white">
-      {isLoading ? ( // แสดง loader ระหว่างโหลดข้อมูล
-        <div className="flex justify-center items-center h-[500px]">
-          <Loader className="animate-spin text-[#0CACF3]" size={50} />
-        </div>
-      ) : (
-        <div className="md:block lg:flex gap-x-10">
-          {/* Left - Image */}
-          <div className="md:w-full lg:w-1/2">
+    <section className="overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,31,64,0.95),rgba(11,18,40,0.95))] shadow-[0_30px_90px_rgba(0,0,0,0.24)]">
+      <div className="grid gap-0 xl:grid-cols-[0.88fr_1.12fr]">
+        <div className="border-b border-white/10 p-6 xl:border-b-0 xl:border-r xl:p-8">
+          <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#091224]">
             <img
               src={imageUrl}
-              alt={t("artToy.selectedAlt")} // ใช้การแปล
-              className="rounded-lg w-full"
+              alt={t("artToy.selectedAlt")}
+              className="aspect-square w-full object-cover"
             />
-            <div className="mt-8 mb-6 p-2 w-full rounded-lg border border-gray-500">
-              <div className="flex justify-between">
+          </div>
+
+          <div className="mt-6 rounded-[28px] border border-white/10 bg-white/5 p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs uppercase tracking-[0.24em] text-[#7ee7ff]">Identity</p>
                 {isEditing ? (
                   <input
                     aria-hidden="true"
                     type="text"
                     value={name}
-                    onChange={handleNameChange}
+                    onChange={(event) => setName(event.target.value)}
                     onBlur={handleBlurOrEnter}
                     onKeyDown={handleBlurOrEnter}
                     autoFocus
-                    className="bg-transparent border border-gray-400 rounded px-2 py-1 w-full text-white"
+                    className="mt-3 w-full rounded-xl border border-white/15 bg-[#0b1734] px-4 py-3 text-lg font-semibold text-white outline-none"
                   />
                 ) : (
-                  <>
-                    <p className="font-semibold">
-                      {name === "Unnamed Art Toy" ? t(`artToy.names.${name}`) : name}
-                    </p>
-                  </>
+                  <p className="mt-3 break-words text-2xl font-semibold text-white">
+                    {name === "Unnamed Art Toy" ? t(`artToy.names.${name}`) : name}
+                  </p>
                 )}
-
-                {!isEditing && (
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="text-[13px] p-0 bg-transparent hover:bg-transparent font-medium text-gray-400 hover:underline"
-                  >
-                    {t("artToy.button.edit")} {/* ใช้การแปล */}
-                  </button>
-                )}
-              </div>
-              <p className="text-sm text-gray-400">{t('artToy.prompts.customizeName')}</p>
-            </div>
-          </div>
-
-          {/* Right - Configurations */}
-          <div className="w-full">
-            {/* Size */}
-            <h3 className="font-semibold mb-1">{t("artToy.size")}</h3> {/* ใช้การแปล */}
-            <div className="flex justify-between gap-2 sm:flex-nowrap flex-wrap">
-              {["Small", "Medium", "Large"].map((s) => (
-                <button
-                  key={s}
-                  className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${size === s ? "border-[#0CACF3]" : "border-gray-600"
-                    }`}
-                  onClick={() => setSize(s)}
-                >
-                  {t(`artToy.sizeOptions.${s}`)} {/* ใช้การแปล */}
-                </button>
-              ))}
-            </div>
-
-            {/* Material */}
-            <h3 className="font-semibold mt-4 mb-1">{t("artToy.material")}</h3> {/* ใช้การแปล */}
-            <div className="flex justify-between gap-2 sm:flex-nowrap flex-wrap">
-              {["PLA", "Resin", "PVC", "Metal"].map((m) => (
-                <button
-                  key={m}
-                  className={`px-4 w-full  text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${material === m ? "border-[#0CACF3]" : "border-gray-600"
-                    }`}
-                  onClick={() => setMaterial(m)}
-                >
-                  {t(`artToy.materialOptions.${m}`)} {/* ใช้การแปล */}
-                </button>
-              ))}
-            </div>
-
-            {/* Painting */}
-            <h3 className="font-semibold mt-4 mb-1">{t("artToy.painting")}</h3> {/* ใช้การแปล */}
-            <div className="flex justify-between gap-2 sm:flex-nowrap flex-wrap">
-              {["Hand-painting", "Airbrush", "Pad Printing"].map((p) => (
-                <button
-                  key={p}
-                  className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${painting === p ? "border-[#0CACF3]" : "border-gray-600"
-                    }`}
-                  onClick={() => setPainting(p)}
-                >
-                  {t(`artToy.paintingOptions.${p}`)} {/* ใช้การแปล */}
-                </button>
-              ))}
-            </div>
-
-            {/* Assembly */}
-            <h3 className="font-semibold mt-4 mb-1">{t("artToy.assembly")}</h3> {/* ใช้การแปล */}
-            <div className="flex justify-between gap-2 sm:flex-nowrap flex-wrap">
-              {["Fixed Pose", "Articulated Joints", "Magnet Joints"].map((a) => (
-                <button
-                  key={a}
-                  className={`px-4 w-full text-[14px] py-2 bg-transparent rounded-lg border hover:border-[#63A3C0] hover:bg-transparent ${assembly === a ? "border-[#0CACF3]" : "border-gray-600"
-                    }`}
-                  onClick={() => setAssembly(a)}
-                >
-                  {t(`artToy.assemblyOptions.${a}`)} {/* ใช้การแปล */}
-                </button>
-              ))}
-            </div>
-
-            {/* Quantity */}
-            <h3 className="font-semibold mt-4 mb-1">{t("artToy.quantity")}</h3> {/* ใช้การแปล */}
-            <div className="flex items-center justify-between sm:flex-nowrap flex-wrap gap-y-4">
-              <div className="space-x-4">
-                <button
-                  className="px-3 py-1 bg-transparent hover:bg-transparent border border-gray-700 rounded-lg"
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                >
-                  -
-                </button>
-                <span className="">{quantity}</span>
-                <button
-                  className="px-3 py-1 bg-transparent hover:bg-transparent border border-gray-600  rounded-lg"
-                  onClick={() => setQuantity((q) => q + 1)}
-                >
-                  +
-                </button>
+                <p className="mt-3 text-sm leading-7 text-white/65">{t("artToy.prompts.customizeName")}</p>
               </div>
 
-              <p className="font-semibold">
-                {t("artToy.totalPrice")} : {price.toLocaleString()} ฿ {/* ใช้การแปล */}
-              </p>
+              {!isEditing && (
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(true)}
+                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white/75 transition hover:bg-white/10 hover:text-white"
+                >
+                  <PencilLine size={14} />
+                  {t("artToy.button.edit")}
+                </button>
+              )}
             </div>
 
-            {/* Buttons */}
-            <div className="flex justify-between mt-4 gap-4">
-              <button
-                className="w-full py-2 bg-[#51536D] hover:bg-[#3E4058] rounded-lg"
-                onClick={handleSave}
-              >
-                {t("artToy.button.save")} {/* ใช้การแปล */}
-              </button>
-              <button className="w-full" onClick={handleCheckout}>
-                {t("artToy.button.checkout")} {/* ใช้การแปล */}
-              </button>
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border border-white/10 bg-[#0b1734] p-4">
+                <p className="text-xs uppercase tracking-[0.24em] text-white/45">{t("artToy.quantity")}</p>
+                <p className="mt-2 text-lg font-semibold text-white">{quantity}</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-[#0b1734] p-4">
+                <p className="text-xs uppercase tracking-[0.24em] text-white/45">Unit Price</p>
+                <p className="mt-2 text-lg font-semibold text-white">{pricePerUnit.toLocaleString()} ฿</p>
+              </div>
+              <div className="min-w-0 rounded-2xl border border-[#0AACF0]/30 bg-[linear-gradient(180deg,rgba(12,172,243,0.16),rgba(11,23,52,0.95))] p-4">
+                <div className="rounded-xl border border-[#0AACF0]/20 bg-[#0b1d3d] p-2.5 w-fit">
+                  <ReceiptText size={16} className="text-[#9defff]" />
+                </div>
+                <p className="mt-4 text-[11px] uppercase tracking-[0.16em] text-[#9defff] sm:text-xs">
+                  {t("artToy.totalPrice")}
+                </p>
+                <p className="mt-2 text-lg font-semibold text-white">{price.toLocaleString()} ฿</p>
+              </div>
             </div>
           </div>
         </div>
-      )}
-    </div>
+
+        <div className="flex flex-col gap-8 p-6 xl:p-8">
+          <div className="border-b border-white/10 pb-6">
+            <p className="text-xs font-medium uppercase tracking-[0.28em] text-[#7ee7ff]">
+              Production Setup
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold text-white">{t("material.title")}</h2>
+            <p className="mt-3 text-sm leading-7 text-[#aebddb]">
+              Finalize build size, material, finish, and assembly before sending this concept into checkout.
+            </p>
+          </div>
+
+          <div className="grid gap-6">
+            {optionSections.map(({ title, value, setValue, icon: Icon, options, optionLabel }) => (
+              <div key={title} className="rounded-[28px] border border-white/10 bg-white/5 p-5">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="rounded-xl border border-white/10 bg-[#0D1733] p-2.5">
+                    <Icon size={16} className="text-[#76e3ff]" />
+                  </div>
+                  <div>
+                    <p className="text-base font-semibold text-white">{title}</p>
+                    <p className="text-sm text-white/55">Choose one option</p>
+                  </div>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  {options.map((option) => {
+                    const isActive = value === option;
+
+                    return (
+                      <button
+                        key={option}
+                        type="button"
+                        className={`rounded-2xl border px-4 py-4 text-left text-sm font-medium transition ${
+                          isActive
+                            ? "border-[#0AACF0]/40 bg-[rgba(12,172,243,0.14)] text-white"
+                            : "border-white/10 bg-[#0b1328] text-white/75 hover:border-white/20 hover:bg-white/10 hover:text-white"
+                        }`}
+                        onClick={() => setValue(option)}
+                      >
+                        {optionLabel(option)}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+
+            <div className="rounded-[28px] border border-white/10 bg-white/5 p-5">
+              <p className="text-base font-semibold text-white">{t("artToy.quantity")}</p>
+              <p className="mt-1 text-sm text-white/55">Adjust how many units you want to prepare.</p>
+
+              <div className="mt-5 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="inline-flex w-fit items-center gap-3 rounded-2xl border border-white/10 bg-[#0b1328] p-2">
+                  <button
+                    type="button"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-lg font-semibold text-white transition hover:bg-white/10"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  >
+                    -
+                  </button>
+                  <span className="min-w-12 text-center text-lg font-semibold text-white">{quantity}</span>
+                  <button
+                    type="button"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-lg font-semibold text-white transition hover:bg-white/10"
+                    onClick={() => setQuantity((q) => q + 1)}
+                  >
+                    +
+                  </button>
+                </div>
+
+                <div className="min-w-0 rounded-2xl border border-white/10 bg-[#0b1734] px-5 py-4">
+                  <p className="break-words text-[11px] uppercase tracking-[0.16em] text-white/45 sm:text-xs">
+                    {t("artToy.totalPrice")}
+                  </p>
+                  <p className="mt-2 break-all text-2xl font-semibold text-white">{price.toLocaleString()} ฿</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <button
+              type="button"
+              className="h-12 w-full rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-white/80 transition hover:bg-white/10 sm:w-1/2"
+              onClick={handleSave}
+            >
+              {t("artToy.button.save")}
+            </button>
+            <button
+              type="button"
+              className="h-12 w-full rounded-xl border border-[#0AACF0]/35 bg-[#0b1d3d] text-sm font-semibold text-[#89ebff] transition hover:bg-[#11305a] sm:w-1/2"
+              onClick={handleCheckout}
+            >
+              {t("artToy.button.checkout")}
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 
