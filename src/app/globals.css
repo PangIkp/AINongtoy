@@ -3,22 +3,26 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #050816;
+  --foreground: #f4f7fb;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #070922;
-    --foreground: #ededed;
+    --background: #050816;
+    --foreground: #f4f7fb;
   }
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-poppins), sans-serif;
-  /* min-height: 1000px; */
+  font-family: "Poppins", "Avenir Next", "Segoe UI", sans-serif;
+  min-height: 100vh;
 }
 
 input,
@@ -28,7 +32,15 @@ textarea {
 }
 
 button {
-  @apply bg-[#0CACF3] text-white hover:bg-[#0578AB] font-bold px-2 rounded-md transition-all;
+  @apply bg-[#0CACF3] text-white hover:bg-[#0578AB] font-bold px-2 rounded-md transition-all disabled:cursor-not-allowed;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .upload-btn {

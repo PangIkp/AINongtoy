@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
+export const dynamic = "force-dynamic";
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -36,12 +37,16 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// ป้องกันการ initialize ซ้ำ
-if (getApps().length === 0) {
-  initializeApp(firebaseConfig);
-}
-
 const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY || "";
+
+const getClientAuth = () => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+  return getAuth(app);
+};
 
 const Login = () => {
   const [isClient, setIsClient] = useState(false);
@@ -53,7 +58,7 @@ const Login = () => {
   const [lastName, setLastName] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
   const { t } = useTranslation(); // ใช้ useTranslation
-  const auth = getAuth();
+  const auth = getClientAuth();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -159,6 +164,10 @@ const Login = () => {
 
   // Google Login Handler
   const handleGoogleLogin = async () => {
+    if (!auth) {
+      return;
+    }
+
     try {
       console.log("Starting Google Login");
       const result = await signInWithPopup(auth, new GoogleAuthProvider());
@@ -202,6 +211,10 @@ const Login = () => {
   };
 
   useEffect(() => {
+    if (!auth) {
+      return;
+    }
+
     const checkRedirectResult = async () => {
       try {
         const result = await getRedirectResult(auth);
@@ -228,12 +241,16 @@ const Login = () => {
     };
 
     checkRedirectResult();
-  }, []); 
+  }, [auth]); 
 
   const [googleUser, setGoogleUser] = useState<any>(null);
 
   // Facebook Login Handler
   const handleFacebookLogin = async () => {
+    if (!auth) {
+      return;
+    }
+
     try {
       console.log("🔐 Starting Facebook Login");
   
