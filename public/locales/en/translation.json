@@ -71,7 +71,14 @@
     "arttoy": {
         "headerLine1": "Create Unique Art Toys – Turn your ideas",
         "headerLine2": "ideas into 3D reality with AI",
-        "loadingImages": "Loading images..."
+        "loadingImages": "Loading image...",
+        "singleModeHint": "Single prompt mode: one prompt creates one image for faster preview and clearer iteration.",
+        "generatorTitle": "Single Prompt Generator",
+        "emptyState": "Enter one prompt and generate your art toy image.",
+        "rateLimitMessage": "The image service is rate-limited right now. Please try again.",
+        "retry": "Try again",
+        "promptLabel": "Prompt",
+        "imageReadyHint": "Click the image to continue material and production setup."
     },
     "filters": {
         "title": "Filters",
@@ -100,6 +107,7 @@
         "arttoyNameLabel": "Art toy Name",
         "arttoyNamePlaceholder": "Enter art toy name",
         "keywordsLabel": "Keywords",
+        "promptLabel": "Prompt",
         "keywordsPlaceholder": "animal, blue and unique",
         "searchButton": "Search"
     },

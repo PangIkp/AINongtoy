@@ -71,7 +71,14 @@
     "arttoy": {
         "headerLine1": "สร้างของเล่นอาร์ตที่ไม่เหมือนใคร – เปลี่ยนไอเดียของคุณ",
         "headerLine2": "ให้กลายเป็นความจริงในรูปแบบ 3D ด้วย AI",
-        "loadingImages": "กำลังโหลดรูปภาพ..."
+        "loadingImages": "กำลังโหลดรูปภาพ...",
+        "singleModeHint": "โหมด Prompt เดียว: 1 prompt จะสร้าง 1 รูป เพื่อให้ลองไอเดียได้เร็วและชัดเจนขึ้น",
+        "generatorTitle": "ตัวสร้างแบบ Prompt เดียว",
+        "emptyState": "ใส่ prompt เดียว แล้วกดสร้างรูปอาร์ตทอยได้เลย",
+        "rateLimitMessage": "ตอนนี้บริการสร้างรูปมีการจำกัดการใช้งาน กรุณาลองใหม่อีกครั้ง",
+        "retry": "ลองใหม่",
+        "promptLabel": "Prompt",
+        "imageReadyHint": "กดที่รูปเพื่อไปตั้งค่าวัสดุและการผลิตต่อ"
     },
     "filters": {
         "title": "ตัวกรอง",
@@ -100,6 +107,7 @@
         "arttoyNameLabel": "ชื่ออาร์ตทอย",
         "arttoyNamePlaceholder": "กรอกชื่ออาร์ตทอย",
         "keywordsLabel": "ลักษณะเฉพาะ",
+        "promptLabel": "Prompt",
         "keywordsPlaceholder": "สัตว์, สีฟ้า หรือจุดเด่น",
         "searchButton": "ค้นหา"
     },
