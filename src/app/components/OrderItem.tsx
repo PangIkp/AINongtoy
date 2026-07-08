@@ -1,9 +1,9 @@
+"use client";
+
 import React from "react";
 import { useRouter } from "next/navigation";
-import { getOrderById } from "@/api/orderAPI";
 import { useTranslation } from "react-i18next"; // Import useTranslation
 import "../../i18n"; // Import i18n
-import Swal from "sweetalert2";
 
 interface OrderItem {
   _id: string; // ✅ เพิ่ม id
@@ -13,6 +13,11 @@ interface OrderItem {
   price: number;
   imageUrl: string;
   status: string;
+  shipping?: number;
+  total?: number;
+  address?: string;
+  createdAt?: string;
+  paymentStatus?: string;
 }
 
 interface OrderItemListProps {
@@ -30,22 +35,8 @@ const OrderItemList: React.FC<OrderItemListProps> = ({ orders }) => {
   const router = useRouter();
   const { t } = useTranslation(); // ใช้ useTranslation
 
-  const handleClick = async (id: string) => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-      const orderDetail = await getOrderById(id, token);
-
-      localStorage.setItem("selectedOrder", JSON.stringify(orderDetail));
-      router.push("/order_detail");
-    } catch {
-      Swal.fire({
-        icon: "error",
-        title: t("orderDetail.errorTitle"),
-        text: t("orderDetail.errorText"),
-      });
-    }
+  const handleClick = (order: OrderItem) => {
+    router.push(`/order_detail?id=${encodeURIComponent(order._id)}`);
   };
 
   return (
@@ -57,7 +48,7 @@ const OrderItemList: React.FC<OrderItemListProps> = ({ orders }) => {
             <div
               key={order._id ?? `order-${index}`} // ใช้ index เป็น fallback ถ้า id ไม่มี
               className="w-full h-full flex justify-between p-7 bg-[#202133] border border-[#202133] rounded-xl cursor-pointer hover:bg-[#292a40] transition-all"
-              onClick={() => handleClick(order._id)}
+              onClick={() => handleClick(order)}
             >
               <div className="w-full h-full flex gap-7">
                 <img

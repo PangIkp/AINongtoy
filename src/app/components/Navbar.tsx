@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
 import { getUserData } from "../../utils/localStorageUtils";
@@ -73,7 +73,7 @@ export default function Navbar({
           <img
             src="/Images/AINongtoy/Logo.png"
             alt="NongToy logo"
-            className="h-9 w-auto sm:h-11"
+            className="h-7 w-auto sm:h-8"
           />
         </Link>
 
@@ -110,20 +110,26 @@ export default function Navbar({
         </ul>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <select
-            id="language-select"
-            aria-label="Select language"
-            onChange={(e) => i18n.changeLanguage(e.target.value)}
-            className="m-0 h-10 rounded-full border border-white/12 bg-white/5 px-3 text-sm text-white outline-none"
-            defaultValue={i18n.language}
-          >
-            <option className="bg-[#07101f]" value="en">
-              EN
-            </option>
-            <option className="bg-[#07101f]" value="th">
-              TH
-            </option>
-          </select>
+          <div className="relative">
+            <select
+              id="language-select"
+              aria-label="Select language"
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
+              className="m-0 h-10 min-w-[92px] appearance-none rounded-full border border-white/12 bg-white/5 pl-4 pr-10 text-sm text-white outline-none"
+              defaultValue={i18n.language}
+            >
+              <option className="bg-[#07101f]" value="en">
+                EN
+              </option>
+              <option className="bg-[#07101f]" value="th">
+                TH
+              </option>
+            </select>
+            <ChevronDown
+              size={16}
+              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-white/70"
+            />
+          </div>
 
           {!isLoggedIn ? (
             <Link
@@ -135,14 +141,14 @@ export default function Navbar({
           ) : (
             <Link
               href="/profile"
-              className="inline-flex h-10 items-center gap-2 rounded-full border border-white/12 bg-white/5 px-3 text-sm text-white"
+              className="inline-flex h-10 max-w-[190px] items-center gap-2 rounded-full border border-white/12 bg-white/5 px-3 text-sm text-white"
             >
               <img
                 src="/Images/AINongtoy/User.png"
                 alt="Profile"
                 className="h-7 w-7 rounded-full"
               />
-              <span>{firstName}</span>
+              <span className="min-w-0 truncate">{firstName}</span>
             </Link>
           )}
         </div>
@@ -183,19 +189,25 @@ export default function Navbar({
           </div>
 
           <div className="mt-4 flex items-center gap-3">
-            <select
-              aria-label="Select language"
-              onChange={(e) => i18n.changeLanguage(e.target.value)}
-              className="m-0 h-10 rounded-full border border-white/12 bg-white/5 px-3 text-sm text-white outline-none"
-              defaultValue={i18n.language}
-            >
-              <option className="bg-[#07101f]" value="en">
-                EN
-              </option>
-              <option className="bg-[#07101f]" value="th">
-                TH
-              </option>
-            </select>
+            <div className="relative">
+              <select
+                aria-label="Select language"
+                onChange={(e) => i18n.changeLanguage(e.target.value)}
+                className="m-0 h-10 min-w-[92px] appearance-none rounded-full border border-white/12 bg-white/5 pl-4 pr-10 text-sm text-white outline-none"
+                defaultValue={i18n.language}
+              >
+                <option className="bg-[#07101f]" value="en">
+                  EN
+                </option>
+                <option className="bg-[#07101f]" value="th">
+                  TH
+                </option>
+              </select>
+              <ChevronDown
+                size={16}
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-white/70"
+              />
+            </div>
 
             {!isLoggedIn ? (
               <Link

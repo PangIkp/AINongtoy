@@ -62,9 +62,6 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="mx-auto mt-8 max-w-7xl border-t border-white/10 pt-5 text-sm text-[#8fa3c2]">
-        {t("footer.copyright")}
-      </div>
     </footer>
   );
 }

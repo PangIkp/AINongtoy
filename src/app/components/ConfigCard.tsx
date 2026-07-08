@@ -9,6 +9,7 @@ import { ArtToy } from "@/mainstore"; // ถ้า ArtToy มี type ให้�
 import useHydration from "../../../useHydration";
 import { deleteArtToy } from "@/api/arttoyAPI";
 import { getArtToyById } from "@/api/arttoyAPI";
+import { API_V1_URL } from "@/api/baseUrl";
 import Swal from "sweetalert2";
 import { useTranslation } from "react-i18next"; // Import useTranslation
 import "../../i18n"; // Import i18n
@@ -45,7 +46,7 @@ function ConfigCard({ onConfigCountChange }: ConfigCardProps) {
           setIsLoading(false); // ปิด loader หากไม่มี token
           return;
         }
-        const response = await fetch("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/arttoy", {
+        const response = await fetch(`${API_V1_URL}/arttoy`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
