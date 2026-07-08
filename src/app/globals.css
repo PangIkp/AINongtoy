@@ -257,3 +257,40 @@ textarea {
 .ant-pagination .ant-pagination-item {
   background: transparent;
 }
+
+@keyframes borderSweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.progress-border-frame {
+  position: relative;
+  padding: 1px;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.progress-border-frame::before {
+  content: "";
+  position: absolute;
+  inset: -35%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(10, 172, 240, 0.1),
+    rgba(10, 172, 240, 0.9),
+    rgba(174, 242, 255, 0.95),
+    rgba(10, 172, 240, 0.2),
+    rgba(10, 172, 240, 0.1)
+  );
+  animation: borderSweep 2s linear infinite;
+}
+
+.progress-border-inner {
+  position: relative;
+  z-index: 1;
+  border-radius: calc(1rem - 1px);
+}
