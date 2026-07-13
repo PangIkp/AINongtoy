@@ -805,6 +805,8 @@
     },
     "keywordManagement": {
         "title": "Keyword",
+        "description": "Manage the keyword library for colors and characters from one admin workspace, including author and update history.",
+        "searchPlaceholder": "Search keyword ID or name",
         "confirmDeleteTitle": "Are you sure?",
         "confirmDeleteText": "You won't be able to revert this!",
         "confirmDeleteConfirm": "Yes, delete it!",
@@ -816,7 +818,23 @@
         "updateSuccessText": "The keyword has been updated successfully.",
         "updateErrorTitle": "Error!",
         "updateErrorText": "Failed to update the keyword.",
+        "required": "This field is required.",
+        "validationError": "Please review the form fields and try again.",
+        "nameRule": "Keyword name must be at least 2 characters.",
+        "close": "Close",
         "createKeyword": "Create keyword",
+        "createTitle": "Create New Keyword",
+        "createDescription": "Add a new keyword for filtering and content categorization so it becomes available immediately.",
+        "createTipTitle": "Available right after creation",
+        "createTipDescription": "Create a color or character keyword and it will appear in the table as soon as save succeeds.",
+        "createHint": "Use short, clear, non-duplicated labels so filtering stays consistent across the product.",
+        "creating": "Creating...",
+        "editTitle": "Edit Keyword",
+        "editDescription": "Update the keyword name or type from one modal instead of editing directly inside the table.",
+        "editTipTitle": "Edit without disturbing the table",
+        "editTipDescription": "After save succeeds, this keyword updates immediately in the table without refreshing the page.",
+        "editHint": "Check the keyword type carefully because it affects filtering and categorization behavior.",
+        "updating": "Saving...",
         "columns": {
             "keywordId": "Keyword ID",
             "createdAt": "Created At",
@@ -825,6 +843,11 @@
             "name": "Name",
             "type": "Type",
             "actions": "Actions"
+        },
+        "stats": {
+            "total": "Total Keywords",
+            "colors": "Color Keywords",
+            "characters": "Character Keywords"
         },
         "actions": {
             "save": "Save",
@@ -840,9 +863,10 @@
     },
     "keywordModal": {
         "title": "Keyword Details",
-        "userId": "User ID",
-        "createdAt": "Created At",
-        "email": "Email"
+        "description": "Review the key metadata for this keyword, including author, type, and the most recent update time.",
+        "keywordId": "Keyword ID",
+        "summaryTitle": "Keyword Overview",
+        "summaryDescription": "Use this view to inspect keyword metadata before editing or deciding to remove it."
     },
     "keywordForm": {
         "fields": {

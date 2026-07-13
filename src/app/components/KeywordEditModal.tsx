@@ -2,45 +2,47 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-import { CircleAlert, Loader2, ShieldCheck, Tags, X } from "lucide-react";
-import { createKeywordForAdmin } from "@/api/keywordAPI";
+import { CircleAlert, Loader2, ShieldCheck, SquarePen, X } from "lucide-react";
 import Swal from "sweetalert2";
 import { useTranslation } from "react-i18next";
+import { updateKeywordForAdmin } from "@/api/keywordAPI";
 import "../../i18n";
 
-interface KeywordFormProps {
-  isFormVisible: boolean;
-  handleCloseModal: () => void;
+interface KeywordEditModalProps {
+  isVisible: boolean;
+  keyword: any | null;
   token: string;
-  onKeywordCreated: (keyword: any) => void;
+  onClose: () => void;
+  onKeywordUpdated: (keyword: any) => void;
 }
 
-const KeywordForm: React.FC<KeywordFormProps> = ({
-  isFormVisible,
-  handleCloseModal,
+const KeywordEditModal: React.FC<KeywordEditModalProps> = ({
+  isVisible,
+  keyword,
   token,
-  onKeywordCreated,
+  onClose,
+  onKeywordUpdated,
 }) => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
     type: "Color",
   });
-  const [errors, setErrors] = useState({
-    name: "",
-    type: "",
-  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!isFormVisible) {
-      setFormData({ name: "", type: "Color" });
-      setErrors({ name: "", type: "" });
+    if (isVisible && keyword) {
+      setFormData({
+        name: keyword.name || "",
+        type: keyword.type || "Color",
+      });
+      setErrors({});
       setIsSubmitting(false);
     }
-  }, [isFormVisible]);
+  }, [isVisible, keyword]);
 
-  if (!isFormVisible) return null;
+  if (!isVisible || !keyword) return null;
 
   const validateField = (name: string, value: string) => {
     if (!value.trim()) return t("keywordManagement.required");
@@ -50,12 +52,21 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
     return "";
   };
 
+  const validateForm = () => {
+    const nextErrors: Record<string, string> = {};
+    const nameError = validateField("name", formData.name);
+    if (nameError) nextErrors.name = nameError;
+    if (!formData.type.trim()) nextErrors.type = t("keywordManagement.required");
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
     }));
     setErrors((prev) => ({
@@ -64,24 +75,14 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
     }));
   };
 
-  const validateForm = () => {
-    const nextErrors = {
-      name: validateField("name", formData.name),
-      type: formData.type.trim() ? "" : t("keywordManagement.required"),
-    };
-    setErrors(nextErrors);
-    return !nextErrors.name && !nextErrors.type;
-  };
-
-  const extractCreatedKeyword = (response: any) =>
-    response?.data ?? response?.keyword ?? response?.createdKeyword ?? response;
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!token) return;
+
     if (!validateForm()) {
       Swal.fire({
         icon: "warning",
-        title: t("keywordForm.errorTitle"),
+        title: t("keywordManagement.updateErrorTitle"),
         text: t("keywordManagement.validationError"),
       });
       return;
@@ -90,21 +91,21 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
     setIsSubmitting(true);
 
     try {
-      const createdKeyword = await createKeywordForAdmin(token, formData);
-      onKeywordCreated(extractCreatedKeyword(createdKeyword));
-      await Swal.fire({
-        icon: "success",
-        title: t("keywordForm.successTitle"),
-        text: t("keywordForm.successText"),
-      });
-      handleCloseModal();
+      await updateKeywordForAdmin(token, keyword._id, formData);
+      onKeywordUpdated({ ...keyword, ...formData });
+      await Swal.fire(
+        t("keywordManagement.updateSuccessTitle"),
+        t("keywordManagement.updateSuccessText"),
+        "success"
+      );
+      onClose();
     } catch (error) {
-      console.error("Error creating keyword:", error);
-      Swal.fire({
-        icon: "error",
-        title: t("keywordForm.errorTitle"),
-        text: t("keywordForm.errorText"),
-      });
+      console.error("Error updating keyword:", error);
+      await Swal.fire(
+        t("keywordManagement.updateErrorTitle"),
+        t("keywordManagement.updateErrorText"),
+        "error"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -121,9 +122,9 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
 
         <button
           type="button"
-          onClick={handleCloseModal}
+          onClick={onClose}
           className="absolute right-5 top-5 z-10 rounded-full border border-white/10 bg-white/5 p-2 text-white/70 transition hover:bg-white/10 hover:text-white"
-          aria-label={t("keywordManagement.close")}
+          aria-label={t("keywordManagement.actions.cancel")}
         >
           <X size={18} />
         </button>
@@ -136,23 +137,23 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
             </div>
 
             <h2 className="mt-5 text-3xl font-semibold tracking-tight text-white">
-              {t("keywordManagement.createTitle")}
+              {t("keywordManagement.editTitle")}
             </h2>
             <p className="mt-3 max-w-md text-sm leading-7 text-[#aebddb]">
-              {t("keywordManagement.createDescription")}
+              {t("keywordManagement.editDescription")}
             </p>
 
             <div className="mt-8 rounded-[24px] border border-white/10 bg-white/5 p-5">
               <div className="flex items-start gap-4">
                 <div className="rounded-2xl border border-[#67dfff]/20 bg-[#0d1733] p-3 text-[#88ebff]">
-                  <Tags size={22} />
+                  <SquarePen size={22} />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white">
-                    {t("keywordManagement.createTipTitle")}
+                    {t("keywordManagement.editTipTitle")}
                   </p>
                   <p className="mt-2 text-sm leading-6 text-white/60">
-                    {t("keywordManagement.createTipDescription")}
+                    {t("keywordManagement.editTipDescription")}
                   </p>
                 </div>
               </div>
@@ -160,7 +161,7 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
 
             <div className="mt-5 flex items-start gap-3 rounded-2xl border border-[#facc15]/20 bg-[#facc15]/10 p-4 text-sm text-[#fde68a]">
               <CircleAlert size={18} className="mt-0.5 shrink-0" />
-              <p>{t("keywordManagement.createHint")}</p>
+              <p>{t("keywordManagement.editHint")}</p>
             </div>
           </div>
 
@@ -168,7 +169,7 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label htmlFor="name" className="text-sm font-medium text-white/80">
-                  {t("keywordForm.fields.name")}
+                  {t("keywordManagement.columns.name")}
                 </label>
                 <input
                   type="text"
@@ -183,7 +184,7 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
 
               <div className="sm:col-span-2">
                 <label htmlFor="type" className="text-sm font-medium text-white/80">
-                  {t("keywordForm.fields.type")}
+                  {t("keywordManagement.columns.type")}
                 </label>
                 <select
                   id="type"
@@ -192,8 +193,8 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
                   onChange={handleChange}
                   className={inputClassName}
                 >
-                  <option value="Color">{t("keywordForm.fields.color")}</option>
-                  <option value="Character">{t("keywordForm.fields.character")}</option>
+                  <option value="Color">{t("keywordManagement.select.color")}</option>
+                  <option value="Character">{t("keywordManagement.select.character")}</option>
                 </select>
                 <p className={errorClassName}>{errors.type || " "}</p>
               </div>
@@ -202,10 +203,10 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
             <div className="mt-4 flex flex-col-reverse gap-3 border-t border-white/10 pt-6 sm:flex-row sm:justify-end">
               <button
                 type="button"
-                onClick={handleCloseModal}
+                onClick={onClose}
                 className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/12 bg-white/[0.03] px-5 text-sm font-medium text-white/60 transition hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
               >
-                {t("keywordManagement.close")}
+                {t("keywordManagement.actions.cancel")}
               </button>
               <button
                 type="submit"
@@ -214,8 +215,8 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
               >
                 {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : null}
                 {isSubmitting
-                  ? t("keywordManagement.creating")
-                  : t("keywordForm.fields.submit")}
+                  ? t("keywordManagement.updating")
+                  : t("keywordManagement.actions.save")}
               </button>
             </div>
           </form>
@@ -225,4 +226,4 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
   );
 };
 
-export default KeywordForm;
+export default KeywordEditModal;
