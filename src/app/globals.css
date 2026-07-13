@@ -81,19 +81,31 @@ textarea {
 /* table for admin */
 
 .custom-table {
-  background-color: #212121 !important; /* ตั้งพื้นหลังให้เป็นสีดำ */
+  background-color: transparent !important;
   color: #fff !important; /* ตั้งข้อความทั้งหมดให้เป็นสีขาว */
 
   /* ลบเส้นโค้ง (border-radius) จากตาราง */
-  border-radius: 0 !important;
+  border-radius: 22px !important;
 
   /* ลบขอบ (border) ของตาราง */
   border: none !important;
+  overflow: hidden;
+}
+
+.custom-table .ant-spin-nested-loading,
+.custom-table .ant-spin-container,
+.custom-table .ant-table {
+  border-radius: 22px !important;
+}
+
+.custom-table .ant-table-container {
+  border-radius: 22px 22px 0 0 !important;
 }
 
 .custom-table .ant-table-cell {
   /* ลบเส้นโค้งจากเซลล์ */
   border-radius: 0 !important;
+  vertical-align: top;
 }
 
 .custom-table .ant-table-row {
@@ -102,24 +114,82 @@ textarea {
 }
 
 .custom-table th {
-  color: #b8b8b8 !important;
-  border-color: #5b5b5b !important;
+  color: #93a4c6 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 .custom-table td {
   color: #fff !important; /* ตั้งข้อความในเซลล์ให้เป็นสีขาว */
-  border-color: #5b5b5b !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 .custom-table .ant-table-thead > tr > th {
-  background-color: #212121 !important; /* ตั้งสีพื้นหลังหัวตาราง */
+  background-color: rgba(8, 14, 30, 0.96) !important;
+  white-space: nowrap;
 }
 
 .custom-table .ant-table-tbody {
-  background-color: #212121 !important;
+  background-color: rgba(9, 18, 36, 0.86) !important;
+}
+
+.custom-table .ant-table-container {
+  background: rgba(9, 18, 36, 0.88) !important;
+}
+
+.custom-table .ant-table-thead > tr:first-child > th:first-child {
+  border-top-left-radius: 22px;
+}
+
+.custom-table .ant-table-thead > tr:first-child > th:last-child {
+  border-top-right-radius: 22px;
+}
+
+.custom-table .ant-table-tbody > tr:last-child > td:first-child,
+.custom-table .ant-table-tbody > tr:last-child > td:last-child {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.custom-table .ant-table-pagination.ant-pagination {
+  margin: 0 !important;
+  padding: 16px 20px 18px !important;
+  background: rgba(9, 18, 36, 0.94) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0 0 22px 22px !important;
+}
+
+.custom-table .ant-table-container,
+.custom-table .ant-table-content {
+  overflow-x: auto !important;
+}
+
+.custom-table .ant-table-body,
+.custom-table .ant-table-content,
+.custom-table .ant-table-header {
+  scrollbar-color: rgba(103, 223, 255, 0.4) rgba(255, 255, 255, 0.04);
+}
+
+.custom-table .ant-table-body::-webkit-scrollbar,
+.custom-table .ant-table-content::-webkit-scrollbar,
+.custom-table .ant-table-header::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+.custom-table .ant-table-body::-webkit-scrollbar-track,
+.custom-table .ant-table-content::-webkit-scrollbar-track,
+.custom-table .ant-table-header::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.custom-table .ant-table-body::-webkit-scrollbar-thumb,
+.custom-table .ant-table-content::-webkit-scrollbar-thumb,
+.custom-table .ant-table-header::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(103, 223, 255, 0.38);
 }
 
 .custom-hover-row:hover td {
-  background-color: #2f2f2f !important;
+  background-color: rgba(19, 32, 62, 0.92) !important;
   cursor: pointer;
 }
 
@@ -141,11 +211,11 @@ textarea {
 }
 
 .custom-table .ant-table-row:hover {
-  background-color: #444 !important; /* หรือสีที่ต้องการ */
+  background-color: rgba(19, 32, 62, 0.92) !important;
 }
 
 .ant-table-wrapper .ant-table-tbody .ant-table-row > .ant-table-cell-row-hover {
-  background: #444 !important;
+  background: rgba(19, 32, 62, 0.92) !important;
 }
 
 /* เปลี่ยนพื้นหลังของเมนูหลัก */
@@ -256,6 +326,27 @@ textarea {
 
 .ant-pagination .ant-pagination-item {
   background: transparent;
+}
+
+.admin-search-field {
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  padding: 0 16px;
+  outline: none;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.admin-search-field::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.admin-search-field:hover,
+.admin-search-field:focus {
+  border-color: rgba(10, 172, 240, 0.35);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 @keyframes borderSweep {

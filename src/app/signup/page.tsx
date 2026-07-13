@@ -161,10 +161,10 @@ const Signup = () => {
 
     try {
       await emailjs.send(
-        "service_m5nbqms", // Replace with your EmailJS Service ID
-        "template_3m72222", // Replace with your EmailJS Template ID
+        "service_i9d8089", // Replace with your EmailJS Service ID
+        "template_ubnzds7", // Replace with your EmailJS Template ID
         templateParams,
-        "1tQROI12k9EH9q4nT" // Replace with your EmailJS User ID
+        "TMP5T0OL8X3jkzeBb" // Replace with your EmailJS User ID
       );
 
       Swal.fire({
