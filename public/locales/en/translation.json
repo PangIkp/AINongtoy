@@ -638,6 +638,7 @@
     },
     "orderM": {
         "title": "Order",
+        "description": "Review order status, update payments, and track fulfillment from one admin-facing table.",
         "searchPlaceholder": "Search Order ID",
         "deleteConfirmTitle": "Are you sure?",
         "deleteConfirmText": "You won't be able to revert this!",
@@ -653,6 +654,16 @@
         "saveSuccessText": "The order has been updated successfully.",
         "saveErrorTitle": "Error!",
         "saveErrorText": "Failed to update the order.",
+        "required": "This field is required.",
+        "validation_error": "Please review the form fields and try again.",
+        "quantity_rule": "Quantity must be greater than 0.",
+        "total_rule": "Total must be 0 or greater.",
+        "edit_title": "Edit Order",
+        "edit_description": "Update item name, quantity, total, and key order states from one modal.",
+        "edit_tip_title": "Edit without disturbing the table",
+        "edit_tip_description": "After saving successfully, the order row updates immediately without refreshing the page.",
+        "edit_hint": "Check order and payment status carefully before saving because they affect the next fulfillment step.",
+        "updating": "Saving...",
         "status": {
             "pending": "Pending",
             "processing": "Processing",
@@ -676,6 +687,12 @@
             "status": "Status",
             "actions": "Actions"
         },
+        "stats": {
+            "totalOrders": "Total Orders",
+            "paidOrders": "Paid Orders",
+            "shippedOrders": "Shipped",
+            "refunds": "Refunds"
+        },
         "actions": {
             "save": "Save",
             "cancel": "Cancel",
@@ -686,6 +703,11 @@
     },
     "orderModal": {
         "title": "Order Details",
+        "description": "View customer, product, payment, and shipping information in one place.",
+        "product_section": "Product Details",
+        "product_section_description": "Preview image and production selections for this order.",
+        "payment_shipping_section": "Payment & Shipping",
+        "payment_shipping_description": "Pricing, totals, address details, and payment proof.",
         "orderId": "Order ID",
         "createdAt": "Created At",
         "customer": "Customer",
@@ -698,6 +720,7 @@
         "artToy": "Art Toy",
         "price": "Price",
         "shipping": "Shipping",
+        "quantity": "Quantity",
         "total": "Total",
         "address": "Address",
         "invalidAddress": "Invalid address format",

@@ -155,6 +155,27 @@ textarea {
   background: rgba(9, 18, 36, 0.94) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 0 0 22px 22px !important;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.custom-table .ant-table-pagination.ant-pagination::before,
+.custom-table .ant-table-pagination.ant-pagination::after {
+  display: none;
+}
+
+.custom-table .ant-pagination-options,
+.custom-table .ant-pagination-total-text,
+.custom-table .ant-pagination-jump-prev,
+.custom-table .ant-pagination-jump-next,
+.custom-table .ant-pagination-prev,
+.custom-table .ant-pagination-next,
+.custom-table .ant-pagination-item {
+  margin-inline-end: 0 !important;
 }
 
 .custom-table .ant-table-container,
