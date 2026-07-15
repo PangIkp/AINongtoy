@@ -26,7 +26,7 @@ export default function Sidebar({
   setIsCollapsed: any;
   isCollapsed: any;
 }) {
-  const { t, i18n } = useTranslation(); // ใช้ react-i18next
+  const { t, i18n } = useTranslation();
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
@@ -36,6 +36,29 @@ export default function Sidebar({
   };
 
   useTokenValidation();
+
+  const navItems = [
+    {
+      icon: <Users size={18} />,
+      label: t("Sidebar.Users"),
+      to: "/user-management",
+    },
+    {
+      icon: <Inbox size={18} />,
+      label: t("Sidebar.Orders"),
+      to: "/order-management",
+    },
+    {
+      icon: <Sparkles size={18} />,
+      label: t("Sidebar.Keywords"),
+      to: "/keyword-management",
+    },
+    {
+      icon: <ChartBarBig size={18} />,
+      label: t("Sidebar.Dashboard"),
+      to: "/dashboard",
+    },
+  ];
 
   const handleLogout = async () => {
     await fetch("/api/logout", { method: "POST" });
@@ -63,83 +86,98 @@ export default function Sidebar({
   };
 
   return (
-    <div
-      className={`fixed top-0 z-50 left-0 h-full bg-[#2F2F2F] text-white p-4 pt-6 flex flex-col items-center transition-all duration-300 ease-in-out ${isCollapsed ? "w-16" : "w-[140px]"
-        }`}
+    <aside
+      className={`fixed left-0 top-0 z-50 h-full py-4 text-white transition-all duration-300 ease-in-out ${isCollapsed ? "w-16 px-2" : "w-[184px] px-3"}`}
     >
-      <img
-        src="/Images/AINongtoy/BotLogo.png"
-        alt="AI Design"
-        className="w-10 mb-6"
-      />
-
-      {/* Toggle button to collapse or expand sidebar */}
-      <button
-        onClick={toggleSidebar}
-        className="absolute top-1/2 left-full transform -translate-x-1/2 -translate-y-1/2 bg-[#2F2F2F] p-2 rounded-full text-white hover:bg-[#2F2F2F]"
+      <div
+        className={`relative flex h-full flex-col rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(10,20,42,0.96),rgba(7,13,27,0.94))] shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur transition-all duration-300 ${isCollapsed ? "p-2" : "p-3"}`}
       >
-        {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-      </button>
-      {/* Language Switcher */}
-      <div className="place-items-center place-content-center">
-        <div className="mt-4 w-[55px]">
-          <label htmlFor="language-select" className="hidden">
-            {t("Sidebar.Language")} {/* เพิ่มข้อความแปลสำหรับชื่อภาษา */}
-          </label>
-          <select
-            id="language-select"
-            onChange={(e) => changeLanguage(e.target.value)}
-            className="text-white bg-transparent border-transparent px-2 py-1 rounded hover:bg-[#787678] w-full"
-            defaultValue={i18n.language} // ตั้งค่าภาษาเริ่มต้น
-          >
-            <option className="bg-[#212121]" value="en">EN</option>
-            <option className="bg-[#212121]" value="th">TH</option>
-          </select>
-        </div>
-      </div>
-
-      <nav className="space-y-4 mt-8 text-[14px] flex flex-col justify-between h-full">
-        <div className="flex-grow">
-          <SidebarItem
-            icon={<Users size={20} />}
-            label={t("Sidebar.Users")}
-            to="/user-management"
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<Inbox size={20} />}
-            label={t("Sidebar.Orders")}
-            to="/order-management"
-            isCollapsed={isCollapsed}
-          />
-
-          <SidebarItem
-            icon={<Sparkles size={20} />}
-            label={t("Sidebar.Keywords")} // ใช้การแปล
-            to="/keyword-management"
-            isCollapsed={isCollapsed}
-          />
-
-          <SidebarItem
-            icon={<ChartBarBig size={20} />}
-            label={t("Sidebar.Dashboard")}
-            to="/dashboard"
-            isCollapsed={isCollapsed}
-          />
-        </div>
-
-
-
-        {/* Logout button */}
-        <div
-          onClick={confirmLogout}
-          className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152] text-red-400"
+        <button
+          onClick={toggleSidebar}
+          className={`absolute top-6 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-[#091224] text-[#cfe8ff] transition hover:border-[#67dfff]/40 hover:text-white ${isCollapsed ? "-right-2" : "-right-3"}`}
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          <LogOut size={20} />
-          {!isCollapsed && <span className="text-red-400">{t("Sidebar.Logout")}</span>}
+          {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+        </button>
+
+        <div className={`flex items-center overflow-hidden ${isCollapsed ? "justify-center" : "gap-3 px-1"}`}>
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#67dfff]/20 bg-[#0c1b3d]">
+            <img
+              src="/Images/AINongtoy/BotLogo.png"
+              alt="AI Design"
+              className="h-7 w-7 object-contain"
+            />
+          </div>
+          <div
+            className={`overflow-hidden transition-all duration-200 ${isCollapsed ? "max-w-0 opacity-0" : "max-w-[116px] opacity-100"}`}
+          >
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#7fe7ff]">
+                Admin
+              </p>
+              <p className="mt-1 text-sm font-semibold text-white">NongToy</p>
+            </div>
+          </div>
         </div>
-      </nav>
-    </div>
+
+        {!isCollapsed ? (
+          <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.04] p-1">
+            <div className="grid grid-cols-2 gap-1">
+              {(["en", "th"] as const).map((lang) => {
+                const isActive = i18n.language === lang;
+                return (
+                  <button
+                    key={lang}
+                    type="button"
+                    onClick={() => changeLanguage(lang)}
+                    className={`h-9 rounded-xl px-0 text-xs font-semibold uppercase tracking-[0.18em] ${isActive
+                        ? "border border-[#67dfff]/30 bg-[#0c1b3d] text-[#8becff]"
+                        : "bg-transparent text-white/55 hover:bg-white/[0.05] hover:text-white"
+                      }`}
+                  >
+                    {t(`Sidebar.LanguageSwitcher.${lang.toUpperCase()}`)}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
+
+        <nav className="mt-6 flex flex-1 flex-col gap-2 text-[14px]">
+          {navItems.map((item) => (
+            <SidebarItem
+              key={item.to}
+              icon={item.icon}
+              label={item.label}
+              to={item.to}
+              isCollapsed={isCollapsed}
+            />
+          ))}
+
+          <div className="mt-auto pt-5">
+            <div className="mb-3 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <button
+              type="button"
+              onClick={confirmLogout}
+              title={isCollapsed ? t("Sidebar.Logout") : undefined}
+              className={`group flex w-full items-center overflow-hidden rounded-2xl border py-3 text-left transition ${isCollapsed
+                  ? "justify-center px-0 border-white/8 bg-transparent text-white/62 hover:border-[#ff8b8b]/16 hover:bg-[#2a1116]/42 hover:text-[#ffc2c2]"
+                  : "gap-3 px-3 border-white/8 bg-transparent text-white/62 hover:border-[#ff8b8b]/16 hover:bg-[#2a1116]/42 hover:text-[#ffc2c2]"
+                }`}
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition">
+                <LogOut size={18} />
+              </span>
+              <span
+                className={`overflow-hidden whitespace-nowrap text-sm font-medium transition-all duration-200 ${isCollapsed ? "max-w-0 opacity-0" : "max-w-[112px] opacity-100"}`}
+              >
+                {t("Sidebar.Logout")}
+              </span>
+            </button>
+          </div>
+        </nav>
+      </div>
+    </aside>
   );
 }
 
@@ -164,12 +202,23 @@ function SidebarItem({
   return (
     <Link
       href={to}
-      className={`flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-[#525152] ${isActive ? "bg-[#787678]" : ""
+      title={isCollapsed ? label : undefined}
+      className={`group flex items-center overflow-hidden rounded-2xl py-3 transition ${isCollapsed ? "justify-center px-0" : "gap-3 px-3"} ${isActive
+          ? "border border-[#67dfff]/20 bg-[linear-gradient(135deg,rgba(16,36,72,0.98),rgba(11,24,47,0.98))] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+          : "border border-transparent text-white/68 hover:border-white/8 hover:bg-white/[0.05] hover:text-white"
         }`}
       onClick={onClick}
     >
-      {icon}
-      {!isCollapsed && <span className={labelClass}>{label}</span>}
+      <span
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition ${isActive ? "bg-[#0f2446] text-[#89ebff]" : "text-current group-hover:bg-white/[0.05]"}`}
+      >
+        {icon}
+      </span>
+      <span
+        className={`truncate whitespace-nowrap text-sm font-medium transition-all duration-200 ${labelClass} ${isCollapsed ? "max-w-0 opacity-0" : "max-w-[124px] opacity-100"}`}
+      >
+        {label}
+      </span>
     </Link>
   );
 }

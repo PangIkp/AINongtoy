@@ -297,7 +297,7 @@ export default function UserManagement() {
     <div className="h-screen overflow-hidden bg-[radial-gradient(circle_at_top,rgba(34,49,100,0.35),rgba(20,20,20,1)_32%,rgba(12,12,12,1)_100%)] text-white">
       <Sidebar setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
       <div
-        className={`h-screen overflow-hidden transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[140px]"}`}
+        className={`h-screen overflow-hidden transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[184px]"}`}
       >
         {isLoading ? (
           <div className="flex h-full items-center justify-center px-6">
@@ -367,7 +367,6 @@ export default function UserManagement() {
                   pagination={{ pageSize: 10 }}
                   className="custom-table h-full"
                   rowClassName={() => "custom-hover-row"}
-                  tableLayout="fixed"
                   scroll={{ x: "max-content", y: tableScrollY }}
                 />
               </div>

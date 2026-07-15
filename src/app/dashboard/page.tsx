@@ -197,7 +197,7 @@ export default function Dashboard() {
       <Sidebar setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
 
       <div
-        className={`h-screen overflow-hidden transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[155px]"}`}
+        className={`h-screen overflow-hidden transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[184px]"}`}
       >
         {isLoading ? (
           <div className="flex h-full items-center justify-center px-6">

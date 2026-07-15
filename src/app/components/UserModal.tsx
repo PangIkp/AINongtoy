@@ -64,7 +64,7 @@ const UserModal: React.FC<UserModalProps> = ({ isVisible, user, onClose }) => {
       open={isVisible}
       onCancel={onClose}
       footer={null}
-      width={920}
+      width="min(920px, calc(100vw - 32px))"
       centered
       destroyOnClose
       closeIcon={
@@ -138,7 +138,7 @@ const UserModal: React.FC<UserModalProps> = ({ isVisible, user, onClose }) => {
           </div>
         </div>
 
-        <div className="relative max-h-[70vh] overflow-y-auto px-6 py-6 sm:px-8">
+        <div className="relative max-h-[72vh] overflow-y-auto overflow-x-hidden px-6 py-6 sm:px-8">
           <div className="grid gap-4 md:grid-cols-2">
             {infoItems.map(({ label, value, icon: Icon }) => (
               <div

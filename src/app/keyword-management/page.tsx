@@ -80,6 +80,15 @@ export default function KeywordManagement() {
       if (token) fetchAdminKeywords(token);
       return;
     }
+    const hasCreatedByName =
+      createdKeyword?.createdBy &&
+      typeof createdKeyword.createdBy === "object" &&
+      (createdKeyword.createdBy.firstName || createdKeyword.createdBy.lastName);
+
+    if (!hasCreatedByName) {
+      if (token) fetchAdminKeywords(token);
+      return;
+    }
     setKeywords((prev) => [createdKeyword, ...prev]);
   };
 
@@ -181,8 +190,12 @@ export default function KeywordManagement() {
       dataIndex: "createdBy",
       key: "createdBy",
       width: 200,
-      render: (createdBy: any) =>
-        createdBy ? `${createdBy.firstName} ${createdBy.lastName}` : "-",
+      render: (createdBy: any) => {
+        const fullName = [createdBy?.firstName, createdBy?.lastName]
+          .filter(Boolean)
+          .join(" ");
+        return fullName || "-";
+      },
       sorter: (a, b) =>
         String(a?.createdBy?.firstName ?? "").localeCompare(
           String(b?.createdBy?.firstName ?? "")
@@ -280,7 +293,7 @@ export default function KeywordManagement() {
     <div className="h-screen overflow-hidden bg-[radial-gradient(circle_at_top,rgba(34,49,100,0.35),rgba(20,20,20,1)_32%,rgba(12,12,12,1)_100%)] text-white">
       <Sidebar setIsCollapsed={setIsCollapsed} isCollapsed={isCollapsed} />
       <div
-        className={`h-screen overflow-hidden transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[140px]"}`}
+        className={`h-screen overflow-hidden transition-all duration-300 ${isCollapsed ? "ml-16" : "ml-[184px]"}`}
       >
         {isLoading ? (
           <div className="flex h-full items-center justify-center px-6">

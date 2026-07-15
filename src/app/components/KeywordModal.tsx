@@ -23,6 +23,10 @@ const KeywordModal: React.FC<KeywordModalProps> = ({
 
   if (!keyword) return null;
 
+  const createdByName = [keyword?.createdBy?.firstName, keyword?.createdBy?.lastName]
+    .filter(Boolean)
+    .join(" ");
+
   const infoItems = [
     {
       label: t("keywordManagement.columns.createdAt"),
@@ -40,9 +44,7 @@ const KeywordModal: React.FC<KeywordModalProps> = ({
     },
     {
       label: t("keywordManagement.columns.createdBy"),
-      value: keyword.createdBy
-        ? `${keyword.createdBy.firstName} ${keyword.createdBy.lastName}`
-        : "-",
+      value: createdByName || "-",
       icon: User2,
     },
     {

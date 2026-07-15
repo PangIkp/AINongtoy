@@ -156,8 +156,9 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
   const errorClassName = "mt-2 min-h-5 text-xs text-[#ffb4b4]";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#020817]/80 p-4 backdrop-blur-sm">
-      <div className="relative w-full max-w-4xl overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(155deg,rgba(10,21,46,0.98),rgba(5,10,22,0.96))] shadow-[0_32px_120px_rgba(0,0,0,0.45)]">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#020817]/80 p-3 backdrop-blur-sm sm:p-4">
+      <div className="flex min-h-full items-center justify-center">
+        <div className="relative w-full max-w-4xl overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(155deg,rgba(10,21,46,0.98),rgba(5,10,22,0.96))] shadow-[0_32px_120px_rgba(0,0,0,0.45)]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(103,223,255,0.2),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.18),transparent_30%)]" />
 
         <button
@@ -169,8 +170,8 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
           <X size={18} />
         </button>
 
-        <div className="relative grid lg:grid-cols-[0.9fr,1.1fr]">
-          <div className="border-b border-white/10 p-7 lg:border-b-0 lg:border-r">
+          <div className="relative grid max-h-[92vh] overflow-hidden lg:grid-cols-[0.9fr,1.1fr]">
+            <div className="overflow-y-auto border-b border-white/10 p-7 lg:border-b-0 lg:border-r">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#67dfff]/20 bg-[#0b1b3e]/70 px-4 py-2 text-xs font-medium uppercase tracking-[0.26em] text-[#88ebff]">
               <ShieldCheck size={14} />
               Admin Access
@@ -203,10 +204,10 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
               <CircleAlert size={18} className="mt-0.5 shrink-0" />
               <p>{t("userM.edit_hint")}</p>
             </div>
-          </div>
+            </div>
 
-          <form onSubmit={handleSubmit} className="relative p-7">
-            <div className="grid gap-5 sm:grid-cols-2">
+            <form onSubmit={handleSubmit} className="relative overflow-y-auto p-7">
+              <div className="grid gap-5 sm:grid-cols-2">
               <div>
                 <label htmlFor="firstName" className="text-sm font-medium text-white/80">
                   {t("userM.first_name")}
@@ -323,26 +324,27 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
                 </select>
                 <p className={errorClassName}> </p>
               </div>
-            </div>
+              </div>
 
-            <div className="mt-4 flex flex-col-reverse gap-3 border-t border-white/10 pt-6 sm:flex-row sm:justify-end">
-              <button
-                type="button"
-                onClick={onClose}
-                className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/12 bg-white/[0.03] px-5 text-sm font-medium text-white/60 transition hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
-              >
-                {t("userM.cancel")}
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-[#67dfff]/40 bg-[linear-gradient(135deg,#0CACF3,#67dfff)] px-6 text-sm font-semibold text-[#03111f] shadow-[0_14px_32px_rgba(12,172,243,0.28)] transition hover:-translate-y-0.5 hover:brightness-105 disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : null}
-                {isSubmitting ? t("userM.updating") : t("userM.save")}
-              </button>
-            </div>
-          </form>
+              <div className="mt-4 flex flex-col-reverse gap-3 border-t border-white/10 pt-6 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/12 bg-white/[0.03] px-5 text-sm font-medium text-white/60 transition hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
+                >
+                  {t("userM.cancel")}
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-[#67dfff]/40 bg-[linear-gradient(135deg,#0CACF3,#67dfff)] px-6 text-sm font-semibold text-[#03111f] shadow-[0_14px_32px_rgba(12,172,243,0.28)] transition hover:-translate-y-0.5 hover:brightness-105 disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : null}
+                  {isSubmitting ? t("userM.updating") : t("userM.save")}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
