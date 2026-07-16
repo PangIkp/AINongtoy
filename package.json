@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
@@ -30,7 +30,7 @@
     "less-loader": "^12.2.0",
     "lucide-react": "^0.475.0",
     "mongoose": "^8.11.0",
-    "next": "^15.2.0-canary.64",
+    "next": "^16.2.10",
     "openai": "^4.85.1",
     "promptpay-qr": "^0.5.0",
     "qrcode.react": "^4.2.0",
@@ -50,12 +50,11 @@
     "@eslint/eslintrc": "^3",
     "@types/crypto-js": "^4.2.2",
     "@types/js-cookie": "^3.0.6",
-    "@types/next": "^9.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.1.6",
+    "eslint-config-next": "^16.2.10",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
