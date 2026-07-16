@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 export const dynamic = "force-dynamic";
-import React, { useState, useEffect, useRef } from "react";
+
+import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import Navbar from "../components/Navbar";
 import { login, loginWithGoogle, loginWithFacebook } from "@/api/authAPI";
-import PasswordInput from "../components/PasswordInput";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
-import dotenv from "dotenv";
-import { Loader } from "lucide-react"; // เพิ่มการ import Loader
-dotenv.config();
+import { Loader, LockKeyhole, Mail } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
 import {
@@ -20,12 +18,10 @@ import {
   FacebookAuthProvider,
   getRedirectResult,
   GoogleAuthProvider,
-  fetchSignInMethodsForEmail,
-  linkWithCredential,
 } from "firebase/auth";
 import { getFirebaseApp, hasFirebaseConfig } from "@/utils/firebase";
-import { FcGoogle } from "react-icons/fc"; // เพิ่มการ import ไอคอน Google
-import { FaFacebook } from "react-icons/fa"; // เพิ่มการ import ไอคอน Facebook
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebookF } from "react-icons/fa";
 
 const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY || "";
 const firebaseReady = hasFirebaseConfig();
@@ -44,40 +40,36 @@ const getClientAuth = () => {
 };
 
 const Login = () => {
-  const [isClient, setIsClient] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // เพิ่ม state สำหรับการโหลด
+  const { t } = useTranslation();
+  const auth = getClientAuth();
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState<string | null>(null);
-  const [firstName, setFirstName] = useState<string | null>(null);
-  const [lastName, setLastName] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
-  const { t } = useTranslation(); // ใช้ useTranslation
-  const auth = getClientAuth();
+  const [googleUser, setGoogleUser] = useState<any>(null);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const aboutRef = useRef<HTMLDivElement>(null!);
+  const partnerRef = useRef<HTMLDivElement>(null!);
+  const contactRef = useRef<HTMLDivElement>(null!);
+
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsLoading(false); // ปิดการโหลดหลังจาก 0ms
+      setIsLoading(false);
     }, 0);
 
-    return () => clearTimeout(timer); // ล้าง timer เมื่อ component ถูก unmount
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    const storedFirstName = localStorage.getItem("firstname");
-    const storedLastName = localStorage.getItem("lastname");
-
-    if (storedUsername) {
-      setUser(storedUsername);
-    }
-    if (storedFirstName) {
-      setFirstName(storedFirstName);
-    }
-    if (storedLastName) {
-      setLastName(storedLastName);
-    }
-
     const encryptedUsername = Cookies.get("username");
     const encryptedPassword = Cookies.get("password");
 
@@ -99,8 +91,33 @@ const Login = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (!auth) return;
+
+    const checkRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+
+        if (!result) return;
+
+        const currentUser = result.user;
+        setGoogleUser({
+          uid: currentUser.uid,
+          email: currentUser.email,
+          name: currentUser.displayName,
+          photo: currentUser.photoURL,
+        });
+      } catch (error) {
+        console.error("Error handling redirect result:", error);
+      }
+    };
+
+    checkRedirectResult();
+  }, [auth]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!username || !password) {
       Swal.fire({
         icon: "warning",
@@ -110,11 +127,10 @@ const Login = () => {
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       const data = await login(username, password);
-      if (data.data.role === "admin") {
-        window.location.href = "/user-management"; // เปลี่ยนเส้นทางไปที่หน้า user-management
-      } else window.location.href = "/"; // เปลี่ยนเส้นทางไปที่หน้า home
 
       if (rememberMe) {
         const encryptedUsername = CryptoJS.AES.encrypt(
@@ -132,32 +148,21 @@ const Login = () => {
         Cookies.remove("username");
         Cookies.remove("password");
       }
+
+      window.location.href = data.data.role === "admin" ? "/user-management" : "/";
     } catch (error: any) {
-      // ใช้ t เพื่อแปลข้อความ error.message
-      const translatedMessage = t(
-        `login.errors.${error.message}`,
-        error.message
-      );
+      const translatedMessage = t(`login.errors.${error.message}`, error.message);
 
       Swal.fire({
         icon: "error",
-        title: String(t("login.errorTitle")), // แปลงเป็น string
-        text: String(translatedMessage), // แปลงเป็น string
+        title: String(t("login.errorTitle")),
+        text: String(translatedMessage),
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const aboutRef = useRef<HTMLDivElement>(null!);
-  const partnerRef = useRef<HTMLDivElement>(null!);
-  const contactRef = useRef<HTMLDivElement>(null!);
-
-  const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
-    if (ref.current) {
-      ref.current.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  // Google Login Handler
   const handleGoogleLogin = async () => {
     if (!auth) {
       Swal.fire({
@@ -169,36 +174,27 @@ const Login = () => {
     }
 
     try {
-      console.log("Starting Google Login");
       const result = await signInWithPopup(auth, new GoogleAuthProvider());
-
-      const user = result.user;
-      console.log("Login successful:", user);
+      const currentUser = result.user;
 
       setGoogleUser({
-        uid: user.uid,
-        email: user.email,
-        name: user.displayName,
-        photo: user.photoURL,
+        uid: currentUser.uid,
+        email: currentUser.email,
+        name: currentUser.displayName,
+        photo: currentUser.photoURL,
       });
 
-      // After successful login, call loginWithGoogle to register or save data to the database
-      const googleToken = await user.getIdToken(); // Get Google ID token
-
-      // Call API to save data in the database
-      if (user.email) {
-        const displayName = user.displayName || "";
-        const response = await loginWithGoogle({
-          email: user.email,
+      if (currentUser.email) {
+        const displayName = currentUser.displayName || "";
+        await loginWithGoogle({
+          email: currentUser.email,
           firstName: displayName.split(" ")[0] || "",
           lastName: displayName.split(" ")[1] || "",
         });
-        console.log("Google login data saved:", response);
       } else {
         throw new Error("User email is null");
       }
 
-      // After saving the data, you can redirect to another page
       window.location.href = "/";
     } catch (err) {
       console.error("Login failed:", err);
@@ -210,42 +206,6 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    if (!auth) {
-      return;
-    }
-
-    const checkRedirectResult = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        console.log("Google Redirect Result:", result);
-
-        if (result) {
-          const user = result.user;
-          console.log("Google Login Successful");
-          console.log("UID:", user.uid);
-          console.log("Email:", user.email);
-          console.log("Display Name:", user.displayName);
-          setGoogleUser({
-            uid: user.uid,
-            email: user.email,
-            name: user.displayName,
-            photo: user.photoURL,
-          });
-        } else {
-          console.log("ℹNo redirect result found.");
-        }
-      } catch (error) {
-        console.error("Error handling redirect result:", error);
-      }
-    };
-
-    checkRedirectResult();
-  }, [auth]); 
-
-  const [googleUser, setGoogleUser] = useState<any>(null);
-
-  // Facebook Login Handler
   const handleFacebookLogin = async () => {
     if (!auth) {
       Swal.fire({
@@ -257,36 +217,21 @@ const Login = () => {
     }
 
     try {
-      console.log("🔐 Starting Facebook Login");
-  
-      // Perform login via Facebook
       const provider = new FacebookAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      console.log("Login successful:", user);
-  
-      // Handle user data (can be customized as needed)
-      const facebookUser = {
-        uid: user.uid,
-        email: user.email,
-        name: user.displayName,
-        photo: user.photoURL,
-      };
-  
-      // Send user data to the API for saving or registration
-      if (user.email) {
-        const displayName = user.displayName || "";
-        const response = await loginWithFacebook({
-          email: user.email,
+      const currentUser = result.user;
+
+      if (currentUser.email) {
+        const displayName = currentUser.displayName || "";
+        await loginWithFacebook({
+          email: currentUser.email,
           firstName: displayName.split(" ")[0] || "",
           lastName: displayName.split(" ")[1] || "",
         });
-        console.log("Facebook login data saved:", response);
       } else {
         throw new Error("User email is null");
       }
-  
-      // After successfully saving the data, redirect to another page
+
       window.location.href = "/";
     } catch (err) {
       console.error("Login failed:", err);
@@ -297,123 +242,186 @@ const Login = () => {
       });
     }
   };
-  
-  
+
+  const inputClassName =
+    "mt-2 h-12 w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 text-sm text-white outline-none transition placeholder:text-white/28 focus:border-[#67dfff]/45 focus:bg-[#102247]";
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#050816] text-white">
       <Navbar
         scrollToSection={scrollToSection}
         aboutRef={aboutRef}
         partnerRef={partnerRef}
         contactRef={contactRef}
       />
-      <div className="w-full h-[90vh] mt-[5rem]">
-        <div className="relative w-full h-full flex items-center justify-center">
+
+      <main className="relative overflow-hidden pt-24">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(36,56,122,0.34),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(12,172,243,0.12),transparent_28%)]" />
+
+        <div className="relative mx-auto flex min-h-[calc(100svh-6rem)] max-w-7xl items-center px-4 py-6 sm:px-6 lg:px-8">
           {isLoading ? (
-            <div className="flex justify-center items-center">
+            <div className="flex w-full justify-center py-24">
               <Loader className="animate-spin text-[#0CACF3]" size={48} />
             </div>
           ) : (
-            <>
-              <img
-                src="/Images/AINongtoy/mainbg.png"
-                alt=""
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute max-w-[375px] w-full p-4">
-                <div>
-                  <h1 className="text-4xl font-semibold mb-3">
-                    {t("login.welcomeBack")}
-                  </h1>
-                  <p className="font-extralight">{t("login.enterDetails")}</p>
-                </div>
-                <div>
-                  <form
-                    onSubmit={handleSubmit}
-                    className="flex flex-col justify-between gap-4 w-full h-[70%] pt-5"
-                  >
-                    <label className="hidden" htmlFor="username">
-                      <p>{t("login.username")}</p>
-                    </label>
-                    <input
-                      className="block"
-                      type="text"
-                      id="username"
-                      placeholder={t("login.username")}
-                      maxLength={40}
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                    />
-
-                    <PasswordInput
-                      id="password"
-                      name="password"
-                      placeholder={t("login.password")}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-
-                    <div className="flex justify-between text-[13px]">
-                      <label
-                        htmlFor="remember"
-                        className="flex items-center gap-2 cursor-pointer"
-                      >
-                        <div>
-                          <input
-                            className="scale-125 accent-black focus:ring-black"
-                            type="checkbox"
-                            id="remember"
-                            checked={rememberMe}
-                            onChange={(e) => setRememberMe(e.target.checked)}
-                          />
-                        </div>
-                        {t("login.rememberMe")}
-                      </label>
-                      <a href="/forgotpassword" className="text-[#0AACF0]">
-                        {t("login.forgotPassword")}
-                      </a>
-                    </div>
-                    <button type="submit" className="h-[40px]">
-                      {t("login.loginButton")}
-                    </button>
-                    <div className="flex justify-center text-[13px]">
-                      <p>
-                        {t("login.notRegistered")}{" "}
-                        <a href="/signup" className="text-[#0AACF0] underline">
-                          {t("login.signUp")}
-                        </a>
-                      </p>
-                    </div>
-
-                    <div className="flex justify-between gap-2 text-white">
-                      <button
-                        type="button"
-                        onClick={handleGoogleLogin}
-                        disabled={!firebaseReady}
-                        className="h-[40px] bg-transparent border border-gray-400  hover:bg-gray-800 flex items-center justify-center gap-2 w-1/2 disabled:opacity-50"
-                      >
-                        <FcGoogle size={20} />
-                        Google
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={handleFacebookLogin}
-                        disabled={!firebaseReady}
-                        className="h-[40px] bg-transparent border border-gray-400 hover:bg-blue-800 flex items-center justify-center gap-2 w-1/2 disabled:opacity-50"
-                      >
-                        <FaFacebook size={20} />
-                        Facebook
-                      </button>
-                    </div>
-                  </form>
-                </div>
+            <section className="mx-auto w-full max-w-[560px] rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(10,18,38,0.96),rgba(7,12,25,0.98))] p-6 shadow-[0_30px_90px_rgba(0,0,0,0.42)] backdrop-blur sm:p-8">
+              <div className="flex items-center justify-between gap-4">
+                <h1 className="text-4xl font-semibold tracking-tight text-white">
+                  {t("login.welcomeBack")}
+                </h1>
+                <Link
+                  href="/signup"
+                  className="hidden h-11 items-center rounded-2xl border border-white/10 bg-white/[0.03] px-4 text-sm font-medium text-white/70 transition hover:border-white/20 hover:bg-white/[0.06] hover:text-white sm:inline-flex"
+                >
+                  {t("login.signUp")}
+                </Link>
               </div>
-            </>
+
+              <form onSubmit={handleSubmit} className="mt-8">
+                  <div>
+                    <label
+                      htmlFor="username"
+                      className="text-sm font-medium text-white/80"
+                    >
+                      {t("login.username")}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="username"
+                        placeholder={t("login.username")}
+                        maxLength={40}
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        className={inputClassName}
+                      />
+                      <Mail
+                        size={16}
+                        className="pointer-events-none absolute right-4 top-1/2 mt-1 -translate-y-1/2 text-white/30"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-5">
+                    <label
+                      htmlFor="password"
+                      className="text-sm font-medium text-white/80"
+                    >
+                      {t("login.password")}
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder={t("login.password")}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className={inputClassName}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        className="absolute right-4 top-1/2 mt-1 -translate-y-1/2 bg-transparent p-0 text-xs font-semibold uppercase tracking-[0.18em] text-white/45 hover:text-[#88ebff]"
+                      >
+                        {showPassword ? "Hide" : "Show"}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <label
+                      htmlFor="remember"
+                      className="flex cursor-pointer items-center gap-3 text-sm text-white/72"
+                    >
+                      <input
+                        className="h-4 w-4 rounded border-white/20 bg-transparent accent-[#0CACF3]"
+                        type="checkbox"
+                        id="remember"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                      />
+                      {t("login.rememberMe")}
+                    </label>
+
+                    <Link
+                      href="/forgotpassword"
+                      className="text-sm font-medium text-[#88ebff] transition hover:text-white"
+                    >
+                      {t("login.forgotPassword")}
+                    </Link>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#67dfff]/40 bg-[linear-gradient(135deg,#0CACF3,#67dfff)] px-6 text-sm font-semibold text-[#03111f] shadow-[0_14px_32px_rgba(12,172,243,0.28)] transition hover:-translate-y-0.5 hover:brightness-105 disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isSubmitting ? (
+                      <Loader size={18} className="animate-spin" />
+                    ) : (
+                      <LockKeyhole size={18} />
+                    )}
+                    {t("login.loginButton")}
+                  </button>
+
+                <div className="mt-6 pt-6 border-t border-white/10">
+                  <div className="flex items-center gap-3">
+                    <div className="h-px flex-1 bg-white/10" />
+                    <span className="text-xs font-semibold uppercase tracking-[0.22em] text-white/35">
+                      {t("login.socialDivider")}
+                    </span>
+                    <div className="h-px flex-1 bg-white/10" />
+                  </div>
+
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={handleGoogleLogin}
+                      disabled={!firebaseReady}
+                      className="inline-flex h-12 items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 text-sm font-medium text-white/78 transition hover:border-white/20 hover:bg-white/[0.06] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <FcGoogle size={20} />
+                      Google
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleFacebookLogin}
+                      disabled={!firebaseReady}
+                      className="inline-flex h-12 items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 text-sm font-medium text-white/78 transition hover:border-[#7fb4ff]/30 hover:bg-[#102247] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <FaFacebookF size={18} className="text-[#7fb4ff]" />
+                      Facebook
+                    </button>
+                  </div>
+
+                  {!firebaseReady ? (
+                    <p className="mt-4 text-sm text-[#f6c676]">
+                      {t("login.socialDisabled")}
+                    </p>
+                  ) : null}
+                </div>
+
+                <p className="mt-5 text-center text-sm text-white/58">
+                  {t("login.notRegistered")}{" "}
+                  <Link
+                    href="/signup"
+                    className="font-medium text-[#88ebff] transition hover:text-white"
+                  >
+                    {t("login.signUp")}
+                  </Link>
+                </p>
+
+                {googleUser?.email ? (
+                  <p className="mt-4 text-center text-xs text-white/35">
+                    {googleUser.email}
+                  </p>
+                ) : null}
+              </form>
+            </section>
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 };
