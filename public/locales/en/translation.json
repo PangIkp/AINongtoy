@@ -1,0 +1,947 @@
+{
+    "home": {
+        "welcome": "Create Unique Art Toys",
+        "description": "Design, customize, and create Art Toys easily with AI."
+    },
+    "navbar": {
+        "createArtToys": "Create Art Toys",
+        "aboutUs": "About Us",
+        "partners": "Partners",
+        "contact": "Contact",
+        "login": "Login",
+        "myProfile": "My Profile"
+    },
+    "aboutUs": {
+        "title": "ABOUT US",
+        "whatIsNongToy": "What is Nong Toy?",
+        "description": "Nong Toy is a platform that brings AI to revolutionize the Art Toy industry, making designing 3D models easy. Limitless creativity Just enter your idea or choose a template, AI can help you design it right away."
+    },
+    "services": {
+        "title": "SERVICES",
+        "weOffer": "Services We Offer",
+        "description": "Turn your ideas into tangible Art Toys. with comprehensive services From design to actual production.",
+        "aiDesignAlt": "AI Design",
+        "aiDesignTitle": "AI-Powered Design",
+        "aiDesignDescription": "AI helps create unique art toys.",
+        "modelPreviewAlt": "3D Model Preview",
+        "modelPreviewTitle": "3D Model Preview",
+        "modelPreviewDescription": "Rotate, zoom, scale in real time.",
+        "realTimeCalcAlt": "Real-Time Calculation",
+        "realTimeCalcTitle": "Real-Time Calculation",
+        "realTimeCalcDescription": "Price depends on size and materials.",
+        "downloadAlt": "Download images",
+        "downloadTitle": "Download images",
+        "downloadDescription": "Export or download image files"
+    },
+    "partner": {
+        "title": "PARTNER",
+        "companyName": "KTP Corporation (Thailand) Co.,Ltd.",
+        "description1": "We work with leading 3D design and manufacturing partners to bring you high quality Art Toys.",
+        "description2": "KTP Corporation is Thailand’s leading Art Toy, Figure, and Character manufacturer with over 35 years of experience and 30 million products produced.",
+        "description3": "With a monthly capacity of 120,000 pieces, we collaborate with top brands worldwide to bring Character creations to life. Backed by expert craftsmanship and industry expertise, we are committed to turning your ideas into reality.",
+        "readMore": "Read More",
+        "imageAlt": "partner"
+    },
+    "contact": {
+        "title": "CONTACT US",
+        "subtitle": "We will get back to you asap!"
+    },
+    "form": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "phone": "Phone Number",
+        "submit": "Submit",
+        "success": "Form submitted successfully!"
+    },
+    "validation": {
+        "firstName": "First Name: only letters",
+        "lastName": "Last Name: only letters",
+        "email": "Email: Invalid.",
+        "phone": "Phone: 10 digits, start with 0."
+    },
+    "footer": {
+        "address": "21 Ladprao Street Bangkok, Thailand",
+        "phone": "090-846-6758",
+        "email": "NongToy@gmail.com",
+        "aboutTitle": "About the company",
+        "aboutDescription": "We use AI to revolutionize Art Toy design, making 3D modeling easier and faster. Our system supports real-world production, turning your ideas into tangible creations. Transform your imagination into reality with cutting-edge technology!",
+        "copyright": "© 2025 NongToy. All rights reserved."
+    },
+    "arttoy": {
+        "headerLine1": "Create Unique Art Toys – Turn your ideas",
+        "headerLine2": "ideas into 3D reality with AI",
+        "loadingImages": "Loading image...",
+        "singleModeHint": "Single prompt mode: one prompt creates one image for faster preview and clearer iteration.",
+        "generatorTitle": "Single Prompt Generator",
+        "emptyState": "Enter one prompt and generate your art toy image.",
+        "rateLimitMessage": "The image service is rate-limited right now. Please try again.",
+        "retry": "Try again",
+        "promptLabel": "Prompt",
+        "imageReadyHint": "Click the image to continue material and production setup."
+    },
+    "filters": {
+        "title": "Filters",
+        "characterStyle": "Character Style",
+        "color": "Color",
+        "characterStyles": {
+            "Sci-Fi": "Sci-Fi",
+            "Fantasy": "Fantasy",
+            "Cute": "Cute",
+            "Horror": "Horror",
+            "Cyberpunk": "Cyberpunk",
+            "Steampunk": "Steampunk",
+            "Animal": "Animal"
+        },
+        "colors": {
+            "Pastel": "Pastel",
+            "Monochrome": "Monochrome",
+            "Dark & Gothic": "Dark & Gothic",
+            "Vintage": "Vintage",
+            "Earth tones": "Earth tones",
+            "Rainbow color": "Rainbow color",
+            "Warm & Cozy": "Warm & Cozy"
+        }
+    },
+    "Search": {
+        "arttoyNameLabel": "Art toy Name",
+        "arttoyNamePlaceholder": "Enter art toy name",
+        "keywordsLabel": "Keywords",
+        "promptLabel": "Prompt",
+        "keywordsPlaceholder": "animal, blue and unique",
+        "searchButton": "Search"
+    },
+    "myProfile": "My Profile",
+    "editProfile": {
+        "information": {
+            "title": "Information",
+            "username": "Username",
+            "firstName": "First Name",
+            "lastName": "Last Name",
+            "email": "Email address",
+            "phone": "Phone Number",
+            "address": "Address",
+            "save": "Save",
+            "cancel": "Cancel",
+            "edit": "Edit",
+            "delete": "Delete"
+        },
+        "address": {
+            "title": "Address",
+            "edit": "Edit",
+            "cancel": "Cancel",
+            "save": "Save",
+            "form": "Address Form",
+            "delete": "Delete",
+            "add": "Add Address",
+            "confirmDeleteTitle": "Are you sure?",
+            "confirmDeleteText": "Do you really want to delete this address?",
+            "confirmDeleteConfirm": "Yes, delete it!",
+            "deleteSuccessTitle": "Success",
+            "deleteSuccessText": "Address deleted successfully!",
+            "deleteErrorTitle": "Error",
+            "deleteErrorText": "Failed to delete address.",
+            "warningTitle": "Warning",
+            "warningText": "Please fill out all address fields completely.",
+            "updateSuccessTitle": "Success",
+            "updateSuccessText": "Addresses updated successfully!",
+            "updateErrorTitle": "Error",
+            "updateErrorText": "Failed to update addresses.",
+            "provincePlaceholder": "Province",
+            "districtPlaceholder": "District",
+            "subdistrictPlaceholder": "Subdistrict",
+            "postalCodePlaceholder": "Postal Code",
+            "detailPlaceholder": "Address Detail such as House number, Apartment name, Condo, Village name"
+        },
+        "validation": {
+            "name": "Alphabetic, 4-40 chars.",
+            "phone": "Phone: 10 digits, start with 0, second digit not 0.",
+            "title": "Validation Error",
+            "correctFields": "Please correct the highlighted fields."
+        },
+        "success": {
+            "title": "Success",
+            "profileUpdated": "Profile updated successfully!"
+        },
+        "error": {
+            "title": "Error",
+            "profileUpdateFailed": "Failed to update profile.",
+            "userIdMissing": "User ID is missing.",
+            "fetchUserDataFailed": "Failed to fetch user data."
+        }
+    },
+    "profile": {
+        "alt": "profile",
+        "editProfile": "Edit Profile",
+        "logout": "Log out",
+        "followMessage": "You have {{count}} models to follow",
+        "noFollowMessage": "You have no models to follow",
+        "favorite": "Favorite",
+        "artToyConfig": "Config",
+        "order": "Order",
+        "configMessage": "You have configured {{count}} models.",
+        "noConfigMessage": "You have not configured any models yet.",
+        "orderMessage": "You have {{count}} orders.",
+        "noOrderMessage": "You have no orders."
+    },
+    "Swal": {
+        "logout": {
+            "title": "Log out",
+            "text": "Are you sure you want to log out?",
+            "confirmButton": "Confirm",
+            "cancelButton": "Cancel"
+        },
+        "configCard": {
+            "error": {
+                "title": "Error",
+                "notLoggedIn": "You are not logged in.",
+                "fetchFailed": "Failed to fetch ArtToys.",
+                "invalidData": "Invalid ArtToy data."
+            },
+            "success": {
+                "title": "Success",
+                "deleted": "The item has been successfully deleted."
+            }
+        },
+        "config": {
+            "error": {
+                "title": "Error",
+                "notLoggedIn": "You are not logged in.",
+                "fetchFailed": "Failed to fetch Art Toy data.",
+                "defaultMessage": "An unexpected error occurred."
+            },
+            "success": {
+                "title": "Success",
+                "saved": "Your Art Toy has been saved.",
+                "ok": "OK"
+            }
+        }
+    },
+    "artToy": {
+        "alt": "Art Toy",
+        "names": {
+            "Unnamed Art Toy": "Unnamed Art Toy"
+        },
+        "prompts": {
+            "customizeName": "Customize your art toy's name"
+        },
+        "size": "Size",
+        "painting": "Painting",
+        "material": "Material",
+        "assembly": "Assembly",
+        "quantity": "Quantity",
+        "noItems": "There are no recorded items.",
+        "totalPrice": "Total price",
+        "sizeOptions": {
+            "Small": "Small",
+            "Medium": "Medium",
+            "Large": "Large"
+        },
+        "materialOptions": {
+            "PLA": "PLA",
+            "Resin": "Resin",
+            "PVC": "PVC",
+            "Metal": "Metal"
+        },
+        "paintingOptions": {
+            "Hand-painting": "Hand-painting",
+            "Airbrush": "Airbrush",
+            "Pad Printing": "Pad Printing"
+        },
+        "assemblyOptions": {
+            "Fixed Pose": "Fixed Pose",
+            "Articulated Joints": "Articulated Joints",
+            "Magnet Joints": "Magnet Joints"
+        },
+        "button": {
+            "edit": "Edit",
+            "save": "Save",
+            "checkout": "Checkout"
+        }
+    },
+    "order": {
+        "status": {
+            "Pending": "Pending",
+            "Processing": "Processing",
+            "Shipped": "Shipped",
+            "Delivered": "Delivered"
+        },
+        "paymentMethod": {
+            "title": "Payment Method",
+            "creditCard": "Credit Card",
+            "bankTransfer": "Bank Transfer",
+            "mobileBanking": "Mobile Banking",
+            "cashOnDelivery": "Cash on Delivery",
+            "paypal": "PayPal",
+            "crypto": "Cryptocurrency",
+            "giftCard": "Gift Card",
+            "applePay": "Apple Pay"
+        },
+        "size": "Size",
+        "quantity": "Quantity",
+        "noOrders": "No orders found.",
+        "subtotal": "Subtotal",
+        "shipping": "Shipping",
+        "totalPrice": "Total price",
+        "address": "Shipping Address",
+        "phoneNumber": "Phone Number",
+        "orderPlacedTime": "Order Placed Time",
+        "shippingTime": "Shipping Time",
+        "deliveredTime": "Delivered Time",
+        "unknownItem": "Unknown Item",
+        "standard": "Standard",
+        "plastic": "Plastic",
+        "noPainting": "No Painting",
+        "preAssembled": "Pre-Assembled",
+        "notProvided": "Not provided",
+        "noPaymentProof": "No payment proof uploaded"
+    },
+    "orderDetail": {
+        "loading": "Loading order details...",
+        "title": "Order Details",
+        "orderNumber": "Order Number",
+        "trackingNumber": "Tracking Number",
+        "invalidAddressFormat": "Invalid address format",
+        "noAddressProvided": "No address provided",
+        "noPhoneNumberProvided": "No phone number provided",
+        "errorTitle": "Error",
+        "errorText": "Failed to fetch order details. Please try again later.",
+        "artToyImageAlt": "Image of the art toy"
+    },
+    "payment": {
+        "title": "Payment",
+        "reviewOrder": "Review your order",
+        "address": "Address",
+        "addAddress": "Add Address",
+        "shippingOption": "Shipping Option",
+        "standardDeliveryTime": "Delivery time 3 - 7 days",
+        "emsDeliveryTime": "Delivery time 1 - 2 days",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "addressRequired": "Select a shipping address",
+        "uploadRequired": "Attach the payment slip",
+        "selectAddress": "Select Address",
+        "editAddress": "Edit Address",
+        "ems": "EMS Delivery",
+        "standard": "Standard Delivery",
+        "addressRequiredText": "Select or add an address before confirming.",
+        "uploadRequiredText": "Upload a payment proof image before confirming.",
+        "orderConfirmed": "Order Confirmed!",
+        "orderSuccess": "Your order has been placed successfully.",
+        "ok": "OK",
+        "errorTitle": "Error",
+        "errorText": "Failed to place order."
+    },
+    "product": {
+        "imageAlt": "Product Image",
+        "details": "Product details",
+        "size": "Size",
+        "material": "Material",
+        "painting": "Painting",
+        "assembly": "Assembly",
+        "quantity": "Quantity",
+        "price": "Price",
+        "shippingFee": "Shipping Fee",
+        "totalPrice": "Total Price",
+        "sizeOptions": {
+            "Small": "Small",
+            "Medium": "Medium",
+            "Large": "Large"
+        },
+        "materialOptions": {
+            "PLA": "PLA",
+            "Resin": "Resin",
+            "PVC": "PVC",
+            "Metal": "Metal"
+        },
+        "paintingOptions": {
+            "Hand-painting": "Hand-painting",
+            "Airbrush": "Airbrush",
+            "Pad Printing": "Pad Printing"
+        },
+        "assemblyOptions": {
+            "Fixed Pose": "Fixed Pose",
+            "Articulated Joints": "Articulated Joints",
+            "Magnet Joints": "Magnet Joints"
+        }
+    },
+    "qrCode": {
+        "scan": "Scan QR Code",
+        "uploadFile": "Upload File",
+        "upload": "Upload Slip",
+        "uploaded": "Attached Slip",
+        "account": "Account",
+        "accname": "Nong Toy",
+        "alt": "QR Code"
+    },
+    "login": {
+        "warningTitle": "Please fill in all fields",
+        "warningText": "Username and Password are required",
+        "welcomeBack": "Welcome back",
+        "enterDetails": "Please enter your details",
+        "description": "Access your account to manage orders, saved configurations, and your personal workspace without losing momentum.",
+        "highlightOne": "Use one account to continue your art toy journey, review activity, and keep everything in one place.",
+        "highlightTwo": "Quick access to saved drafts, orders, and AI-assisted workspaces right after sign in.",
+        "highlightThree": "Your account stays protected with password-based access and recovery support when needed.",
+        "helpTitle": "Need to get back in quickly?",
+        "helpDescription": "If you forgot your password, use the recovery flow to verify your email and set a new password in a few guided steps.",
+        "socialDivider": "or continue with",
+        "socialDisabled": "Social login is currently unavailable because Firebase is not configured for this environment.",
+        "username": "Username",
+        "password": "Password",
+        "rememberMe": "Remember me",
+        "forgotPassword": "Forgot password?",
+        "loginButton": "Login",
+        "notRegistered": "Not registered yet?",
+        "signUp": "Sign up",
+        "errorTitle": "Login failed",
+        "errors": {
+            "Invalid username or passwords": "Invalid username or password.",
+            "Your account has been banned. Please contact support.": "Your account has been banned. Please contact support."
+        }
+    },
+    "signup": {
+        "warningTitle": "Warning",
+        "warningText": "Please fill in all required fields.",
+        "otpSentTitle": "OTP Sent",
+        "otpSentText": "OTP has been sent to your email.",
+        "errorTitle": "Error",
+        "errorText": "Something went wrong. Please try again.",
+        "createAccount": "Create an account",
+        "alreadyHaveAccount": "Already have an account?",
+        "login": "Log in",
+        "firstName": "First name",
+        "lastName": "Last name",
+        "email": "Email",
+        "username": "Username",
+        "phoneNumber": "Phone number",
+        "password": "Password",
+        "confirmPassword": "Confirm password",
+        "signUpButton": "Sign Up",
+        "verifyOtpButton": "Verify OTP",
+        "enterOtp": "Enter the OTP sent to your email",
+        "verifyEmail": "Verify email",
+        "invalidOtp": "Invalid OTP",
+        "genericError": "Something went wrong. Please try again.",
+        "successTitle": "Success",
+        "registeredSuccessfully": "Registered successfully!",
+        "otpEmpty": "OTP cannot be empty",
+        "phoneExists": "Phone number already exists.",
+        "emailExists": "Email already exists.",
+        "usernameExists": "Username already exists.",
+        "fixErrors": "Please fix the errors in the form.",
+        "fillRequiredFields": "Please fill in all required fields.",
+        "firstNameError": "FirstName: Alphabetic, 4-40 chars.",
+        "lastNameError": "LastName: Alphabetic, 4-40 chars.",
+        "usernameError": "Username: 4-20 chars, start with letter, allow '.', '_', and numbers.",
+        "phoneNumberError": "Phone: 10 digits, start 0, second not 0.",
+        "emailError": "Email: Invalid.",
+        "passwordError": "Password: 6+ chars, include upper, lower, and a number.",
+        "confirmPasswordError": "Passwords: do not match.",
+        "passwordLabel": "Password",
+        "confirmPasswordLabel": "Confirm Password"
+    },
+    "forgotPassword": {
+        "title": "Forgot Password",
+        "description": "Recover access in a few guided steps. We will verify your email with a one-time code before allowing a new password.",
+        "stepEmail": "Verify Email",
+        "stepOtp": "Check OTP",
+        "stepPassword": "Set New Password",
+        "emailHint": "Enter the account email that should receive the recovery code.",
+        "otpHint": "Use the 6-digit code sent to your inbox to continue securely.",
+        "passwordHint": "Choose a stronger password before signing back into the account.",
+        "helpTitle": "Keep recovery fast and safe",
+        "helpDescription": "Use the same inbox registered to your account and finish the process in one session so the OTP does not get mixed up.",
+        "backToLogin": "Back to Login",
+        "resendOtpButton": "Resend OTP",
+        "otpSentTo": "OTP sent to",
+        "emailEmpty": "Recipient email is empty. Please provide a valid email.",
+        "otpSent": "OTP sent to your email",
+        "otpSendFailed": "Failed to send OTP. Please try again later.",
+        "enterEmail": "Enter your email to receive OTP",
+        "enterOtp": "Enter the OTP sent to your email",
+        "verifyOtpButton": "Verify OTP",
+        "enterNewPassword": "Enter your new password",
+        "resetPasswordButton": "Reset Password",
+        "passwordsDoNotMatch": "Passwords: do not match.",
+        "invalidPassword": "Password: 6+ chars, include upper, lower, and a number.",
+        "invalidEmailFormat": "Invalid email format.",
+        "resetPasswordFailed": "Failed to reset password. Please try again later.",
+        "passwordResetSuccess": "Password reset successfully",
+        "fillAllFields": "Please fill in all fields",
+        "userNotFound": "User not found. Please try again.",
+        "invalidOtp": "Invalid OTP",
+        "otpVerified": "OTP verified successfully",
+        "otpEmpty": "OTP cannot be empty",
+        "invalidEmail": "Invalid email. Please check and try again.",
+        "sendOtpButton": "Send OTP",
+        "warningTitle": "Warning",
+        "successTitle": "Success",
+        "errorTitle": "Error",
+        "emailPlaceholder": "Email",
+        "newPasswordLabel": "New Password",
+        "newPasswordPlaceholder": "Min length is 6 chars.",
+        "confirmPasswordLabel": "Confirm Password",
+        "confirmPasswordPlaceholder": "Min length is 6 chars."
+    },
+    "material": {
+        "title": "Material Selection",
+        "subtitle": "Choose Your Material",
+        "tipsTitle": "Tips",
+        "tip1": "For custom or limited edition art toys, choose hand-painting.",
+        "tip2": "For mass production, use Pad Printing.",
+        "tip3": "For complex designs, consider magnetic joints or interchangeable parts for added functionality.",
+        "tipsButton": "Tips",
+        "loading": "Loading..."
+    },
+    "arttoyCard": {
+        "login": {
+            "required": {
+                "title": "You need to login first!",
+                "text": "Do you want to go to the login page?"
+            },
+            "confirm": {
+                "button": "Yes, take me there!"
+            },
+            "cancel": {
+                "button": "Cancel"
+            }
+        },
+        "error": {
+            "title": "Error",
+            "remove": {
+                "favorite": "Failed to remove favorite"
+            }
+        },
+        "image": {
+            "alt": {
+                "text": "Generated Art Toy"
+            }
+        }
+    },
+    "OrderModal": {
+        "Order Details": "Order Details",
+        "Order ID": "Order ID",
+        "Created At": "Created At",
+        "Customer": "Customer",
+        "Phone number": "Phone number",
+        "Name": "Name",
+        "Size": "Size",
+        "Material": "Material",
+        "Painting": "Painting",
+        "Assembly": "Assembly",
+        "Art toy": "Art toy",
+        "Price": "Price",
+        "Shipping": "Shipping",
+        "Total": "Total",
+        "Address": "Address",
+        "Confirmation": "Confirmation",
+        "Payment Status": "Payment Status",
+        "Status": "Status",
+        "Invalid address format": "Invalid address format",
+        "No address provided": "No address provided",
+        "No payment image available": "No payment image available"
+    },
+    "Sidebar": {
+        "Users": "Users",
+        "Orders": "Orders",
+        "Keywords": "Keywords",
+        "Dashboard": "Dashboard",
+        "Logout": "Log out",
+        "LanguageSwitcher": {
+            "EN": "EN",
+            "TH": "TH"
+        },
+        "Warning": {
+            "LogOutTitle": "Log out",
+            "LogOutText": "Are you sure you want to log out?",
+            "Confirm": "Confirm",
+            "Cancel": "Cancel"
+        }
+    },
+    "userM": {
+        "user_id": "User ID",
+        "created_at": "Created At",
+        "first_name": "First Name",
+        "last_name": "Last Name",
+        "username": "Username",
+        "email": "Email",
+        "phone": "Phone",
+        "role": "Role",
+        "status": "Status",
+        "actions": "Actions",
+        "edit": "Edit",
+        "delete": "Delete",
+        "users": "Users",
+        "search_user_id": "Search User ID",
+        "create_user": "Create User",
+        "details": "User Details",
+        "detail_description": "Review account details, role, and contact information in a single view.",
+        "account_overview": "Account Overview",
+        "account_summary": "Use this view to inspect status and key profile details before editing or changing access.",
+        "profile_section": "Profile Details",
+        "profile_section_description": "Core identity information for this account.",
+        "address_section_description": "Address records linked to this user account.",
+        "address": "Address",
+        "address_n": "Address {{n}}",
+        "no_address": "No address available",
+        "roles": {
+            "user": "User",
+            "admin": "Admin"
+        },
+        "statuses": {
+            "active": "active",
+            "banned": "banned"
+        },
+        "deleted_title": "Deleted!",
+        "deleted_message": "The user has been deleted.",
+        "error_title": "Error!",
+        "delete_failed": "Failed to delete the user.",
+        "confirm_delete_title": "Are you sure?",
+        "confirm_delete_text": "You won't be able to revert this!",
+        "confirm_delete_button": "Yes, delete it!",
+        "update_success_title": "Success!",
+        "update_success_message": "User details have been updated successfully.",
+        "update_error_title": "Error!",
+        "update_error_message": "Failed to update user details. Please try again.",
+        "ok_button": "OK",
+        "view": "View",
+        "save": "Save",
+        "cancel": "Cancel",
+        "close": "Close",
+        "required": "This field is required.",
+        "validation_error": "Please review the form fields and try again.",
+        "name_rule": "Use 2-40 English letters.",
+        "email_rule": "Invalid email format.",
+        "username_rule": "Username must start with a letter and be 4-40 characters long.",
+        "phone_rule": "Phone number must be 10 digits and start with 0.",
+        "edit_title": "Edit User",
+        "edit_description": "Update account details, role, and status from one modal instead of editing directly in the table.",
+        "edit_tip_title": "Edit without disturbing the table",
+        "edit_tip_description": "Use this form to update the account and the table row will refresh immediately after save succeeds.",
+        "edit_hint": "Check role and status carefully before saving because they affect account access.",
+        "updating": "Saving..."
+    },
+    "mForm": {
+        "title": "Create New User",
+        "description": "Add a user account from the admin workspace with the right access level and initial profile details.",
+        "tip_title": "New accounts are available immediately",
+        "tip_description": "Fill in the profile, assign the correct role, and the new user will appear in the table as soon as creation succeeds.",
+        "password_hint": "Password must be at least 6 characters and include uppercase, lowercase, and a number.",
+        "required": "This field is required.",
+        "validation_error": "Please review the form fields and try again.",
+        "name_rule": "Use 2-40 English letters.",
+        "email_rule": "Invalid email format.",
+        "username_rule": "Username must start with a letter and be 4-40 characters long.",
+        "phone_rule": "Phone number must be 10 digits and start with 0.",
+        "password_rule": "Password must be at least 6 characters with uppercase, lowercase, and a number.",
+        "submitting": "Creating user...",
+        "close": "Close",
+        "first_name": "First Name",
+        "last_name": "Last Name",
+        "email": "Email",
+        "username": "Username",
+        "phone_number": "Phone Number",
+        "role": "Role",
+        "roles": {
+            "user": "User",
+            "admin": "Admin"
+        },
+        "password": "Password",
+        "confirm_password": "Confirm Password",
+        "submit": "Submit",
+        "error": "Error",
+        "password_mismatch": "Passwords do not match!",
+        "success": "Success",
+        "user_created": "User created successfully!",
+        "creation_failed": "Error creating user."
+    },
+    "orderM": {
+        "title": "Order",
+        "description": "Review order status, update payments, and track fulfillment from one admin-facing table.",
+        "searchPlaceholder": "Search Order ID",
+        "deleteConfirmTitle": "Are you sure?",
+        "deleteConfirmText": "You won't be able to revert this!",
+        "deleteSuccess": "The order has been deleted successfully.",
+        "deleteError": "Failed to delete the order.",
+        "editSuccess": "The order has been updated successfully.",
+        "editError": "Failed to update the order.",
+        "deleteSuccessTitle": "Success!",
+        "deleteErrorTitle": "Error!",
+        "cancelButton": "Cancel",
+        "deleteConfirmButton": "Delete",
+        "saveSuccessTitle": "Success!",
+        "saveSuccessText": "The order has been updated successfully.",
+        "saveErrorTitle": "Error!",
+        "saveErrorText": "Failed to update the order.",
+        "required": "This field is required.",
+        "validation_error": "Please review the form fields and try again.",
+        "quantity_rule": "Quantity must be greater than 0.",
+        "total_rule": "Total must be 0 or greater.",
+        "edit_title": "Edit Order",
+        "edit_description": "Update item name, quantity, total, and key order states from one modal.",
+        "edit_tip_title": "Edit without disturbing the table",
+        "edit_tip_description": "After saving successfully, the order row updates immediately without refreshing the page.",
+        "edit_hint": "Check order and payment status carefully before saving because they affect the next fulfillment step.",
+        "updating": "Saving...",
+        "status": {
+            "pending": "Pending",
+            "processing": "Processing",
+            "shipped": "Shipped",
+            "delivered": "Delivered",
+            "cancelled": "Cancelled"
+        },
+        "paymentStatus": {
+            "unpaid": "Unpaid",
+            "paid": "Paid",
+            "refunded": "Refunded"
+        },
+        "columns": {
+            "orderId": "Order ID",
+            "createdAt": "Created at",
+            "customer": "Customer",
+            "name": "Name",
+            "quantity": "Qty",
+            "total": "Total",
+            "paymentStatus": "Confirmation",
+            "status": "Status",
+            "actions": "Actions"
+        },
+        "stats": {
+            "totalOrders": "Total Orders",
+            "paidOrders": "Paid Orders",
+            "shippedOrders": "Shipped",
+            "refunds": "Refunds"
+        },
+        "actions": {
+            "save": "Save",
+            "cancel": "Cancel",
+            "view": "View",
+            "edit": "Edit",
+            "delete": "Delete"
+        }
+    },
+    "orderModal": {
+        "title": "Order Details",
+        "description": "View customer, product, payment, and shipping information in one place.",
+        "product_section": "Product Details",
+        "product_section_description": "Preview image and production selections for this order.",
+        "payment_shipping_section": "Payment & Shipping",
+        "payment_shipping_description": "Pricing, totals, address details, and payment proof.",
+        "orderId": "Order ID",
+        "createdAt": "Created At",
+        "customer": "Customer",
+        "phoneNumber": "Phone Number",
+        "name": "Name",
+        "size": "Size",
+        "material": "Material",
+        "painting": "Painting",
+        "assembly": "Assembly",
+        "artToy": "Art Toy",
+        "price": "Price",
+        "shipping": "Shipping",
+        "quantity": "Quantity",
+        "total": "Total",
+        "address": "Address",
+        "invalidAddress": "Invalid address format",
+        "noAddress": "No address provided",
+        "confirmation": "Confirmation",
+        "paymentImage": "Payment Status",
+        "noPaymentImage": "No payment image available",
+        "unnamedArtToy": "Unnamed Art Toy",
+        "status": "Status",
+        "statuss": {
+            "Pending": "Pending",
+            "Processing": "Processing",
+            "Shipped": "Shipped",
+            "Delivered": "Delivered",
+            "Cancelled": "Cancelled"
+        },
+        "paymentStatus": {
+            "Unpaid": "Unpaid",
+            "Paid": "Paid",
+            "Refunded": "Refunded"
+        },
+        "assemblyOptions": {
+            "Fixed Pose": "Fixed Pose",
+            "Articulated Joints": "Articulated Joints",
+            "Magnet Joints": "Magnet Joints"
+        },
+        "paintingOptions": {
+            "Hand-painting": "Hand-painting",
+            "Airbrush": "Airbrush",
+            "Pad Printing": "Pad Printing"
+        },
+        "materialOptions": {
+            "PLA": "PLA",
+            "Resin": "Resin",
+            "PVC": "PVC",
+            "Metal": "Metal"
+        },
+        "sizeOptions": {
+            "Small": "Small",
+            "Medium": "Medium",
+            "Large": "Large"
+        }
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "description": "A focused view of orders, payments, and production trends so the admin team can make faster decisions from one page.",
+        "totalOrders": "Total Orders (Paid)",
+        "totalAmount": "Total Purchase Amount",
+        "avgOrderValue": "Avg. Order Value",
+        "totalQuantity": "Order Quantity",
+        "refunds": "Refunds",
+        "chartData": {
+            "paid": "Paid",
+            "unpaid": "Unpaid",
+            "refunded": "Refunded",
+            "hand-painting": "Hand Painting",
+            "airbrush": "Airbrush",
+            "pla": "PLA",
+            "resin": "Resin",
+            "pvc": "PVC",
+            "fixed pose": "Fixed Pose",
+            "magnet joints": "Magnet Joints",
+            "articulated joints": "Articulated Joints",
+            "pad printing": "Pad Printing"
+        },
+        "legend": {
+            "totalQuantity": "Total Quantity",
+            "totalOrders": "Total Orders"
+        },
+        "overview": {
+            "Material": "Material Orders Overview",
+            "Assembly": "Assembly Orders Overview",
+            "Painting": "Painting Orders Overview"
+        },
+        "panels": {
+            "paymentTitle": "Payment Status",
+            "paymentDescription": "Compare paid, unpaid, and refunded orders at a glance.",
+            "ordersTitle": "Order Volume Trend",
+            "ordersDescription": "Track how many orders arrive each day.",
+            "breakdownTitle": "Production Breakdown",
+            "breakdownDescription": "Inspect which material, assembly, or painting groups are used most often.",
+            "quantityTitle": "Sold Quantity Trend",
+            "quantityDescription": "Follow how many units were sold from paid orders over time."
+        },
+        "tooltip": {
+            "orders": "orders"
+        },
+        "select": {
+            "material": "Material",
+            "assembly": "Assembly",
+            "painting": "Painting"
+        }
+    },
+    "keywordManagement": {
+        "title": "Keyword",
+        "description": "Manage the keyword library for colors and characters from one admin workspace, including author and update history.",
+        "searchPlaceholder": "Search keyword ID or name",
+        "confirmDeleteTitle": "Are you sure?",
+        "confirmDeleteText": "You won't be able to revert this!",
+        "confirmDeleteConfirm": "Yes, delete it!",
+        "deleteSuccessTitle": "Deleted!",
+        "deleteSuccessText": "The keyword has been deleted.",
+        "deleteErrorTitle": "Error!",
+        "deleteErrorText": "Failed to delete the keyword.",
+        "updateSuccessTitle": "Success!",
+        "updateSuccessText": "The keyword has been updated successfully.",
+        "updateErrorTitle": "Error!",
+        "updateErrorText": "Failed to update the keyword.",
+        "required": "This field is required.",
+        "validationError": "Please review the form fields and try again.",
+        "nameRule": "Keyword name must be at least 2 characters.",
+        "close": "Close",
+        "createKeyword": "Create keyword",
+        "createTitle": "Create New Keyword",
+        "createDescription": "Add a new keyword for filtering and content categorization so it becomes available immediately.",
+        "createTipTitle": "Available right after creation",
+        "createTipDescription": "Create a color or character keyword and it will appear in the table as soon as save succeeds.",
+        "createHint": "Use short, clear, non-duplicated labels so filtering stays consistent across the product.",
+        "creating": "Creating...",
+        "editTitle": "Edit Keyword",
+        "editDescription": "Update the keyword name or type from one modal instead of editing directly inside the table.",
+        "editTipTitle": "Edit without disturbing the table",
+        "editTipDescription": "After save succeeds, this keyword updates immediately in the table without refreshing the page.",
+        "editHint": "Check the keyword type carefully because it affects filtering and categorization behavior.",
+        "updating": "Saving...",
+        "columns": {
+            "keywordId": "Keyword ID",
+            "createdAt": "Created At",
+            "updatedAt": "Updated At",
+            "createdBy": "Created By",
+            "name": "Name",
+            "type": "Type",
+            "actions": "Actions"
+        },
+        "stats": {
+            "total": "Total Keywords",
+            "colors": "Color Keywords",
+            "characters": "Character Keywords"
+        },
+        "actions": {
+            "save": "Save",
+            "cancel": "Cancel",
+            "view": "View",
+            "edit": "Edit",
+            "delete": "Delete"
+        },
+        "select": {
+            "color": "Color",
+            "character": "Character"
+        }
+    },
+    "keywordModal": {
+        "title": "Keyword Details",
+        "description": "Review the key metadata for this keyword, including author, type, and the most recent update time.",
+        "keywordId": "Keyword ID",
+        "summaryTitle": "Keyword Overview",
+        "summaryDescription": "Use this view to inspect keyword metadata before editing or deciding to remove it."
+    },
+    "keywordForm": {
+        "fields": {
+            "name": "Name",
+            "type": "Type",
+            "selectType": "Select type",
+            "color": "Color",
+            "character": "Character",
+            "submit": "Submit"
+        },
+        "errors": {
+            "nameRequired": "Name is required.",
+            "typeRequired": "Type is required."
+        },
+        "successTitle": "Success",
+        "successText": "Keyword created successfully!",
+        "errorTitle": "Error",
+        "errorText": "Error creating keyword."
+    },
+    "useToken": {
+        "updatePhoneNumber": {
+            "title": "Update Phone Number",
+            "text": "Your phone number is not valid. Please update your phone number.",
+            "confirmButton": "Update Now"
+        },
+        "errors": {
+            "tokenOrUserMissing": "Token or user data is missing",
+            "tokenValidationFailed": "Token validation failed:",
+            "userIdMissing": "User ID is missing",
+            "fetchingUserData": "Error fetching user data:"
+        },
+        "messages": {
+            "tokenValid": "Token is valid:",
+            "userDataFetched": "User data fetched successfully:",
+            "userStatus": "User status:",
+            "logoutCanceled": "User canceled the logout process."
+        },
+        "accountBanned": {
+            "title": "Account Banned",
+            "text": "Your account has been banned. Please contact support."
+        },
+        "sessionExpired": {
+            "title": "Session Expired",
+            "text": "Your session has expired. Please log in again."
+        }
+    }
+}

@@ -3,19 +3,424 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #050816;
+  --foreground: #f4f7fb;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #070922;
-    --foreground: #ededed;
+    --background: #050816;
+    --foreground: #f4f7fb;
   }
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-poppins), sans-serif;
+  font-family: "Poppins", "Avenir Next", "Segoe UI", sans-serif;
+  min-height: 100vh;
+}
+
+input,
+select,
+textarea {
+  @apply w-full px-4 py-2 border border-gray-300 text-[14px] text-black font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-[#0AACF0] mt-1;
+}
+
+button {
+  @apply bg-[#0CACF3] text-white hover:bg-[#0578AB] font-bold px-2 rounded-md transition-all disabled:cursor-not-allowed;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.upload-btn {
+  position: relative;
+  display: inline-block;
+  background: #00b4d8;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.upload-btn:hover {
+  background: #0578ab;
+}
+
+.upload-btn input[type="file"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.select-default {
+  color: #9f9f9f;
+}
+
+.select-selected {
+  color: black;
+}
+
+/* table for admin */
+
+.custom-table {
+  background-color: transparent !important;
+  color: #fff !important; /* ตั้งข้อความทั้งหมดให้เป็นสีขาว */
+
+  /* ลบเส้นโค้ง (border-radius) จากตาราง */
+  border-radius: 22px !important;
+
+  /* ลบขอบ (border) ของตาราง */
+  border: none !important;
+  overflow: hidden;
+}
+
+.custom-table .ant-spin-nested-loading,
+.custom-table .ant-spin-container,
+.custom-table .ant-table {
+  border-radius: 22px !important;
+}
+
+.custom-table .ant-table-container {
+  border-radius: 22px 22px 0 0 !important;
+}
+
+.custom-table .ant-table-cell {
+  /* ลบเส้นโค้งจากเซลล์ */
+  border-radius: 0 !important;
+  vertical-align: top;
+}
+
+.custom-table .ant-table-row {
+  /* ลบเส้นโค้งจากแถว */
+  border-radius: 0 !important;
+}
+
+.custom-table th {
+  color: #93a4c6 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+.custom-table td {
+  color: #fff !important; /* ตั้งข้อความในเซลล์ให้เป็นสีขาว */
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.custom-table .ant-table-thead > tr > th {
+  background-color: rgba(8, 14, 30, 0.96) !important;
+  white-space: nowrap;
+}
+
+.custom-table .ant-table-tbody {
+  background-color: rgba(9, 18, 36, 0.86) !important;
+}
+
+.custom-table .ant-table-container {
+  background: rgba(9, 18, 36, 0.88) !important;
+}
+
+.custom-table .ant-table-thead > tr:first-child > th:first-child {
+  border-top-left-radius: 22px;
+}
+
+.custom-table .ant-table-thead > tr:first-child > th:last-child {
+  border-top-right-radius: 22px;
+}
+
+.custom-table .ant-table-tbody > tr:last-child > td:first-child,
+.custom-table .ant-table-tbody > tr:last-child > td:last-child {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.custom-table .ant-table-pagination.ant-pagination {
+  margin: 0 !important;
+  padding: 16px 20px 18px !important;
+  background: rgba(9, 18, 36, 0.94) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0 0 22px 22px !important;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.custom-table .ant-table-pagination.ant-pagination::before,
+.custom-table .ant-table-pagination.ant-pagination::after {
+  display: none;
+}
+
+.custom-table .ant-pagination-options,
+.custom-table .ant-pagination-total-text,
+.custom-table .ant-pagination-jump-prev,
+.custom-table .ant-pagination-jump-next,
+.custom-table .ant-pagination-prev,
+.custom-table .ant-pagination-next,
+.custom-table .ant-pagination-item {
+  margin-inline-end: 0 !important;
+}
+
+.custom-table .ant-table-container,
+.custom-table .ant-table-content {
+  overflow-x: auto !important;
+}
+
+.custom-table .ant-table-body,
+.custom-table .ant-table-content,
+.custom-table .ant-table-header {
+  scrollbar-color: rgba(103, 223, 255, 0.4) rgba(255, 255, 255, 0.04);
+}
+
+.custom-table .ant-table-body::-webkit-scrollbar,
+.custom-table .ant-table-content::-webkit-scrollbar,
+.custom-table .ant-table-header::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+.custom-table .ant-table-body::-webkit-scrollbar-track,
+.custom-table .ant-table-content::-webkit-scrollbar-track,
+.custom-table .ant-table-header::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.custom-table .ant-table-body::-webkit-scrollbar-thumb,
+.custom-table .ant-table-content::-webkit-scrollbar-thumb,
+.custom-table .ant-table-header::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(103, 223, 255, 0.38);
+}
+
+.custom-hover-row:hover td {
+  background-color: rgba(19, 32, 62, 0.92) !important;
+  cursor: pointer;
+}
+
+.custom-table .ant-pagination-item a {
+  color: white !important;
+}
+
+.custom-table .ant-pagination .ant-pagination-item-active {
+  background-color: transparent !important;
+  font-weight: medium !important;
+  border: 1px solid #444 !important; /* Add border color */
+  border-radius: 8px !important; /* Apply rounded corners */
+  color: #444 !important; /* Adjust text color if needed */
+}
+
+.custom-table .ant-pagination-prev .ant-pagination-item-link,
+.custom-table .ant-pagination-next .ant-pagination-item-link {
+  color: white !important;
+}
+
+.custom-table .ant-table-row:hover {
+  background-color: rgba(19, 32, 62, 0.92) !important;
+}
+
+.ant-table-wrapper .ant-table-tbody .ant-table-row > .ant-table-cell-row-hover {
+  background: rgba(19, 32, 62, 0.92) !important;
+}
+
+/* เปลี่ยนพื้นหลังของเมนูหลัก */
+.ant-dropdown .ant-dropdown-menu {
+  background-color: #2f2f2f !important; /* สีพื้นหลังของเมนู */
+  border-radius: 8px !important; /* เพิ่มการมุมมนถ้าต้องการ */
+  box-shadow: none !important; /* เอาเงาออก */
+}
+
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item {
+  color: #f0f0f0 !important; /* สีข้อความที่ต้องการ */
+}
+
+/* เปลี่ยนสีของเมนูเมื่อ hover */
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item:hover {
+  background-color: #444 !important; /* สีที่ต้องการเมื่อ hover */
+  color: #fff !important; /* เปลี่ยนสีข้อความเมื่อ hover */
+}
+
+/* เปลี่ยนสีเมื่อเมนู active */
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item-active {
+  background-color: #0578ab !important; /* สีที่ต้องการเมื่อ active */
+  color: #fff !important; /* เปลี่ยนสีข้อความเมื่อ active */
+}
+
+/* จัดการให้ไอคอนและข้อความอยู่ในแถวเดียวกัน */
+.custom-menu .ant-dropdown-menu-item .menu-item-content {
+  display: flex;
+  align-items: center; /* จัดแนวไอคอนและข้อความให้ตรงกลาง */
+}
+
+.custom-menu .ant-dropdown-menu-item .menu-item-content span {
+  margin-left: 8px; /* เพิ่มระยะห่างระหว่างไอคอนและข้อความ */
+}
+
+/* เพิ่มความเฉพาะเจาะจงเพื่อให้ CSS ของเราไม่ถูกทับ */
+.custom-menu .ant-dropdown-menu-item-danger:hover {
+  background-color: red !important; /* เปลี่ยนพื้นหลังเป็นสีแดง */
+}
+
+.custom-menu .ant-dropdown-menu-item-danger:hover span {
+  color: white !important; /* เปลี่ยนข้อความเป็นสีขาว */
+}
+
+/* ถ้าอยากให้ข้อความของ Delete เป็นสีแดงเริ่มต้น */
+.custom-menu .ant-dropdown-menu-item-danger span {
+  color: #eb5b5b !important;
+}
+
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item-danger:hover {
+  background-color: #eb5b5b !important; /* เปลี่ยนพื้นหลังเป็นสีแดงเมื่อ hover */
+  color: white !important; /* เปลี่ยนข้อความเป็นสีขาวเมื่อ hover */
+}
+
+.ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+.ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  position: static; /* นำ position absolute ออก */
+  width: 1px;
+  height: 1.6em;
+  background-color: #f0f0f0;
+  transition: background-color 0.2s;
+  content: "";
+}
+
+.ant-empty-normal .ant-empty-description {
+  color: white;
+}
+
+.ant-table-wrapper .ant-table-tbody > tr.ant-table-placeholder:hover > th,
+.ant-table-wrapper .ant-table-tbody > tr.ant-table-placeholder:hover > td,
+.ant-table-wrapper .ant-table-tbody > tr.ant-table-placeholder {
+  background: transparent !important;
+}
+
+.ant-table-wrapper td.ant-table-column-sort {
+  background: transparent !important;
+}
+
+/* ตั้งค่าขนาดของ icon ของการเรียงลำดับ */
+.ant-table-wrapper .ant-table-column-sorter {
+  margin-inline-start: 1px;
+  color: #b8b8b8 !important;
+  font-size: 0;
+  transition: color 0.3s;
+}
+
+/* ตั้งค่าขนาดของ icon ของการเรียงลำดับ */
+.ant-table-wrapper .ant-table-column-sorter-up.active,
+.ant-table-wrapper .ant-table-column-sorter-down.active {
+  color: white;
+}
+
+/* ขนาดของไอคอนเรียงลำดับ */
+.ant-table-wrapper .ant-table-column-sorter-up,
+.ant-table-wrapper .ant-table-column-sorter-down {
+  font-size: 9px;
+}
+
+.ant-pagination .ant-pagination-item {
+  background: transparent;
+}
+
+.admin-search-field {
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  padding: 0 16px;
+  outline: none;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.admin-search-field::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.admin-search-field:hover,
+.admin-search-field:focus {
+  border-color: rgba(10, 172, 240, 0.35);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.dashboard-select {
+  height: 44px;
+  min-width: 180px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  padding: 0 16px;
+  outline: none;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.dashboard-select:hover,
+.dashboard-select:focus {
+  border-color: rgba(10, 172, 240, 0.35);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+@keyframes borderSweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.progress-border-frame {
+  position: relative;
+  padding: 1px;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.progress-border-frame::before {
+  content: "";
+  position: absolute;
+  inset: -35%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(10, 172, 240, 0.1),
+    rgba(10, 172, 240, 0.9),
+    rgba(174, 242, 255, 0.95),
+    rgba(10, 172, 240, 0.2),
+    rgba(10, 172, 240, 0.1)
+  );
+  animation: borderSweep 2s linear infinite;
+}
+
+.progress-border-inner {
+  position: relative;
+  z-index: 1;
+  border-radius: calc(1rem - 1px);
 }
