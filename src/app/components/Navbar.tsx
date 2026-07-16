@@ -1,10 +1,11 @@
 "use client";
+
 import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
-import { useTranslation } from "react-i18next"; // เพิ่ม
-import "../../i18n"; // เพิ่ม
+import { usePathname, useRouter } from "next/navigation";
+import { ChevronDown, Menu, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 import { getUserData } from "../../utils/localStorageUtils";
 import { useTokenValidation } from "../../utils/useTokenValidation";
 
@@ -21,13 +22,13 @@ export default function Navbar({
   partnerRef,
   contactRef,
 }: NavbarProps) {
-  const { t, i18n } = useTranslation(); // ใช้ useTranslation
+  const { t, i18n } = useTranslation();
+  const router = useRouter();
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [pendingRef, setPendingRef] =
     useState<React.RefObject<HTMLDivElement | null> | null>(null);
-  const router = useRouter();
-  const pathname = usePathname();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [firstName, setFirstName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,191 +43,190 @@ export default function Navbar({
 
   useEffect(() => {
     if (pendingRef && pathname === "/") {
-      setTimeout(() => {
+      const timeout = window.setTimeout(() => {
         scrollToSection(pendingRef);
         setPendingRef(null);
       }, 100);
+
+      return () => window.clearTimeout(timeout);
     }
   }, [pathname, pendingRef, scrollToSection]);
 
   const handleNavigation = (ref: React.RefObject<HTMLDivElement | null>) => {
+    setMenuOpen(false);
+
     if (pathname === "/") {
       scrollToSection(ref);
-    } else {
-      setPendingRef(ref);
-      router.push("/", { scroll: false });
+      return;
     }
-  };
 
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
+    setPendingRef(ref);
+    router.push("/", { scroll: false });
   };
 
   useTokenValidation();
 
   return (
-    <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-8 lg:px-20 py-6 bg-[#010312] text-white drop-shadow-lg z-50">
-      {/* Logo */}
-      <Link href="/">
-        <p className="hidden">a</p>
-        <img
-          src="/Images/AINongtoy/Logo.png"
-          alt="Logo"
-          width={200}
-          height={100}
-          className="object-contain"
-        />
-      </Link>
+    <nav className="fixed inset-x-0 top-0 z-50 px-4 py-4 sm:px-6 lg:px-10">
+      <div className="mx-auto flex max-w-7xl items-center justify-between rounded-full border border-white/12 bg-[#07101f]/78 px-4 py-3 text-white shadow-[0_18px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:px-6">
+        <Link href="/" className="flex items-center">
+          <img
+            src="/Images/AINongtoy/Logo.png"
+            alt="NongToy logo"
+            className="h-7 w-auto sm:h-8"
+          />
+        </Link>
 
-      {/* Menu */}
-      <ul className="hidden lg:flex space-x-[50px] text-[16px] font-semibold">
-        <li>
-          <Link
-            href="/arttoy"
-            className="font-bold bg-transparent hover:bg-transparent hover:text-[#0AACF0] transition-colors duration-300"
-          >
-            {t("navbar.createArtToys")}
-          </Link>
-        </li>
-        <li>
-          <button
-            onClick={() => handleNavigation(aboutRef)}
-            className="bg-transparent hover:bg-transparent hover:text-[#0AACF0] transition-colors duration-300"
-          >
-            {t("navbar.aboutUs")}
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={() => handleNavigation(partnerRef)}
-            className="bg-transparent hover:bg-transparent hover:text-[#0AACF0] transition-colors duration-300"
-          >
-            {t("navbar.partners")}
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={() => handleNavigation(contactRef)}
-            className="bg-transparent hover:bg-transparent hover:text-[#0AACF0] transition-colors duration-300"
-          >
-            {t("navbar.contact")}
-          </button>
-        </li>
-      </ul>
-
-      <div className="flex items-center space-x-4">
-        {/* Hamburger Menu Button */}
-        <button
-          className="lg:hidden text-white"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? <X size={32} /> : <Menu size={32} />}
-        </button>
-
-        {/* เมนูสำหรับมือถือ */}
-        {menuOpen && (
-          <ul className="absolute top-[80px] left-0 w-full bg-[#010312] flex flex-col items-center space-y-6 py-6 lg:hidden">
-            <li>
-              <Link
-                href="/arttoy"
-                className="font-bold bg-transparent hover:bg-transparent hover:text-[#0AACF0] transition-colors duration-300"
-              >
-                {t("navbar.createArtToys")}
-              </Link>
-            </li>
-            <li>
-              <button
-                onClick={() => {
-                  handleNavigation(aboutRef);
-                  setMenuOpen(false);
-                }}
-                className="bg-transparent hover:bg-transparent hover:text-[#0AACF0]"
-              >
-                {t("navbar.aboutUs")}
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => {
-                  handleNavigation(partnerRef);
-                  setMenuOpen(false);
-                }}
-                className="bg-transparent hover:bg-transparent hover:text-[#0AACF0]"
-              >
-                {t("navbar.partners")}
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => {
-                  handleNavigation(contactRef);
-                  setMenuOpen(false);
-                }}
-                className="bg-transparent hover:bg-transparent hover:text-[#0AACF0]"
-              >
-                {t("navbar.contact")}
-              </button>
-            </li>
-            <li>
-              {!isLoggedIn ? (
-                <Link href="/login">
-                  <button className="bg-transparent hover:bg-transparent hover:text-[#0AACF0]">
-                    {t("navbar.login")}
-                  </button>
-                </Link>
-              ) : (
-                <Link href="/profile" className="flex items-center space-x-2">
-                  <button
-                    onClick={() => {
-                      handleNavigation(contactRef);
-                      setMenuOpen(false);
-                    }}
-                    className="bg-transparent hover:bg-transparent hover:text-[#0AACF0]"
-                  >
-                    {t("navbar.myProfile")}
-                  </button>
-                </Link>
-              )}
-            </li>
-          </ul>
-        )}
-
-        {/* Login Button */}
-        {!isLoggedIn ? (
-          <Link href="/login" className="hidden lg:block">
-            <button className="bg-[#0AACF0] hover:bg-[#0578AB] text-white font-extrabold px-6 py-1 rounded-[5px] text-[15px] transition-all flex items-center justify-center h-[40px]">
-              {t("navbar.login")}
+        <ul className="hidden items-center gap-8 text-sm font-medium text-[#d8e6ff] lg:flex">
+          <li>
+            <Link href="/arttoy" className="transition hover:text-[#78dbff]">
+              {t("navbar.createArtToys")}
+            </Link>
+          </li>
+          <li>
+            <button
+              onClick={() => handleNavigation(aboutRef)}
+              className="bg-transparent p-0 transition hover:bg-transparent hover:text-[#78dbff]"
+            >
+              {t("navbar.aboutUs")}
             </button>
-          </Link>
-        ) : (
-          <Link
-            href="/profile"
-            className="items-center space-x-2 hidden lg:flex border border-[#51536D] rounded-[10px] p-1 px-2 h-[40px]"
-          >
-            <img
-              src="/Images/AINongtoy/User.png"
-              alt="Profile"
-              className="w-7 h-7 rounded-full"
+          </li>
+          <li>
+            <button
+              onClick={() => handleNavigation(partnerRef)}
+              className="bg-transparent p-0 transition hover:bg-transparent hover:text-[#78dbff]"
+            >
+              {t("navbar.partners")}
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => handleNavigation(contactRef)}
+              className="bg-transparent p-0 transition hover:bg-transparent hover:text-[#78dbff]"
+            >
+              {t("navbar.contact")}
+            </button>
+          </li>
+        </ul>
+
+        <div className="hidden items-center gap-3 lg:flex">
+          <div className="relative">
+            <select
+              id="language-select"
+              aria-label="Select language"
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
+              className="m-0 h-10 min-w-[92px] appearance-none rounded-full border border-white/12 bg-white/5 pl-4 pr-10 text-sm text-white outline-none"
+              defaultValue={i18n.language}
+            >
+              <option className="bg-[#07101f]" value="en">
+                EN
+              </option>
+              <option className="bg-[#07101f]" value="th">
+                TH
+              </option>
+            </select>
+            <ChevronDown
+              size={16}
+              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-white/70"
             />
-            <span className="text-[13px] font-medium">{firstName}</span>
-          </Link>
-        )}
-        {/* Language Switcher */}
-        <div className="flex items-center">
-          <label htmlFor="language-select" className="hidden">
-            {t("navbar.language")} {/* เพิ่มข้อความแปลสำหรับชื่อภาษา */}
-          </label>
-          <select
-            id="language-select"
-            onChange={(e) => changeLanguage(e.target.value)}
-            className="m-0 p-1 bg-transparent text-white hover:bg-[#010311] border-transparent h-[40px]"
-            defaultValue={i18n.language} // ตั้งค่าภาษาเริ่มต้น
-          >
-            <option className="bg-[#010311]" value="en">EN</option>
-            <option className="bg-[#010311]" value="th">TH</option>
-          </select>
+          </div>
+
+          {!isLoggedIn ? (
+            <Link
+              href="/login"
+              className="inline-flex h-10 items-center rounded-full bg-[#5ad7ff] px-5 text-sm font-semibold text-[#05111f] transition hover:bg-[#82e2ff]"
+            >
+              {t("navbar.login")}
+            </Link>
+          ) : (
+            <Link
+              href="/profile"
+              className="inline-flex h-10 max-w-[190px] items-center gap-2 rounded-full border border-white/12 bg-white/5 px-3 text-sm text-white"
+            >
+              <img
+                src="/Images/AINongtoy/User.png"
+                alt="Profile"
+                className="h-7 w-7 rounded-full"
+              />
+              <span className="min-w-0 truncate">{firstName}</span>
+            </Link>
+          )}
         </div>
+
+        <button
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/5 text-white lg:hidden"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+        >
+          {menuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
       </div>
+
+      {menuOpen && (
+        <div className="mx-auto mt-3 max-w-7xl rounded-[28px] border border-white/12 bg-[#07101f]/92 p-5 text-white shadow-[0_18px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl lg:hidden">
+          <div className="flex flex-col gap-3 text-sm">
+            <Link href="/arttoy" className="rounded-2xl px-3 py-3 transition hover:bg-white/8">
+              {t("navbar.createArtToys")}
+            </Link>
+            <button
+              onClick={() => handleNavigation(aboutRef)}
+              className="rounded-2xl bg-transparent px-3 py-3 text-left transition hover:bg-white/8"
+            >
+              {t("navbar.aboutUs")}
+            </button>
+            <button
+              onClick={() => handleNavigation(partnerRef)}
+              className="rounded-2xl bg-transparent px-3 py-3 text-left transition hover:bg-white/8"
+            >
+              {t("navbar.partners")}
+            </button>
+            <button
+              onClick={() => handleNavigation(contactRef)}
+              className="rounded-2xl bg-transparent px-3 py-3 text-left transition hover:bg-white/8"
+            >
+              {t("navbar.contact")}
+            </button>
+          </div>
+
+          <div className="mt-4 flex items-center gap-3">
+            <div className="relative">
+              <select
+                aria-label="Select language"
+                onChange={(e) => i18n.changeLanguage(e.target.value)}
+                className="m-0 h-10 min-w-[92px] appearance-none rounded-full border border-white/12 bg-white/5 pl-4 pr-10 text-sm text-white outline-none"
+                defaultValue={i18n.language}
+              >
+                <option className="bg-[#07101f]" value="en">
+                  EN
+                </option>
+                <option className="bg-[#07101f]" value="th">
+                  TH
+                </option>
+              </select>
+              <ChevronDown
+                size={16}
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-white/70"
+              />
+            </div>
+
+            {!isLoggedIn ? (
+              <Link
+                href="/login"
+                className="inline-flex h-10 flex-1 items-center justify-center rounded-full bg-[#5ad7ff] px-5 text-sm font-semibold text-[#05111f]"
+              >
+                {t("navbar.login")}
+              </Link>
+            ) : (
+              <Link
+                href="/profile"
+                className="inline-flex h-10 flex-1 items-center justify-center rounded-full border border-white/12 bg-white/5 px-5 text-sm"
+              >
+                {t("navbar.myProfile")}
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

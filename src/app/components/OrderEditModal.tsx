@@ -2,108 +2,128 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-import { CircleAlert, Loader2, ShieldCheck, Tags, X } from "lucide-react";
-import { createKeywordForAdmin } from "@/api/keywordAPI";
+import { CircleAlert, Loader2, ShieldCheck, SquarePen, X } from "lucide-react";
 import Swal from "sweetalert2";
 import { useTranslation } from "react-i18next";
+import { updateOrderByAdmin } from "@/api/orderAPI";
 import "../../i18n";
 
-interface KeywordFormProps {
-  isFormVisible: boolean;
-  handleCloseModal: () => void;
-  token: string;
-  onKeywordCreated: (keyword: any) => void;
+interface OrderEditModalProps {
+  isVisible: boolean;
+  order: any | null;
+  token: string | null;
+  onClose: () => void;
+  onOrderUpdated: (order: any) => void;
 }
 
-const KeywordForm: React.FC<KeywordFormProps> = ({
-  isFormVisible,
-  handleCloseModal,
+const OrderEditModal: React.FC<OrderEditModalProps> = ({
+  isVisible,
+  order,
   token,
-  onKeywordCreated,
+  onClose,
+  onOrderUpdated,
 }) => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
-    type: "Color",
+    quantity: "",
+    total: "",
+    paymentStatus: "Unpaid",
+    status: "Pending",
   });
-  const [errors, setErrors] = useState({
-    name: "",
-    type: "",
-  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!isFormVisible) {
-      setFormData({ name: "", type: "Color" });
-      setErrors({ name: "", type: "" });
+    if (isVisible && order) {
+      setFormData({
+        name: order.name || "",
+        quantity: String(order.quantity ?? ""),
+        total: String(order.total ?? ""),
+        paymentStatus: order.paymentStatus || "Unpaid",
+        status: order.status || "Pending",
+      });
+      setErrors({});
       setIsSubmitting(false);
     }
-  }, [isFormVisible]);
+  }, [isVisible, order]);
 
-  if (!isFormVisible) return null;
+  if (!isVisible || !order) return null;
 
   const validateField = (name: string, value: string) => {
-    if (!value.trim()) return t("keywordManagement.required");
-    if (name === "name" && value.trim().length < 2) {
-      return t("keywordManagement.nameRule");
+    if (!value.trim()) return t("orderM.required");
+    if (name === "quantity") {
+      return Number(value) > 0 ? "" : t("orderM.quantity_rule");
+    }
+    if (name === "total") {
+      return Number(value) >= 0 ? "" : t("orderM.total_rule");
     }
     return "";
+  };
+
+  const validateForm = () => {
+    const nextErrors: Record<string, string> = {};
+    ["name", "quantity", "total"].forEach((field) => {
+      const error = validateField(field, formData[field as keyof typeof formData]);
+      if (error) nextErrors[field] = error;
+    });
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
   };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
     }));
     setErrors((prev) => ({
       ...prev,
-      [name]: validateField(name, value),
+      [name]:
+        name === "paymentStatus" || name === "status"
+          ? ""
+          : validateField(name, value),
     }));
   };
 
-  const validateForm = () => {
-    const nextErrors = {
-      name: validateField("name", formData.name),
-      type: formData.type.trim() ? "" : t("keywordManagement.required"),
-    };
-    setErrors(nextErrors);
-    return !nextErrors.name && !nextErrors.type;
-  };
-
-  const extractCreatedKeyword = (response: any) =>
-    response?.data ?? response?.keyword ?? response?.createdKeyword ?? response;
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!token) return;
+
     if (!validateForm()) {
       Swal.fire({
         icon: "warning",
-        title: t("keywordForm.errorTitle"),
-        text: t("keywordManagement.validationError"),
+        title: t("orderM.saveErrorTitle"),
+        text: t("orderM.validation_error"),
       });
       return;
     }
 
     setIsSubmitting(true);
 
+    const updatePayload = {
+      ...formData,
+      quantity: Number(formData.quantity),
+      total: Number(formData.total),
+    };
+
     try {
-      const createdKeyword = await createKeywordForAdmin(token, formData);
-      onKeywordCreated(extractCreatedKeyword(createdKeyword));
+      await updateOrderByAdmin(token, order._id, updatePayload);
+      onOrderUpdated({ ...order, ...updatePayload });
       await Swal.fire({
+        title: t("orderM.saveSuccessTitle"),
+        text: t("orderM.saveSuccessText"),
         icon: "success",
-        title: t("keywordForm.successTitle"),
-        text: t("keywordForm.successText"),
       });
-      handleCloseModal();
+      onClose();
     } catch (error) {
-      console.error("Error creating keyword:", error);
-      Swal.fire({
+      console.error("Error updating order:", error);
+      await Swal.fire({
+        title: t("orderM.saveErrorTitle"),
+        text: t("orderM.saveErrorText"),
         icon: "error",
-        title: t("keywordForm.errorTitle"),
-        text: t("keywordForm.errorText"),
       });
     } finally {
       setIsSubmitting(false);
@@ -121,9 +141,9 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
 
         <button
           type="button"
-          onClick={handleCloseModal}
+          onClick={onClose}
           className="absolute right-5 top-5 z-10 rounded-full border border-white/10 bg-white/5 p-2 text-white/70 transition hover:bg-white/10 hover:text-white"
-          aria-label={t("keywordManagement.close")}
+          aria-label={t("orderM.actions.cancel")}
         >
           <X size={18} />
         </button>
@@ -136,23 +156,23 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
             </div>
 
             <h2 className="mt-5 text-3xl font-semibold tracking-tight text-white">
-              {t("keywordManagement.createTitle")}
+              {t("orderM.edit_title")}
             </h2>
             <p className="mt-3 max-w-md text-sm leading-7 text-[#aebddb]">
-              {t("keywordManagement.createDescription")}
+              {t("orderM.edit_description")}
             </p>
 
             <div className="mt-8 rounded-[24px] border border-white/10 bg-white/5 p-5">
               <div className="flex items-start gap-4">
                 <div className="rounded-2xl border border-[#67dfff]/20 bg-[#0d1733] p-3 text-[#88ebff]">
-                  <Tags size={22} />
+                  <SquarePen size={22} />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white">
-                    {t("keywordManagement.createTipTitle")}
+                    {t("orderM.edit_tip_title")}
                   </p>
                   <p className="mt-2 text-sm leading-6 text-white/60">
-                    {t("keywordManagement.createTipDescription")}
+                    {t("orderM.edit_tip_description")}
                   </p>
                 </div>
               </div>
@@ -160,7 +180,7 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
 
             <div className="mt-5 flex items-start gap-3 rounded-2xl border border-[#facc15]/20 bg-[#facc15]/10 p-4 text-sm text-[#fde68a]">
               <CircleAlert size={18} className="mt-0.5 shrink-0" />
-              <p>{t("keywordManagement.createHint")}</p>
+              <p>{t("orderM.edit_hint")}</p>
             </div>
           </div>
 
@@ -168,7 +188,7 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label htmlFor="name" className="text-sm font-medium text-white/80">
-                  {t("keywordForm.fields.name")}
+                  {t("orderM.columns.name")}
                 </label>
                 <input
                   type="text"
@@ -181,31 +201,85 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
                 <p className={errorClassName}>{errors.name || " "}</p>
               </div>
 
-              <div className="sm:col-span-2">
-                <label htmlFor="type" className="text-sm font-medium text-white/80">
-                  {t("keywordForm.fields.type")}
+              <div>
+                <label htmlFor="quantity" className="text-sm font-medium text-white/80">
+                  {t("orderM.columns.quantity")}
+                </label>
+                <input
+                  type="number"
+                  id="quantity"
+                  name="quantity"
+                  value={formData.quantity}
+                  onChange={handleChange}
+                  className={inputClassName}
+                />
+                <p className={errorClassName}>{errors.quantity || " "}</p>
+              </div>
+
+              <div>
+                <label htmlFor="total" className="text-sm font-medium text-white/80">
+                  {t("orderM.columns.total")}
+                </label>
+                <input
+                  type="number"
+                  id="total"
+                  name="total"
+                  value={formData.total}
+                  onChange={handleChange}
+                  className={inputClassName}
+                />
+                <p className={errorClassName}>{errors.total || " "}</p>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="paymentStatus"
+                  className="text-sm font-medium text-white/80"
+                >
+                  {t("orderM.columns.paymentStatus")}
                 </label>
                 <select
-                  id="type"
-                  name="type"
-                  value={formData.type}
+                  id="paymentStatus"
+                  name="paymentStatus"
+                  value={formData.paymentStatus}
                   onChange={handleChange}
                   className={inputClassName}
                 >
-                  <option value="Color">{t("keywordForm.fields.color")}</option>
-                  <option value="Character">{t("keywordForm.fields.character")}</option>
+                  <option value="Unpaid">{t("orderM.paymentStatus.unpaid")}</option>
+                  <option value="Paid">{t("orderM.paymentStatus.paid")}</option>
+                  <option value="Refunded">{t("orderM.paymentStatus.refunded")}</option>
                 </select>
-                <p className={errorClassName}>{errors.type || " "}</p>
+                <p className={errorClassName}> </p>
+              </div>
+
+              <div>
+                <label htmlFor="status" className="text-sm font-medium text-white/80">
+                  {t("orderM.columns.status")}
+                </label>
+                <select
+                  id="status"
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className={inputClassName}
+                >
+                  <option value="Pending">{t("orderM.status.pending")}</option>
+                  <option value="Processing">{t("orderM.status.processing")}</option>
+                  <option value="Shipped">{t("orderM.status.shipped")}</option>
+                  <option value="Delivered">{t("orderM.status.delivered")}</option>
+                  <option value="Cancelled">{t("orderM.status.cancelled")}</option>
+                </select>
+                <p className={errorClassName}> </p>
               </div>
             </div>
 
             <div className="mt-4 flex flex-col-reverse gap-3 border-t border-white/10 pt-6 sm:flex-row sm:justify-end">
               <button
                 type="button"
-                onClick={handleCloseModal}
+                onClick={onClose}
                 className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/12 bg-white/[0.03] px-5 text-sm font-medium text-white/60 transition hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
               >
-                {t("keywordManagement.close")}
+                {t("orderM.actions.cancel")}
               </button>
               <button
                 type="submit"
@@ -213,9 +287,7 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-[#67dfff]/40 bg-[linear-gradient(135deg,#0CACF3,#67dfff)] px-6 text-sm font-semibold text-[#03111f] shadow-[0_14px_32px_rgba(12,172,243,0.28)] transition hover:-translate-y-0.5 hover:brightness-105 disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : null}
-                {isSubmitting
-                  ? t("keywordManagement.creating")
-                  : t("keywordForm.fields.submit")}
+                {isSubmitting ? t("orderM.updating") : t("orderM.actions.save")}
               </button>
             </div>
           </form>
@@ -225,4 +297,4 @@ const KeywordForm: React.FC<KeywordFormProps> = ({
   );
 };
 
-export default KeywordForm;
+export default OrderEditModal;

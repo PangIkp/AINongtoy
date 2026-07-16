@@ -1,46 +1,46 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+
+import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import PasswordInput from "../components/PasswordInput";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Loader } from "lucide-react"; // เพิ่มการ import Loader
-import emailjs from "emailjs-com"; // เพิ่มการ import emailjs
+import emailjs from "emailjs-com";
+import { API_V1_URL } from "@/api/baseUrl";
 import { checkUserExists } from "../../api/userAPI";
+import { Loader, Mail, ShieldCheck, UserRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
 
+const EMAILJS_SERVICE_ID = "service_i9d8089";
+const EMAILJS_TEMPLATE_ID = "template_ubnzds7";
+const EMAILJS_PUBLIC_KEY = "TMP5T0OL8X3jkzeBb";
+
 const Signup = () => {
-  const { t } = useTranslation(); // ใช้ useTranslation
+  const { t } = useTranslation();
+  const router = useRouter();
+
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);
   const contactRef = useRef<HTMLDivElement>(null!);
+  const otpInputRefs = useRef<Array<HTMLInputElement | null>>([]);
+
   const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  const router = useRouter();
-  const [userCount, setUserCount] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(true); // เพิ่ม state สำหรับการโหลด
-  const [errors, setErrors] = useState<Record<string, string | null>>({}); // ใช้เพื่อเก็บข้อความผิดพลาด
-  const [isEmailSent, setIsEmailSent] = useState(false); // ใช้เพื่อเช็คว่าอีเมลถูกส่งไปแล้วหรือยัง
-  const [otp, setOtp] = useState(""); // ใช้เพื่อเก็บ OTP ที่กรอกจากผู้ใช้
-  const [generatedOtp, setGeneratedOtp] = useState(""); // ใช้เพื่อเก็บ OTP ที่สร้างขึ้น
-  const [isOtpVerified, setIsOtpVerified] = useState(false); // ใช้เพื่อเช็คว่า OTP ถูกยืนยันแล้วหรือยัง
-
-  // Validation rules
-  const emailRegex = /^[a-zA-Z][^\s@]*@[a-zA-Z]{2,}(\.[a-zA-Z]{2,}){1,2}$/;
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
-  const nameRegex = /^[a-zA-Z]{4,40}$/;
-  const phoneRegex = /^0[1-9]\d{8}$/;
-  const usernameRegex = /^[a-zA-Z](?=[a-zA-Z0-9._]{3,39}$)(?!.*[.].*[.])(?!.*[_].*[_])[a-zA-Z0-9._]*$/;
-
+  const [userCount, setUserCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState<Record<string, string | null>>({});
+  const [isEmailSent, setIsEmailSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [generatedOtp, setGeneratedOtp] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -51,98 +51,91 @@ const Signup = () => {
     confirmpassword: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    // Update formData first
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-
-    // Validation logic
-    const newErrors = { ...errors };
-
-    if (name === "firstName") {
-      newErrors.firstName =
-        value && !nameRegex.test(value)
-          ? t("signup.firstNameError")
-          : null;
-    }
-
-    if (name === "lastName") {
-      newErrors.lastName =
-        value && !nameRegex.test(value)
-          ? t("signup.lastNameError")
-          : null;
-    }
-
-    if (name === "username") {
-      newErrors.username =
-        value && !usernameRegex.test(value)
-          ? t("signup.usernameError")
-          : null;
-    }
-
-    if (name === "phoneNumber") {
-      newErrors.phoneNumber =
-        value && !phoneRegex.test(value)
-          ? t("signup.phoneNumberError")
-          : null;
-    }
-
-    if (name === "email") {
-      newErrors.email =
-        value && !emailRegex.test(value)
-          ? t("signup.emailError")
-          : null;
-    }
-
-    if (name === "password") {
-      newErrors.password =
-        value && !passwordRegex.test(value)
-          ? t("signup.passwordError")
-          : null;
-    }
-
-    if (name === "confirmpassword") {
-      newErrors.confirmpassword =
-        value && value !== formData.password
-          ? t("signup.confirmPasswordError")
-          : null;
-    }
-
-    setErrors(newErrors);
-  };
+  const emailRegex = /^[a-zA-Z][^\s@]*@[a-zA-Z]{2,}(\.[a-zA-Z]{2,}){1,2}$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
+  const nameRegex = /^[a-zA-Z]{4,40}$/;
+  const phoneRegex = /^0[1-9]\d{8}$/;
+  const usernameRegex =
+    /^[a-zA-Z](?=[a-zA-Z0-9._]{3,39}$)(?!.*[.].*[.])(?!.*[_].*[_])[a-zA-Z0-9._]*$/;
 
   useEffect(() => {
     const fetchUserCount = async () => {
       try {
-        const response = await axios.get("https://nongtoybackend-rby6pw6h.b4a.run/api/v1/user/");
+        const response = await axios.get(`${API_V1_URL}/user/`);
         setUserCount(response.data.count);
       } catch (error) {
         console.error("Error fetching user count:", error);
       } finally {
-        setLoading(false); // หยุดโหลด
+        setLoading(false);
       }
     };
 
     fetchUserCount();
   }, []);
 
+  const validateField = (name: string, value: string) => {
+    switch (name) {
+      case "firstName":
+        return value && !nameRegex.test(value) ? t("signup.firstNameError") : null;
+      case "lastName":
+        return value && !nameRegex.test(value) ? t("signup.lastNameError") : null;
+      case "username":
+        return value && !usernameRegex.test(value)
+          ? t("signup.usernameError")
+          : null;
+      case "phoneNumber":
+        return value && !phoneRegex.test(value)
+          ? t("signup.phoneNumberError")
+          : null;
+      case "email":
+        return value && !emailRegex.test(value) ? t("signup.emailError") : null;
+      case "password":
+        return value && !passwordRegex.test(value)
+          ? t("signup.passwordError")
+          : null;
+      case "confirmpassword":
+        return value && value !== formData.password
+          ? t("signup.confirmPasswordError")
+          : null;
+      default:
+        return null;
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: validateField(name, value),
+      ...(name === "password" && formData.confirmpassword
+        ? {
+            confirmpassword:
+              formData.confirmpassword !== value
+                ? t("signup.confirmPasswordError")
+                : null,
+          }
+        : {}),
+    }));
+  };
+
   const sendOtp = async (email: string) => {
     if (!email) {
-      console.error("Recipient email is empty.");
       Swal.fire({
         icon: "warning",
         title: t("signup.warningTitle"),
         text: t("signup.warningText"),
       });
-      return;
+      return false;
     }
 
-    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
-    setGeneratedOtp(generatedOtp);
+    const nextOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedOtp(nextOtp);
 
     const currentDate = new Date();
     const formattedDate = currentDate.toLocaleDateString("th-TH", {
@@ -153,18 +146,18 @@ const Signup = () => {
     const formattedTime = currentDate.toLocaleTimeString("th-TH");
 
     const templateParams = {
-      to_email: email, // Ensure this matches the variable in your EmailJS template
-      otp: generatedOtp,
+      to_email: email,
+      otp: nextOtp,
       date: formattedDate,
       time: formattedTime,
     };
 
     try {
       await emailjs.send(
-        "service_m5nbqms", // Replace with your EmailJS Service ID
-        "template_3m72222", // Replace with your EmailJS Template ID
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
         templateParams,
-        "1tQROI12k9EH9q4nT" // Replace with your EmailJS User ID
+        EMAILJS_PUBLIC_KEY
       );
 
       Swal.fire({
@@ -173,7 +166,8 @@ const Signup = () => {
         text: t("signup.otpSentText"),
       });
 
-      setIsEmailSent(true); // Update the state to indicate the email was sent successfully
+      setIsEmailSent(true);
+      return true;
     } catch (error) {
       console.error("Error sending email:", error);
       Swal.fire({
@@ -181,13 +175,13 @@ const Signup = () => {
         title: t("signup.errorTitle"),
         text: t("signup.errorText"),
       });
+      return false;
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // ป้องกันการรีเฟรชหน้า
+    e.preventDefault();
 
-    // ตรวจสอบว่ามีข้อมูลที่จำเป็นครบถ้วนหรือไม่
     if (
       !formData.firstName ||
       !formData.lastName ||
@@ -205,7 +199,6 @@ const Signup = () => {
       return;
     }
 
-    // ตรวจสอบว่ามีข้อผิดพลาดหรือไม่
     if (Object.values(errors).some((error) => error !== null)) {
       Swal.fire({
         icon: "warning",
@@ -215,15 +208,15 @@ const Signup = () => {
       return;
     }
 
-    setLoading(true); // เริ่มโหลดก่อนการตรวจสอบข้อมูลผู้ใช้
+    setLoading(true);
+
     try {
-      // เช็คว่า username ซ้ำหรือไม่
       const { exists } = await checkUserExists({
         username: formData.username,
         email: formData.email,
         phoneNumber: formData.phoneNumber,
       });
-      console.log("exists:", exists);
+
       if (exists.username.exists) {
         Swal.fire({
           icon: "warning",
@@ -232,6 +225,7 @@ const Signup = () => {
         });
         return;
       }
+
       if (exists.email.exists) {
         Swal.fire({
           icon: "warning",
@@ -240,6 +234,7 @@ const Signup = () => {
         });
         return;
       }
+
       if (exists.phoneNumber.exists) {
         Swal.fire({
           icon: "warning",
@@ -249,34 +244,34 @@ const Signup = () => {
         return;
       }
 
-      // เรียกฟังก์ชันส่ง OTP
       await sendOtp(formData.email);
     } catch (err) {
       console.error("Error:", err);
     } finally {
-      setLoading(false); // หยุดโหลดหลังจากการดำเนินการเสร็จสิ้น
+      setLoading(false);
     }
   };
 
-  const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const value = e.target.value;
-    if (!/^\d*$/.test(value)) return; // อนุญาตเฉพาะตัวเลข
+  const handleOtpChange = (value: string, index: number) => {
+    if (!/^\d*$/.test(value)) return;
 
-    const newOtp = otp.split("");
-    newOtp[index] = value;
-    setOtp(newOtp.join(""));
+    const char = value.slice(-1);
+    const nextOtp = otp.padEnd(6, " ").split("");
+    nextOtp[index] = char || " ";
+    const normalizedOtp = nextOtp.join("").replace(/\s+$/g, "");
+    setOtp(normalizedOtp);
 
-    // ย้ายไปยังช่องถัดไปถ้ากรอกครบ
-    if (value && index < 5) {
-      const nextInput = document.querySelectorAll<HTMLInputElement>("input[type='text']")[index + 1];
-      nextInput?.focus();
+    if (char && index < 5) {
+      otpInputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+  const handleOtpKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number
+  ) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      const prevInput = document.querySelectorAll<HTMLInputElement>("input[type='text']")[index - 1];
-      prevInput?.focus();
+      otpInputRefs.current[index - 1]?.focus();
     }
   };
 
@@ -290,215 +285,316 @@ const Signup = () => {
       return;
     }
 
-    if (otp === generatedOtp) {
-      setIsOtpVerified(true);
-      setGeneratedOtp(""); // ลบ OTP ทิ้งหลังจากยืนยันสำเร็จ
-
-      // เพิ่มผู้ใช้ใหม่ในระบบ
-      setLoading(true); // เริ่มโหลด
-      try {
-        const newUser = {
-          id: userCount + 1,
-          ...formData,
-        };
-
-        const response = await axios.post(
-          "https://nongtoybackend-rby6pw6h.b4a.run/api/v1/user/",
-          newUser
-        );
-
-        Swal.fire({
-          icon: "success",
-          title: t("signup.successTitle"),
-          text: response.data.message || t("signup.registeredSuccessfully"),
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        router.push("/login");
-      } catch (err: any) {
-        console.error("Error:", err.response?.data?.message || err.message);
-
-        if (err.response?.data?.errors) {
-          Swal.fire({
-            icon: "error",
-            title: t("signup.errorTitle"),
-            text: err.response.data.errors.join(", "),
-          });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: t("signup.errorTitle"),
-            text: err.response?.data?.message || t("signup.genericError"),
-          });
-        }
-      } finally {
-        setLoading(false); // หยุดโหลด
-      }
-    } else {
+    if (otp !== generatedOtp) {
       Swal.fire({
         icon: "warning",
         title: t("signup.warningTitle"),
         text: t("signup.invalidOtp"),
       });
+      return;
+    }
+
+    setGeneratedOtp("");
+    setLoading(true);
+
+    try {
+      const newUser = {
+        id: userCount + 1,
+        ...formData,
+      };
+
+      const response = await axios.post(`${API_V1_URL}/user/`, newUser);
+
+      Swal.fire({
+        icon: "success",
+        title: t("signup.successTitle"),
+        text: response.data.message || t("signup.registeredSuccessfully"),
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      router.push("/login");
+    } catch (err: any) {
+      console.error("Error:", err.response?.data?.message || err.message);
+
+      if (err.response?.data?.errors) {
+        Swal.fire({
+          icon: "error",
+          title: t("signup.errorTitle"),
+          text: err.response.data.errors.join(", "),
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: t("signup.errorTitle"),
+          text: err.response?.data?.message || t("signup.genericError"),
+        });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
+  const otpDigits = Array.from({ length: 6 }, (_, index) => otp[index] || "");
+  const inputClassName =
+    "mt-2 h-12 w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 text-sm text-white outline-none transition placeholder:text-white/28 focus:border-[#67dfff]/45 focus:bg-[#102247]";
+  const errorTextClassName = "mt-2 min-h-5 text-xs text-[#f6c676]";
+
   return (
-    <div>
+    <div className="min-h-screen bg-[#050816] text-white">
       <Navbar
         scrollToSection={scrollToSection}
         aboutRef={aboutRef}
         partnerRef={partnerRef}
         contactRef={contactRef}
       />
-      <div className="w-full sm:h-[90vh] h-[1000px] mt-[5rem]">
-        <div className="relative w-full h-full flex items-center justify-center">
-          <img
-            src="/Images/AINongtoy/mainbg.png"
-            alt=""
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute max-w-[600px] w-full p-5 sm:p-14 ">
-            {loading ? ( // แสดง Loader ระหว่างโหลด
-              <div className="flex justify-center items-center">
-                <Loader className="animate-spin text-[#0CACF3]" size={48} />
-              </div>
-            ) : (
-              <>
-                {!isEmailSent ? (
-                  <>
-                    <h1 className="text-4xl font-semibold mb-3">{t("signup.createAccount")}</h1>
-                    <p className="font-extralight">
-                      {t("signup.alreadyHaveAccount")}{" "}
-                      <a href="/login" className="hover:text-[#0AACF0] underline">
-                        {t("signup.login")}
-                      </a>
-                    </p>
-                    <form
-                      onSubmit={handleSubmit}
-                      className="flex flex-col w-full h-[70%] pt-5"
+
+      <main className="relative overflow-hidden pt-24">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(36,56,122,0.34),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(12,172,243,0.12),transparent_28%)]" />
+
+        <div className="relative mx-auto flex min-h-[calc(100svh-6rem)] max-w-7xl items-center px-4 py-6 sm:px-6 lg:px-8">
+          {loading ? (
+            <div className="flex w-full justify-center py-24">
+              <Loader className="animate-spin text-[#0CACF3]" size={48} />
+            </div>
+          ) : (
+            <section className="mx-auto w-full max-w-[720px] rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(10,18,38,0.96),rgba(7,12,25,0.98))] p-6 shadow-[0_30px_90px_rgba(0,0,0,0.42)] backdrop-blur sm:p-8">
+              {!isEmailSent ? (
+                <>
+                  <div className="flex items-center justify-between gap-4">
+                    <h1 className="text-4xl font-semibold tracking-tight text-white">
+                      {t("signup.createAccount")}
+                    </h1>
+                    <Link
+                      href="/login"
+                      className="hidden h-11 items-center rounded-2xl border border-white/10 bg-white/[0.03] px-4 text-sm font-medium text-white/70 transition hover:border-white/20 hover:bg-white/[0.06] hover:text-white sm:inline-flex"
                     >
-                      <div className="grid grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 gap-x-5">
-                        <label htmlFor="firstName">
-                          <p>{t("signup.firstName")} <span className="text-red-600">*</span></p>
-                          <input
-                            type="text"
-                            name="firstName"
-                            maxLength={40}
-                            value={formData.firstName}
-                            onChange={handleChange}
-                          />
-                          <p className="text-xs my-1 text-yellow-500 h-4">{errors.firstName}</p>
+                      {t("signup.login")}
+                    </Link>
+                  </div>
+
+                  <p className="mt-3 text-sm text-white/58">
+                    {t("signup.alreadyHaveAccount")}{" "}
+                    <Link
+                      href="/login"
+                      className="font-medium text-[#88ebff] transition hover:text-white"
+                    >
+                      {t("signup.login")}
+                    </Link>
+                  </p>
+
+                  <form onSubmit={handleSubmit} className="mt-8">
+                    <div className="grid gap-x-5 gap-y-3 sm:grid-cols-2">
+                      <div>
+                        <label htmlFor="firstName" className="text-sm font-medium text-white/80">
+                          {t("signup.firstName")} <span className="text-[#ff8b8b]">*</span>
                         </label>
-                        <label htmlFor="lastName">
-                          <p>{t("signup.lastName")} <span className="text-red-600">*</span></p>
-                          <input
-                            type="text"
-                            name="lastName"
-                            maxLength={40}
-                            value={formData.lastName}
-                            onChange={handleChange}
-                          />
-                          <p className="text-xs my-1 text-yellow-500 h-4">{errors.lastName}</p>
-                        </label>
+                        <input
+                          id="firstName"
+                          type="text"
+                          name="firstName"
+                          maxLength={40}
+                          value={formData.firstName}
+                          onChange={handleChange}
+                          className={inputClassName}
+                        />
+                        <p className={errorTextClassName}>{errors.firstName || " "}</p>
                       </div>
 
-                      <label htmlFor="email">
-                        <p>{t("signup.email")} <span className="text-red-600">*</span></p>
+                      <div>
+                        <label htmlFor="lastName" className="text-sm font-medium text-white/80">
+                          {t("signup.lastName")} <span className="text-[#ff8b8b]">*</span>
+                        </label>
                         <input
-                          type="email"
-                          name="email"
-                          value={formData.email}
+                          id="lastName"
+                          type="text"
+                          name="lastName"
+                          maxLength={40}
+                          value={formData.lastName}
                           onChange={handleChange}
+                          className={inputClassName}
                         />
-                        <p className="text-xs my-1 text-yellow-500 h-4">{errors.email}</p>
-                      </label>
+                        <p className={errorTextClassName}>{errors.lastName || " "}</p>
+                      </div>
 
-                      <div className="grid grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 gap-x-5">
-                        <label htmlFor="username">
-                          <p>{t("signup.username")} <span className="text-red-600">*</span></p>
+                      <div className="sm:col-span-2">
+                        <label htmlFor="email" className="text-sm font-medium text-white/80">
+                          {t("signup.email")} <span className="text-[#ff8b8b]">*</span>
+                        </label>
+                        <div className="relative">
                           <input
+                            id="email"
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className={inputClassName}
+                          />
+                          <Mail
+                            size={16}
+                            className="pointer-events-none absolute right-4 top-1/2 mt-1 -translate-y-1/2 text-white/30"
+                          />
+                        </div>
+                        <p className={errorTextClassName}>{errors.email || " "}</p>
+                      </div>
+
+                      <div>
+                        <label htmlFor="username" className="text-sm font-medium text-white/80">
+                          {t("signup.username")} <span className="text-[#ff8b8b]">*</span>
+                        </label>
+                        <div className="relative">
+                          <input
+                            id="username"
                             type="text"
                             name="username"
                             maxLength={40}
                             value={formData.username}
                             onChange={handleChange}
+                            className={inputClassName}
                           />
-                          <p className="text-xs my-1 text-yellow-500 h-8">{errors.username}</p>
-                        </label>
-                        <label htmlFor="phoneNumber">
-                          <p>{t("signup.phoneNumber")} <span className="text-red-600">*</span></p>
-                          <input
-                            type="text"
-                            name="phoneNumber"
-                            maxLength={10}
-                            value={formData.phoneNumber}
-                            onChange={handleChange}
+                          <UserRound
+                            size={16}
+                            className="pointer-events-none absolute right-4 top-1/2 mt-1 -translate-y-1/2 text-white/30"
                           />
-                          <p className="text-xs my-1 text-yellow-500 h-4">{errors.phoneNumber}</p>
-                        </label>
+                        </div>
+                        <p className={errorTextClassName}>{errors.username || " "}</p>
                       </div>
 
-                      <div className="grid grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 gap-x-5 ">
-                        <div>
-                          <PasswordInput
+                      <div>
+                        <label
+                          htmlFor="phoneNumber"
+                          className="text-sm font-medium text-white/80"
+                        >
+                          {t("signup.phoneNumber")} <span className="text-[#ff8b8b]">*</span>
+                        </label>
+                        <input
+                          id="phoneNumber"
+                          type="text"
+                          name="phoneNumber"
+                          maxLength={10}
+                          value={formData.phoneNumber}
+                          onChange={handleChange}
+                          className={inputClassName}
+                        />
+                        <p className={errorTextClassName}>{errors.phoneNumber || " "}</p>
+                      </div>
+
+                      <div>
+                        <label htmlFor="password" className="text-sm font-medium text-white/80">
+                          {t("signup.passwordLabel")} <span className="text-[#ff8b8b]">*</span>
+                        </label>
+                        <div className="relative">
+                          <input
                             id="password"
+                            type={showPassword ? "text" : "password"}
                             name="password"
-                            label={t("signup.passwordLabel")}
                             value={formData.password}
                             onChange={handleChange}
-                            required
+                            className={inputClassName}
                           />
-                          <p className="text-xs my-1 text-yellow-500 h-8">{errors.password}</p>
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            className="absolute right-4 top-1/2 mt-1 -translate-y-1/2 bg-transparent p-0 text-xs font-semibold uppercase tracking-[0.18em] text-white/45 hover:text-[#88ebff]"
+                          >
+                            {showPassword ? "Hide" : "Show"}
+                          </button>
                         </div>
+                        <p className={errorTextClassName}>{errors.password || " "}</p>
+                      </div>
 
-                        <div>
-                          <PasswordInput
-                            id="cpassword"
+                      <div>
+                        <label
+                          htmlFor="confirmpassword"
+                          className="text-sm font-medium text-white/80"
+                        >
+                          {t("signup.confirmPasswordLabel")}{" "}
+                          <span className="text-[#ff8b8b]">*</span>
+                        </label>
+                        <div className="relative">
+                          <input
+                            id="confirmpassword"
+                            type={showConfirmPassword ? "text" : "password"}
                             name="confirmpassword"
-                            label={t("signup.confirmPasswordLabel")}
                             value={formData.confirmpassword}
                             onChange={handleChange}
-                            required
+                            className={inputClassName}
                           />
-                          <p className="text-xs my-1 text-yellow-500 h-4">{errors.confirmpassword}</p>
+                          <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword((prev) => !prev)}
+                            className="absolute right-4 top-1/2 mt-1 -translate-y-1/2 bg-transparent p-0 text-xs font-semibold uppercase tracking-[0.18em] text-white/45 hover:text-[#88ebff]"
+                          >
+                            {showConfirmPassword ? "Hide" : "Show"}
+                          </button>
                         </div>
+                        <p className={errorTextClassName}>
+                          {errors.confirmpassword || " "}
+                        </p>
                       </div>
-                      <button className="h-[40px]" type="submit">
-                        {t("signup.signUpButton")}
-                      </button>
-                    </form>
-                  </>
-                ) : (
-                  <form className="flex flex-col justify-between gap-4 w-full h-[70%] pt-5">
-                    <h1 className="text-4xl font-semibold">{t("signup.verifyEmail")}</h1>
-                    <p className="font-extralight">{t("signup.enterOtp")}</p>
-                    <div className="flex justify-around gap-2 mb-2">
-                      <label htmlFor="otp" className="hidden">a</label>
-                      {Array.from({ length: 6 }).map((_, index) => (
-                        <input
-                          id="otp"
-                          key={index}
-                          type="text"
-                          maxLength={1}
-                          className="w-10 h-10 text-center border border-gray-300 rounded p-0 m-0 text-2xl"
-                          value={otp[index] || ""}
-                          onChange={(e) => handleOtpChange(e, index)}
-                          onKeyDown={(e) => handleOtpKeyDown(e, index)}
-                        />
-                      ))}
                     </div>
-                    <button type="button" className="h-[40px]" onClick={verifyOtp}>
-                      {t("signup.verifyOtpButton")}
+
+                    <button
+                      className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#67dfff]/40 bg-[linear-gradient(135deg,#0CACF3,#67dfff)] px-6 text-sm font-semibold text-[#03111f] shadow-[0_14px_32px_rgba(12,172,243,0.28)] transition hover:-translate-y-0.5 hover:brightness-105"
+                      type="submit"
+                    >
+                      <Mail size={18} />
+                      {t("signup.signUpButton")}
                     </button>
                   </form>
-                )}
-              </>
-            )}
-          </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <h1 className="text-4xl font-semibold tracking-tight text-white">
+                        {t("signup.verifyEmail")}
+                      </h1>
+                      <p className="mt-3 text-sm text-white/58">
+                        {t("signup.enterOtp")}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => sendOtp(formData.email)}
+                      className="hidden h-11 items-center rounded-2xl border border-white/10 bg-white/[0.03] px-4 text-sm font-medium text-white/70 transition hover:border-white/20 hover:bg-white/[0.06] hover:text-white sm:inline-flex"
+                    >
+                      {t("forgotPassword.resendOtpButton")}
+                    </button>
+                  </div>
+
+                  <div className="mt-8 grid grid-cols-6 gap-2 sm:gap-3">
+                    {otpDigits.map((digit, index) => (
+                      <input
+                        key={index}
+                        ref={(element) => {
+                          otpInputRefs.current[index] = element;
+                        }}
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={1}
+                        className="h-14 rounded-2xl border border-white/10 bg-[#0f1f42] text-center text-xl font-semibold text-white outline-none transition focus:border-[#67dfff]/50"
+                        value={digit}
+                        onChange={(e) => handleOtpChange(e.target.value, index)}
+                        onKeyDown={(e) => handleOtpKeyDown(e, index)}
+                      />
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#67dfff]/40 bg-[linear-gradient(135deg,#0CACF3,#67dfff)] px-6 text-sm font-semibold text-[#03111f] shadow-[0_14px_32px_rgba(12,172,243,0.28)] transition hover:-translate-y-0.5 hover:brightness-105"
+                    onClick={verifyOtp}
+                  >
+                    <ShieldCheck size={18} />
+                    {t("signup.verifyOtpButton")}
+                  </button>
+                </>
+              )}
+            </section>
+          )}
         </div>
-      </div>
-      <Footer />
+      </main>
     </div>
   );
 };

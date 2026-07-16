@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const API_URL = "https://nongtoybackend-rby6pw6h.b4a.run/api/v1/auth";
+import { API_V1_URL } from "./baseUrl";
+
+const API_URL = `${API_V1_URL}/auth`;
 
 const isEmail = (value: string): boolean => {
   // Regular Expression สำหรับตรวจสอบว่าเป็นอีเมลหรือไม่
@@ -139,7 +141,7 @@ export const loginWithFacebook = async ({
 export const getUser = async (token: string) => {
   try {
     const response = await fetch(
-      "https://nongtoybackend-rby6pw6h.b4a.run/api/v1/auth/about",
+      `${API_URL}/about`,
       {
         headers: {
           "Content-Type": "application/json",

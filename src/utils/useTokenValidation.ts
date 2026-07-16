@@ -1,3 +1,5 @@
+"use client";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from "react";
 import { checkTokenValidity } from "../api/authAPI";
@@ -7,7 +9,7 @@ import Swal from "sweetalert2";
 import { useTranslation } from "react-i18next";
 
 export const useTokenValidation = () => {
-  const { t } = useTranslation(); // ใช้ useTranslation สำหรับการแปลภาษา
+  const { t } = useTranslation(); // useTranslation hook for i18n
 
   useEffect(() => {
     const excludedPaths = ["/", "/login", "/arttoy", "/signup", "/forgotpassword"];

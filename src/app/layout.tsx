@@ -1,12 +1,7 @@
+import "@ant-design/v5-patch-for-react-19";
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
 import "./globals.css";
-
-const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
+import Copyright from "./components/Copyright";
 
 export const metadata: Metadata = {
   title: "Nongtoy",
@@ -20,8 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} antialiased`}>
+      <body className="antialiased">
         {children}
+        <Copyright />
       </body>
     </html>
   );

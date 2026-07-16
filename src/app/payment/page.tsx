@@ -1,23 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import { ArtToy } from "@/mainstore"; // นำเข้า interface ArtToy
-import React, { useEffect, useRef, useState } from "react";
+
+import { ArtToy } from "@/mainstore";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import ProductDetailsSection from "../components/ProductDetailsSection";
 import QRCodeSection from "../components/QRCodeSection";
 import { getUserData } from "@/utils/localStorageUtils";
-import { IoIosAddCircle } from "react-icons/io";
 import { createOrder } from "@/api/orderAPI";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { Loader } from "lucide-react"; // Import Loader
-import { useTranslation } from "react-i18next"; // Import useTranslation
-import "../../i18n"; // Import i18n
+import {
+  CreditCard,
+  Loader,
+  MapPinned,
+  Package2,
+  ReceiptText,
+  Sparkles,
+  Truck,
+} from "lucide-react";
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 
 export default function Payment() {
-  const { t } = useTranslation(); // ใช้ useTranslation
+  const { t } = useTranslation();
   const aboutRef = useRef<HTMLDivElement>(null!);
   const partnerRef = useRef<HTMLDivElement>(null!);
   const contactRef = useRef<HTMLDivElement>(null!);
@@ -28,26 +36,16 @@ export default function Payment() {
   const fname = userData?.firstName;
   const lname = userData?.lastName;
   const phone = userData?.phoneNumber;
-  const address = userData?.address;
+  const address = userData?.address || [];
   const totalPrice = (artToyData?.price || 0) + shippingFee;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<any>(null);
-
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleAddressSelect = (addr: any) => {
-    // console.log("Selected Address Updated:", addr);
     setSelectedAddress(addr);
-    handleClosePopUp();
-  };
-
-  const handleOpenPopUp = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleClosePopUp = () => {
     setIsModalOpen(false);
   };
 
@@ -56,14 +54,50 @@ export default function Payment() {
   };
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
-    if (ref.current) {
-      ref.current.scrollIntoView({ behavior: "smooth" });
-    }
+    ref.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const CancelButton = () => {
+  const cancelCheckout = () => {
     router.back();
   };
+
+  const activeAddress = selectedAddress || address[0] || null;
+
+  const shippingOptions = [
+    {
+      id: "standard",
+      fee: 50,
+      title: t("payment.standard"),
+      detail: t("payment.standardDeliveryTime"),
+    },
+    {
+      id: "ems",
+      fee: 70,
+      title: t("payment.ems"),
+      detail: t("payment.emsDeliveryTime"),
+    },
+  ];
+
+  const checkoutStats = useMemo(
+    () => [
+      {
+        label: t("payment.address"),
+        value: address.length,
+        icon: MapPinned,
+      },
+      {
+        label: t("payment.shippingOption"),
+        value: `${shippingFee} ฿`,
+        icon: Truck,
+      },
+      {
+        label: t("order.totalPrice"),
+        value: `${totalPrice.toLocaleString()} ฿`,
+        icon: ReceiptText,
+      },
+    ],
+    [address.length, shippingFee, t, totalPrice]
+  );
 
   const handleConfirmOrder = async () => {
     const token = localStorage.getItem("token");
@@ -87,23 +121,14 @@ export default function Payment() {
       quantity: artToyData?.quantity || 1,
       price: artToyData?.price || 0,
       shipping: shippingFee || 50,
-      total:
-        (artToyData?.price || 0) * (artToyData?.quantity || 1) + shippingFee,
-      address: selectedAddress
+      total: (artToyData?.price || 0) * (artToyData?.quantity || 1) + shippingFee,
+      address: activeAddress
         ? JSON.stringify({
-            detail: selectedAddress.detail,
-            province: selectedAddress.province,
-            district: selectedAddress.district,
-            subdistrict: selectedAddress.subdistrict,
-            postalCode: selectedAddress.postalCode,
-          })
-        : address.length > 0
-        ? JSON.stringify({
-            detail: address[0].detail,
-            province: address[0].province,
-            district: address[0].district,
-            subdistrict: address[0].subdistrict,
-            postalCode: address[0].postalCode,
+            detail: activeAddress.detail,
+            province: activeAddress.province,
+            district: activeAddress.district,
+            subdistrict: activeAddress.subdistrict,
+            postalCode: activeAddress.postalCode,
           })
         : t("order.notProvided"),
       payment: paymentImage || t("order.noPaymentProof"),
@@ -111,7 +136,8 @@ export default function Payment() {
     };
 
     try {
-      const response = await createOrder(token, orderData);
+      setLoading(true);
+      await createOrder(token, orderData);
 
       Swal.fire({
         title: t("payment.orderConfirmed"),
@@ -119,11 +145,8 @@ export default function Payment() {
         icon: "success",
         confirmButtonText: t("payment.ok"),
       }).then(() => {
-        // Clear artToyData from state and localStorage
         setArtToyData(null);
         localStorage.removeItem("artToyData");
-
-        // Redirect to the order page
         router.push("/order");
       });
     } catch (error: any) {
@@ -134,10 +157,11 @@ export default function Payment() {
         timer: 1500,
         showConfirmButton: false,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
-  // ดึงข้อมูลจาก localStorage เมื่อโหลดหน้า Payment
   useEffect(() => {
     const storedData = localStorage.getItem("artToyData");
     if (storedData) {
@@ -146,232 +170,314 @@ export default function Payment() {
         if (typeof parsedData === "object" && parsedData !== null) {
           setArtToyData(parsedData);
         } else {
-          router.push("/profile"); // Redirect to /profile if data is invalid
+          router.push("/profile");
         }
       } catch (error) {
         console.error("Error parsing artToyData from localStorage:", error);
-        router.push("/profile"); // Redirect to /profile if parsing fails
+        router.push("/profile");
       }
     } else {
-      router.push("/profile"); // Redirect to /profile if no data found
+      router.push("/profile");
     }
-  }, []);
+  }, [router]);
 
-  // artToyData ลง localStorage ทันทีที่มีการเปลี่ยนแปลง
   useEffect(() => {
     if (artToyData) {
       localStorage.setItem("artToyData", JSON.stringify(artToyData));
     }
   }, [artToyData]);
 
+  if (!artToyData) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,rgba(28,44,92,0.82),rgba(7,13,31,1)_42%,rgba(5,8,22,1)_100%)]">
+        <Loader className="animate-spin text-[#0CACF3]" size={50} />
+      </div>
+    );
+  }
+
   return (
-    <div>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(28,44,92,0.82),rgba(7,13,31,1)_42%,rgba(5,8,22,1)_100%)] text-white">
       <Navbar
         scrollToSection={scrollToSection}
         aboutRef={aboutRef}
         partnerRef={partnerRef}
         contactRef={contactRef}
       />
-      <main className="w-full my-[5rem] place-items-center">
-        {!artToyData || loading ? ( // Show loader if data is loading
-          <div className="flex justify-center items-center h-screen">
-            <Loader className="animate-spin text-[#0CACF3]" size={50} />
+
+      <section className="border-b border-white/10 pt-24">
+        <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-5 px-4 py-10 sm:px-6 lg:px-8">
+          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[#67dfff]/20 bg-[#0b1b3e]/70 px-4 py-2 text-xs font-medium uppercase tracking-[0.26em] text-[#88ebff]">
+            <Sparkles size={14} />
+            Checkout Review
           </div>
-        ) : (
-          <div className="max-w-[1080px] w-full h-full pt-24 flex flex-col gap-7 p-3">
-            <header>
-              <h1 className="text-4xl font-semibold mb-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
                 {t("payment.title")}
               </h1>
-              <p className="font-thin">{t("payment.reviewOrder")}</p>
-            </header>
-            <ProductDetailsSection
-              {...artToyData}
-              shippingFee={shippingFee}
-              totalPrice={totalPrice}
-            />{" "}
-            <form action="">
-              <section className="w-full h-full grid lg:grid-cols-2 lg:gird-rows-1 gird-rows-2 grid-cols-1 gap-4">
-                <section className="w-full h-full flex flex-col gap-3">
-                  <div className="bg-[#202133] border border-[#202133] rounded-xl p-4">
-                    <h2 className="mb-1 text-[16px] font-semibold">
-                      {t("payment.address")}
-                    </h2>
-                    {address && address.length > 0 ? (
-                      <div
-                        className="w-full h-30 py-2 bg-[#202133] border border-[#828399] rounded-lg place-items-start font-thin text-xs leading-5 cursor-pointer hover:bg-[#0578AB] px-2"
-                        onClick={handleOpenPopUp}
-                      >
-                        <p>
-                          <strong className="text-[14px]">
-                            {fname} {lname}
-                          </strong>
-                        </p>
-                        <p className="text-left text-[14px]">
-                          {selectedAddress
-                            ? `${selectedAddress.detail} ${selectedAddress.subdistrict} ${selectedAddress.district} ${selectedAddress.province} ${selectedAddress.postalCode}`
-                            : `${address[0].detail} ${address[0].subdistrict} ${address[0].district} ${address[0].province} ${address[0].postalCode}`}
-                        </p>
-                        <p className="text-[14px]">{phone}</p>
-                      </div>
-                    ) : (
-                      <a
-                        className="w-full h-[40px] gap-1 py-2 border border-[#828399] rounded-lg flex justify-center items-center leading-5 cursor-pointer hover:bg-[#0578AB] px-2"
-                        href="/editProfile"
-                      >
-                        <IoIosAddCircle className="text-white text-xl" />
-                        <p className="text-white">{t("payment.addAddress")}</p>
-                      </a>
-                    )}
-                  </div>
-                  <div className="bg-[#202133] border border-[#202133] rounded-xl p-4">
-                    <h2 className="mb-1 text-[16px] font-semibold">
-                      {t("payment.shippingOption")}
-                    </h2>
-                    <div className="flex flex-col gap-2">
-                      <div
-                        className={`flex items-center border ${
-                          shippingFee === 50
-                            ? "border-[#0578AB]"
-                            : "border-[#828399]"
-                        } rounded-lg gap-2 px-2 py-4 hover:bg-[#0578AB] cursor-pointer`}
-                        onClick={() => handleShippingChange(50)}
-                      >
-                        <input
-                          type="radio"
-                          name="shipping"
-                          value="standard"
-                          id="standard"
-                          checked={shippingFee === 50}
-                          onChange={() => handleShippingChange(50)}
-                          className="w-5 h-5 border-2 border-[#828399] rounded-full checked:bg-[#0578AB] checked:border-[#0578AB] cursor-pointer"
-                        />
-                        <label
-                          className="w-full text-[14px] flex justify-between cursor-pointer"
-                          htmlFor="standard"
-                        >
-                          <p>
-                            {t("payment.standard")} (
-                            {t("payment.standardDeliveryTime")})
-                          </p>
-                          <p>50 ฿</p>
-                        </label>
-                      </div>
-
-                      {/* EMS Delivery */}
-                      <div
-                        className={`flex items-center border ${
-                          shippingFee === 70
-                            ? "border-[#0578AB]"
-                            : "border-[#828399]"
-                        } rounded-lg gap-2 px-2 py-4 hover:bg-[#0578AB] cursor-pointer`}
-                        onClick={() => handleShippingChange(70)}
-                      >
-                        <input
-                          type="radio"
-                          name="shipping"
-                          value="ems"
-                          id="ems"
-                          checked={shippingFee === 70}
-                          onChange={() => handleShippingChange(70)}
-                          className="w-5 h-5 border-2 border-[#828399] rounded-full checked:bg-[#0578AB] checked:border-[#0578AB] cursor-pointer"
-                        />
-
-                        <label
-                          className="w-full text-[14px] flex justify-between cursor-pointer"
-                          htmlFor="ems"
-                        >
-                          <p>
-                            {t("payment.ems")} ({t("payment.emsDeliveryTime")})
-                          </p>
-                          <p>70 ฿</p>
-                        </label>
-                      </div>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-[#aebddb] sm:text-base">
+                {t("payment.reviewOrder")}
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {checkoutStats.map(({ label, value, icon: Icon }) => (
+                <div
+                  key={label}
+                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 backdrop-blur"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-xl border border-white/10 bg-[#0D1733] p-2.5">
+                      <Icon size={18} className="text-[#76e3ff]" />
+                    </div>
+                    <div>
+                      <p className="text-lg font-semibold text-white">{value}</p>
+                      <p className="text-xs text-white/60">{label}</p>
                     </div>
                   </div>
-                </section>
-                <section className="w-full h-full">
-                  {/* <QRCodeSection onImageUpload={(url) => console.log("Uploaded Image URL:", url)} /> */}
-                  <QRCodeSection
-                    setPaymentImage={setPaymentImage}
-                    totalPrice={totalPrice}
-                  />
-                </section>
-              </section>
-            </form>
-            <div className="flex flex-col sm:flex-row justify-between gap-4">
-              <button
-                className="w-full sm:w-1/2 bg-[#51536D] h-[40px]"
-                onClick={CancelButton}
-              >
-                {t("payment.cancel")}
-              </button>
-
-              <button
-                className="w-full sm:w-1/2 h-[40px]"
-                onClick={() => {
-                  if (!selectedAddress && (!address || address.length === 0)) {
-                    Swal.fire({
-                      title: t("payment.addressRequired"),
-                      text: t("payment.addressRequiredText"),
-                      icon: "warning",
-                      confirmButtonText: t("payment.ok"),
-                    });
-                    return;
-                  } else if (!paymentImage) {
-                    Swal.fire({
-                      title: t("payment.uploadRequired"),
-                      text: t("payment.uploadRequiredText"),
-                      icon: "warning",
-                      confirmButtonText: t("payment.ok"),
-                    });
-                    return;
-                  }
-                  handleConfirmOrder();
-                }}
-                disabled={loading}
-              >
-                {loading ? "Processing..." : t("payment.confirm")}
-              </button>
-            </div>
-          </div>
-        )}
-      </main>
-      <Footer />
-
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className=" bg-[#202133] border border-[#202133] rounded-xl p-4">
-            <div className="flex justify-between">
-              <h2>{t("payment.selectAddress")}</h2>
-              <button onClick={handleClosePopUp}>X</button>
-            </div>
-            <div className="flex flex-col gap-4 my-4">
-              {address.map((addr: any, index: number) => (
-                <div
-                  key={index}
-                  className="w-full h-30 py-2 bg-[#202133] border border-[#828399] rounded-lg place-items-start font-thin text-xs leading-5 cursor-pointer hover:bg-[#0578AB] px-2"
-                  onClick={() => handleAddressSelect(addr)}
-                >
-                  <p>
-                    <strong className="text-[14px]">
-                      {fname} {lname}
-                    </strong>
-                  </p>
-                  <p className="text-left text-[14px]">
-                    {addr.detail} {addr.subdistrict} {addr.district}{" "}
-                    {addr.province} {addr.postalCode}
-                  </p>
-                  <p className="text-[14px]">{phone}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
-              <a
-                className="w-full h-[40px] gap-1 py-2 border border-[#828399] rounded-lg flex justify-center items-center leading-5 cursor-pointer bg-[#0CACF3] hover:bg-[#0578AB] px-2"
+      <main className="mx-auto w-full max-w-[1180px] px-4 py-10 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-8">
+          <section className="flex flex-wrap gap-3">
+            <Link
+              className="rounded-full border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/72 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
+              href="/material"
+            >
+              Back To Configuration
+            </Link>
+          </section>
+
+          <ProductDetailsSection
+            {...artToyData}
+            shippingFee={shippingFee}
+            totalPrice={totalPrice}
+          />
+
+          <div className="grid gap-8 xl:grid-cols-[0.92fr_1.08fr]">
+            <section className="grid gap-8">
+              <section className="overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,31,64,0.95),rgba(11,18,40,0.95))] shadow-[0_30px_90px_rgba(0,0,0,0.24)]">
+                <div className="border-b border-white/10 px-6 py-6 sm:px-8">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-xl border border-white/10 bg-[#0D1733] p-2.5">
+                      <MapPinned size={18} className="text-[#76e3ff]" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-[0.28em] text-[#7ee7ff]">
+                        Shipping Address
+                      </p>
+                      <h2 className="mt-2 text-2xl font-semibold text-white">{t("payment.address")}</h2>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="px-6 py-6 sm:px-8 sm:py-8">
+                  {activeAddress ? (
+                    <button
+                      type="button"
+                      className="w-full rounded-[26px] border border-white/10 bg-white/5 p-5 text-left transition hover:border-[#0AACF0]/35 hover:bg-white/10"
+                      onClick={() => setIsModalOpen(true)}
+                    >
+                      <p className="text-lg font-semibold text-white">
+                        {fname} {lname}
+                      </p>
+                      <p className="mt-3 text-sm leading-7 text-white/75">
+                        {activeAddress.detail} {activeAddress.subdistrict} {activeAddress.district} {activeAddress.province} {activeAddress.postalCode}
+                      </p>
+                      <p className="mt-3 text-sm text-white/70">{phone}</p>
+                    </button>
+                  ) : (
+                    <Link
+                      className="flex min-h-[128px] w-full items-center justify-center rounded-[26px] border border-dashed border-white/15 bg-white/5 px-6 text-center text-sm font-medium text-white/72 transition hover:border-[#0AACF0]/35 hover:bg-white/10 hover:text-white"
+                      href="/editProfile"
+                    >
+                      {t("payment.addAddress")}
+                    </Link>
+                  )}
+                </div>
+              </section>
+
+              <section className="overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,31,64,0.95),rgba(11,18,40,0.95))] shadow-[0_30px_90px_rgba(0,0,0,0.24)]">
+                <div className="border-b border-white/10 px-6 py-6 sm:px-8">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-xl border border-white/10 bg-[#0D1733] p-2.5">
+                      <Truck size={18} className="text-[#76e3ff]" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-[0.28em] text-[#7ee7ff]">
+                        Delivery Method
+                      </p>
+                      <h2 className="mt-2 text-2xl font-semibold text-white">{t("payment.shippingOption")}</h2>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-4 px-6 py-6 sm:px-8 sm:py-8">
+                  {shippingOptions.map((option) => {
+                    const isActive = shippingFee === option.fee;
+
+                    return (
+                      <button
+                        key={option.id}
+                        type="button"
+                        onClick={() => handleShippingChange(option.fee)}
+                        className={`flex items-center justify-between rounded-[24px] border p-5 text-left transition ${
+                          isActive
+                            ? "border-[#0AACF0]/40 bg-[rgba(12,172,243,0.14)]"
+                            : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10"
+                        }`}
+                      >
+                        <div className="flex items-center gap-4">
+                          <div
+                            className={`flex h-5 w-5 items-center justify-center rounded-full border ${
+                              isActive ? "border-[#72e4ff] bg-[#0CACF3]" : "border-white/25"
+                            }`}
+                          >
+                            <div className="h-2.5 w-2.5 rounded-full bg-[#07111f]" />
+                          </div>
+                          <div>
+                            <p className="text-base font-semibold text-white">{option.title}</p>
+                            <p className="mt-1 text-sm text-white/65">{option.detail}</p>
+                          </div>
+                        </div>
+                        <p className="text-base font-semibold text-white">{option.fee} ฿</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            </section>
+
+            <section className="grid gap-8">
+              <QRCodeSection
+                setPaymentImage={setPaymentImage}
+                totalPrice={totalPrice}
+              />
+
+              <section className="overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,31,64,0.95),rgba(11,18,40,0.95))] shadow-[0_30px_90px_rgba(0,0,0,0.24)]">
+                <div className="border-b border-white/10 px-6 py-6 sm:px-8">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-xl border border-white/10 bg-[#0D1733] p-2.5">
+                      <CreditCard size={18} className="text-[#76e3ff]" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-[0.28em] text-[#7ee7ff]">
+                        Final Confirmation
+                      </p>
+                      <h2 className="mt-2 text-2xl font-semibold text-white">{t("payment.confirm")}</h2>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-6 px-6 py-6 sm:px-8 sm:py-8">
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                      <p className="text-xs uppercase tracking-[0.24em] text-white/45">{t("product.price")}</p>
+                      <p className="mt-2 text-lg font-semibold text-white">{(artToyData.price || 0).toLocaleString()} ฿</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                      <p className="text-xs uppercase tracking-[0.24em] text-white/45">{t("product.shippingFee")}</p>
+                      <p className="mt-2 text-lg font-semibold text-white">{shippingFee.toLocaleString()} ฿</p>
+                    </div>
+                    <div className="rounded-2xl border border-[#0AACF0]/30 bg-[linear-gradient(180deg,rgba(12,172,243,0.16),rgba(11,23,52,0.95))] p-4">
+                      <p className="text-xs uppercase tracking-[0.24em] text-[#9defff]">{t("product.totalPrice")}</p>
+                      <p className="mt-2 text-lg font-semibold text-white">{totalPrice.toLocaleString()} ฿</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-4 sm:flex-row">
+                    <button
+                      type="button"
+                      className="h-12 w-full rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-white/80 transition hover:bg-white/10 sm:w-1/2"
+                      onClick={cancelCheckout}
+                    >
+                      {t("payment.cancel")}
+                    </button>
+                    <button
+                      type="button"
+                      className="h-12 w-full rounded-xl border border-[#0AACF0]/35 bg-[#0b1d3d] text-sm font-semibold text-[#89ebff] transition hover:bg-[#11305a] disabled:cursor-not-allowed disabled:opacity-60 sm:w-1/2"
+                      onClick={() => {
+                        if (!activeAddress) {
+                          Swal.fire({
+                            title: t("payment.addressRequired"),
+                            text: t("payment.addressRequiredText"),
+                            icon: "warning",
+                            confirmButtonText: t("payment.ok"),
+                          });
+                          return;
+                        }
+
+                        if (!paymentImage) {
+                          Swal.fire({
+                            title: t("payment.uploadRequired"),
+                            text: t("payment.uploadRequiredText"),
+                            icon: "warning",
+                            confirmButtonText: t("payment.ok"),
+                          });
+                          return;
+                        }
+
+                        handleConfirmOrder();
+                      }}
+                      disabled={loading}
+                    >
+                      {loading ? "Processing..." : t("payment.confirm")}
+                    </button>
+                  </div>
+                </div>
+              </section>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#040814]/75 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-2xl overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,31,64,0.98),rgba(11,18,40,0.98))] shadow-[0_30px_90px_rgba(0,0,0,0.35)]">
+            <div className="flex items-center justify-between border-b border-white/10 px-6 py-5 sm:px-8">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-[0.28em] text-[#7ee7ff]">
+                  Saved Addresses
+                </p>
+                <h2 className="mt-2 text-xl font-semibold text-white">{t("payment.selectAddress")}</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="grid gap-4 px-6 py-6 sm:px-8 sm:py-8">
+              {address.map((addr: any, index: number) => (
+                <button
+                  key={index}
+                  type="button"
+                  className="rounded-[24px] border border-white/10 bg-white/5 p-5 text-left transition hover:border-[#0AACF0]/35 hover:bg-white/10"
+                  onClick={() => handleAddressSelect(addr)}
+                >
+                  <p className="text-lg font-semibold text-white">
+                    {fname} {lname}
+                  </p>
+                  <p className="mt-3 text-sm leading-7 text-white/75">
+                    {addr.detail} {addr.subdistrict} {addr.district} {addr.province} {addr.postalCode}
+                  </p>
+                  <p className="mt-3 text-sm text-white/70">{phone}</p>
+                </button>
+              ))}
+
+              <Link
+                className="flex h-12 items-center justify-center rounded-xl border border-[#0AACF0]/35 bg-[#0b1d3d] px-5 text-sm font-semibold text-[#89ebff] transition hover:bg-[#11305a]"
                 href="/editProfile"
               >
-                <p className="text-white">{t("payment.editAddress")}</p>
-              </a>
+                {t("payment.editAddress")}
+              </Link>
             </div>
           </div>
         </div>

@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
+import Link from "next/link";
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 import { IoIosAddCircle } from "react-icons/io";
-import { Loader } from "lucide-react"; // Import Loader
+import { BadgeCheck, Home, Loader, MapPinned, Sparkles, UserRound } from "lucide-react"; // Import Loader
 import { updateUserProfile, updateUserAddresses, getUserById } from '../../api/userAPI';
 import { getUserData, setUserData } from '../../utils/localStorageUtils';
 import Swal from "sweetalert2";
@@ -506,12 +506,31 @@ export default function Page() {
     // ใช้ useEffect ในการดึงข้อมูลผู้ใช้ และที่อยู่ของผู้ใช้เมื่อเปิดหน้าเว็บ เมื่อเปิดหน้าเว็บ
     useEffect(() => {
         setIsLoading(true); // Set loading to true when component mounts
-        fetch('https://raw.githubusercontent.com/kongvut/thai-province-data/master/api_province_with_amphure_tambon.json')
-            .then(response => response.json())
-            .then(data => setData(data))
-            .catch(error => {
-                console.error('Error:', error);
-            });
+
+        const provinceDataSources = [
+            'https://raw.githubusercontent.com/kongvut/thai-province-data/master/api/v1/province_with_amphure_tambon.json',
+            'https://cdn.jsdelivr.net/gh/kongvut/thai-province-data@master/api/v1/province_with_amphure_tambon.json',
+        ];
+
+        const fetchProvinceData = async () => {
+            for (const source of provinceDataSources) {
+                try {
+                    const response = await fetch(source);
+                    if (!response.ok) {
+                        continue;
+                    }
+                    const provinceData = await response.json();
+                    setData(provinceData);
+                    return;
+                } catch {
+                    // Try next mirror
+                }
+            }
+
+            console.error('Error: failed to fetch province data from all sources.');
+        };
+
+        fetchProvinceData();
 
         fetchUserData();
     }, []);
@@ -578,8 +597,21 @@ export default function Page() {
         setAddressFormsCount(addresses.length);
     }, [addresses.length, data]); // useEffect will run when addresses.length or data changes
 
+    const profileStats = [
+        {
+            label: t('editProfile.information.firstName'),
+            value: firstName || '-',
+            icon: UserRound,
+        },
+        {
+            label: t('editProfile.address.title'),
+            value: addresses.length,
+            icon: MapPinned,
+        },
+    ];
+
     return (
-        <div>
+        <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(28,44,92,0.82),rgba(7,13,31,1)_42%,rgba(5,8,22,1)_100%)] text-white">
             <Navbar scrollToSection={scrollToSection} aboutRef={aboutRef} partnerRef={partnerRef} contactRef={contactRef} />
 
             {isLoading ? ( // Show loader while loading
@@ -588,55 +620,104 @@ export default function Page() {
                 </div>
             ) : (
                 <>
-                    <div className='w-full place-content-center place-items-center h-[100px] mt-[5rem] bg-black'>
-                        <h1 className='text-4xl font-semibold mb-3'>{t('myProfile')}</h1> {/* ใช้ t() แปลข้อความ */}
-                    </div>
-                    <div className='w-full place-items-center'>
-                        <div className='w-full max-w-[980px] px-4 py-20 flex flex-col gap-12'>
-                            <div className='flex justify-between border-b border-white pb-2'>
-                                <p className='text-xl font-semibold'>{t('editProfile.information.title')}</p> {/* ใช้ t() แปลข้อความ */}
-                                <div className='place-aitems-end place-content-center'>
+                    <section className="border-b border-white/10 pt-24">
+                        <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-5 px-4 py-10 sm:px-6 lg:px-8">
+                            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[#67dfff]/20 bg-[#0b1b3e]/70 px-4 py-2 text-xs font-medium uppercase tracking-[0.26em] text-[#88ebff]">
+                                <Sparkles size={14} />
+                                Account Settings
+                            </div>
+                            <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+                                <div>
+                                    <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+                                        {t('editProfile.information.title')}
+                                    </h1>
+                                    <p className="mt-3 max-w-2xl text-sm leading-7 text-[#aebddb] sm:text-base">
+                                        Update your profile details, keep contact information current, and manage saved shipping addresses from one place.
+                                    </p>
+                                </div>
+                                <div className="grid gap-3 sm:grid-cols-2 lg:ml-auto">
+                                    {profileStats.map(({ label, value, icon: Icon }) => (
+                                        <div
+                                            key={label}
+                                            className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 backdrop-blur"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className="rounded-xl border border-white/10 bg-[#0D1733] p-2.5">
+                                                    <Icon size={18} className="text-[#76e3ff]" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-lg font-semibold text-white">{value}</p>
+                                                    <p className="text-xs text-white/60">{label}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div className='mx-auto w-full max-w-[1180px] px-4 py-10 sm:px-6 lg:px-8'>
+                        <div className='flex flex-col gap-8'>
+                            <section className="flex flex-wrap gap-3">
+                                <Link
+                                    className="rounded-full border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/72 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
+                                    href="/profile"
+                                >
+                                    Back To Profile
+                                </Link>
+                            </section>
+
+                            <section className="overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,31,64,0.95),rgba(11,18,40,0.95))] shadow-[0_30px_90px_rgba(0,0,0,0.24)]">
+                                <div className='flex flex-col gap-4 border-b border-white/10 px-6 py-6 sm:flex-row sm:items-end sm:justify-between sm:px-8'>
+                                    <div>
+                                        <p className='text-xs font-medium uppercase tracking-[0.28em] text-[#7ee7ff]'>
+                                            Profile Information
+                                        </p>
+                                        <h2 className='mt-2 text-2xl font-semibold text-white sm:text-3xl'>{t('editProfile.information.title')}</h2>
+                                    </div>
+                                    <div className='place-aitems-end place-content-center'>
                                     {!isEditing ? (
-                                        <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={() => setIsEditing(true)}>
+                                        <button className='h-11 rounded-xl border border-white/15 bg-white/5 px-5 text-sm font-medium text-white hover:bg-white/10' onClick={() => setIsEditing(true)}>
                                             {t('editProfile.information.edit')}
                                         </button>
                                     ) : (
                                         <div className='flex gap-2'>
-                                            <button className='bg-[#51536D] border border-[#51536D] text-gray-300 font-normal text-xs py-1 px-3' onClick={handleCancelEdit}>
+                                            <button className='h-11 rounded-xl border border-white/10 bg-[#51536D] px-5 text-sm font-medium text-gray-200' onClick={handleCancelEdit}>
                                                 {t('editProfile.information.cancel')}
                                             </button>
-                                            <button className='bg-background border border-white font-normal text-xs py-1 px-3' onClick={handleSaveUserdata}>
+                                            <button className='h-11 rounded-xl border border-[#0AACF0]/35 bg-[#0b1d3d] px-5 text-sm font-medium text-[#89ebff] hover:bg-[#11305a]' onClick={handleSaveUserdata}>
                                                 {t('editProfile.information.save')}
                                             </button>
                                         </div>
                                     )}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div>
-                                <form action="#information" method="post" className='grid grid-cols-1 sm:grid-cols-2 sm:gap-y-6  gap-x-8'>
+                                <div className='px-6 py-6 sm:px-8 sm:py-8'>
+                                <form action="#information" method="post" className='grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 sm:gap-y-6'>
                                     <label htmlFor="username">
-                                        <p>{t('editProfile.information.username')}</p>
+                                        <p className='mb-1.5 text-sm font-medium text-white/82'>{t('editProfile.information.username')}</p>
                                         <input
                                             type="text"
                                             id="username"
                                             value={username || ''}
                                             readOnly disabled
-                                            className='bg-[#51536D] border-transparent' />
+                                            className='bg-[#51536D] border-transparent text-black/95' />
                                         <p className="text-xs my-1 text-yellow-500 h-4"></p>
                                     </label>
                                     <label htmlFor="email">
-                                        <p>{t('editProfile.information.email')}</p>
+                                        <p className='mb-1.5 text-sm font-medium text-white/82'>{t('editProfile.information.email')}</p>
                                         <input
                                             type="email"
                                             id="email"
                                             value={email || ''}
                                             readOnly disabled
-                                            className='bg-[#51536D] border-transparent' />
+                                            className='bg-[#51536D] border-transparent text-black/95' />
                                         <p className="text-xs my-1 text-yellow-500 h-4"></p>
                                     </label>
                                     <label htmlFor="fname">
-                                        <p>{t('editProfile.information.firstName')}</p>
+                                        <p className='mb-1.5 text-sm font-medium text-white/82'>{t('editProfile.information.firstName')}</p>
                                         <input
                                             type="text"
                                             id="fname"
@@ -655,7 +736,7 @@ export default function Page() {
                                     </label>
 
                                     <label htmlFor="lname">
-                                        <p>{t('editProfile.information.lastName')}</p>
+                                        <p className='mb-1.5 text-sm font-medium text-white/82'>{t('editProfile.information.lastName')}</p>
                                         <input
                                             type="text"
                                             id="lname"
@@ -674,13 +755,10 @@ export default function Page() {
                                     </label>
 
                                     <label htmlFor="phone">
-                                        <p>{t('editProfile.information.phone')}</p>
+                                        <p className='mb-1.5 text-sm font-medium text-white/82'>{t('editProfile.information.phone')}</p>
                                         <input
                                             type="tel"
                                             id="phone"
-                                            minLength={10}
-                                            maxLength={10}
-                                            pattern="[0-9]"
                                             value={phoneNumber || ''}
                                             readOnly={!isEditing}
                                             disabled={!isEditing}
@@ -693,17 +771,28 @@ export default function Page() {
                                         />
                                         <p className="text-xs my-1 text-yellow-500 h-4">{errors.phoneNumber}</p>
                                     </label>
+
                                 </form>
-                            </div>
-                            <div>
-                                <div className='flex justify-between'>
-                                    <h1 className='text-xl font-semibold'>
+                                </div>
+                            </section>
+
+                            <section className="overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(20,31,64,0.95),rgba(11,18,40,0.95))] shadow-[0_30px_90px_rgba(0,0,0,0.24)]">
+                                <div className='flex flex-col gap-4 border-b border-white/10 px-6 py-6 sm:flex-row sm:items-end sm:justify-between sm:px-8'>
+                                    <div className='flex items-center gap-3'>
+                                        <div className='rounded-xl border border-white/10 bg-[#0D1733] p-2.5'>
+                                            <Home size={18} className='text-[#76e3ff]' />
+                                        </div>
+                                        <div>
+                                            <p className='text-xs font-medium uppercase tracking-[0.28em] text-[#7ee7ff]'>Shipping Addresses</p>
+                                            <h1 className='mt-2 text-2xl font-semibold text-white sm:text-3xl'>
                                         {t('editProfile.address.title')}
                                     </h1>
+                                        </div>
+                                    </div>
                                     <div className='place-aitems-end place-content-center'>
                                         {!isEditingAddress ? (
                                             <button
-                                                className={`bg-background border border-white font-normal text-xs py-1 px-3 ${addressFormsCount <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                className={`h-11 rounded-xl border border-white/15 bg-white/5 px-5 text-sm font-medium text-white ${addressFormsCount <= 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10'}`}
                                                 onClick={() => setIsEditingAddress(true)}
                                                 disabled={addressFormsCount <= 0}
                                             >
@@ -712,13 +801,13 @@ export default function Page() {
                                         ) : (
                                             <div className="flex gap-2">
                                                 <button
-                                                    className="bg-background border border-white font-normal text-xs py-1 px-3"
+                                                    className="h-11 rounded-xl border border-white/10 bg-[#51536D] px-5 text-sm font-medium text-gray-200"
                                                     onClick={handleCancelEditAddress}
                                                 >
                                                     {t('editProfile.address.cancel')}
                                                 </button>
                                                 <button
-                                                    className="bg-background border border-white font-normal text-xs py-1 px-3"
+                                                    className="h-11 rounded-xl border border-[#0AACF0]/35 bg-[#0b1d3d] px-5 text-sm font-medium text-[#89ebff] hover:bg-[#11305a]"
                                                     onClick={handleSaveAddresses}
                                                 >
                                                     {t('editProfile.address.save')}
@@ -728,17 +817,22 @@ export default function Page() {
                                         }
                                     </div>
                                 </div>
-                                <hr className='border border-white mt-2 mb-10 ' />
 
+                                <div className='px-6 py-6 sm:px-8 sm:py-8'>
                                 {Array.from({ length: addressFormsCount }).map((_, index) => (
                                     <div key={index}>
                                         {results[index] && (
-                                            <div>
-                                                <div className='flex justify-between my-4'>
-                                                    <p>{index === 0 ? t('editProfile.address.form') : `${t('editProfile.address.form')} ${index + 1}`}</p>
+                                            <div className='rounded-[28px] border border-white/10 bg-[#0d1736] p-5 sm:p-6'>
+                                                <div className='mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+                                                    <div className='flex items-center gap-3'>
+                                                        <div className='rounded-xl border border-white/10 bg-white/5 p-2.5'>
+                                                            <BadgeCheck size={16} className='text-[#7ee7ff]' />
+                                                        </div>
+                                                        <p className='text-lg font-semibold text-white'>{index === 0 ? t('editProfile.address.form') : `${t('editProfile.address.form')} ${index + 1}`}</p>
+                                                    </div>
                                                     <div className='place-aitems-end place-content-center'>
                                                         <button
-                                                            className={`bg-background border border-white font-normal text-xs py-1 px-3 ${!isEditingAddress ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                            className={`h-10 rounded-xl border border-white/15 bg-white/5 px-4 text-sm font-medium text-white/80 ${!isEditingAddress ? 'opacity-50 cursor-not-allowed' : 'hover:border-red-400/35 hover:bg-red-400/15 hover:text-white'}`}
                                                             onClick={() => isEditingAddress && handleDeleteAddress(index)}
                                                             disabled={!isEditingAddress}
                                                         >
@@ -750,7 +844,7 @@ export default function Page() {
                                                 <form
                                                     action="#address"
                                                     method="post"
-                                                    className='grid grid-cols-1 sm:grid-cols-2 gap-y-10 gap-x-8'>
+                                                    className='grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2'>
                                                     <div>
                                                         <label htmlFor="province_id" className='hidden'>
                                                             <p>Province</p>
@@ -1038,20 +1132,20 @@ export default function Page() {
                                             </div>
                                         )}
                                         {index < addressFormsCount - 1 && (
-                                            <hr className='my-10 opacity-50' />
+                                            <div className='my-6' />
                                         )}
                                     </div>
                                 ))}
                                 {addressFormsCount < 3 && (
-                                    <button aria-hidden='true' onClick={handleAddAddressForm} className='flex justify-center items-center gap-1 h-[40px] w-full mt-5'>
+                                    <button aria-hidden='true' onClick={handleAddAddressForm} className='mt-6 flex h-[52px] w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-white/20 bg-white/[0.03] transition hover:border-[#7ee7ff]/35 hover:bg-white/[0.05]'>
                                         <IoIosAddCircle className='text-white text-2xl' />
                                         <p className='text-white'>{t('editProfile.address.add')}</p>
                                     </button>
                                 )}
-                            </div>
+                                </div>
+                            </section>
                         </div>
                     </div>
-                    <Footer />
                 </>)}
         </div>
     );

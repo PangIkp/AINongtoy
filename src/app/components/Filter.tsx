@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
@@ -41,42 +43,59 @@ export default function Filter({ onFilterChange }: { onFilterChange: (filters: s
   }, [selectedFilters, onFilterChange]);
 
   return (
-    <div className="w-64 text-white pr-6 pt-6 rounded-lg">
-      <h2 className="text-[25px] font-semibold">{t("filters.title")}</h2>
-      <hr className="border-gray-600 my-3" />
+    <div className="w-full text-white">
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <h2 className="text-2xl font-semibold">{t("filters.title")}</h2>
+        <button
+          type="button"
+          onClick={() => setSelectedFilters([])}
+          className="rounded-lg border border-white/20 bg-white/5 px-2.5 py-1 text-xs text-white/80 transition hover:bg-white/10"
+        >
+          Clear
+        </button>
+      </div>
+      <p className="mb-4 rounded-xl border border-[#0AACF0]/25 bg-[#0B1736] px-3 py-2 text-xs text-[#97e6ff]">
+        {selectedFilters.length} selected
+      </p>
 
       {/* Character Style */}
-      <div className="mb-4">
+      <div className="mb-5">
         <h3 className="text-lg font-semibold">{t("filters.characterStyle")}</h3>
-        <div className="mt-2 space-y-1">
+        <div className="mt-3 flex flex-wrap gap-2">
           {characterStyles.map((option) => (
-            <label key={option} className="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={selectedFilters.includes(option)}
-                onChange={() => toggleFilter(option)}
-                className="w-4 h-5 border border-gray-500 bg-transparent rounded-sm"
-              />
-              <span>{t(`filters.characterStyles.${option}`)}</span>
-            </label>
+            <button
+              key={option}
+              type="button"
+              onClick={() => toggleFilter(option)}
+              className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                selectedFilters.includes(option)
+                  ? "border-[#0AACF0] bg-[#0a2b55] text-[#9cecff]"
+                  : "border-white/20 bg-[#0b1228] text-white/80 hover:bg-[#132042]"
+              }`}
+            >
+              {t(`filters.characterStyles.${option}`)}
+            </button>
           ))}
         </div>
       </div>
 
       {/* Color */}
-      <div className="mb-4">
+      <div className="mb-1">
         <h3 className="text-lg font-semibold">{t("filters.color")}</h3>
-        <div className="mt-2 space-y-1">
+        <div className="mt-3 flex flex-wrap gap-2">
           {colors.map((option) => (
-            <label key={option} className="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={selectedFilters.includes(option)}
-                onChange={() => toggleFilter(option)}
-                className="w-4 h-5 border border-gray-500 bg-transparent rounded-sm"
-              />
-              <span>{t(`filters.colors.${option}`)}</span>
-            </label>
+            <button
+              key={option}
+              type="button"
+              onClick={() => toggleFilter(option)}
+              className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                selectedFilters.includes(option)
+                  ? "border-[#0AACF0] bg-[#0a2b55] text-[#9cecff]"
+                  : "border-white/20 bg-[#0b1228] text-white/80 hover:bg-[#132042]"
+              }`}
+            >
+              {t(`filters.colors.${option}`)}
+            </button>
           ))}
         </div>
       </div>

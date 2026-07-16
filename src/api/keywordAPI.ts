@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_V1_URL } from "./baseUrl";
 
-const API_URL = "https://nongtoybackend-rby6pw6h.b4a.run/api/v1/keyword";
+const API_URL = `${API_V1_URL}/keyword`;
 
 export const getAllKeywords = async () => {
   try {

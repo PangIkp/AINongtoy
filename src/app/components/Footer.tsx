@@ -1,54 +1,67 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import React from 'react';
-import Image from 'next/image';
-import { useTranslation } from 'react-i18next';
+
+import { useTranslation } from "react-i18next";
 import "../../i18n";
 
 export default function Footer() {
-    const { t } = useTranslation(); // ใช้ useTranslation
-    const social_size = 35;
+  const { t } = useTranslation();
 
-    return (
-        <div className='inset-x-0 bottom-0  w-screen bg-[#1B1D36]' >
-            <section className='w-full flex flex-col sm:flex-row sm:justify-around gap-5 py-5 min-w-sm'>
-                <div className='w-full sm:w-1/2 px-5 xl:w-1/3 leading-[70px] '>
-                    <a href="#" className='flex items-center gap-4'>
-                        <img src="/Images/AINongtoy/Map.png" alt="" className='w-10 h-10' />
-                        <p className='underline'>{t("footer.address")}</p>
-                    </a>
-                    <a href="tel:090-846-6758" className='flex items-center gap-4'>
-                        <img src="Images/AINongtoy/Phone.png" alt="" className='w-10 h-10' />
-                        <p>{t("footer.phone")}</p>
-                    </a>
-                    <a href="mailto:NongToy@gmail.com" className='flex items-center gap-4'>
-                        <img src="/Images/AINongtoy/Email.png" alt="" className='w-10 h-10' />
-                        <p>{t("footer.email")}</p>
-                    </a>
-                </div>
-                <div className='w-full sm:w-1/2 px-5 xl:w-1/3 leading-10'>
-                    <p className='font-bold'>{t("footer.aboutTitle")}</p>
-                    <p>{t("footer.aboutDescription")}</p>
-                    <div className='flex gap-4 mt-4'>
-                        <a href="#">
-                            <img src="/Images/AINongtoy/Facebook.png" alt="Facebook logo" className='w-9 h-9' />
-                            <p className='hidden'>Facebook</p>
-                        </a>
-                        <a href="#">
-                            <img src="/Images/AINongtoy/Instagram.png" alt="Instagram logo" className='w-9 h-9' />
-                            <p className='hidden'>Instagram</p>
-                        </a>
-                        <a href="#">
-                            <img src="/Images/AINongtoy/Twitter.png" alt="Twitter logo" className='w-9 h-9' />
-                            <p className='hidden'>Twitter</p>
-                        </a>
-                    </div>
-                </div>
-            </section>
-
-            <div className='bg-[#20255E] text-white  w-full h-9 flex justify-center items-center'>
-                <p>{t("footer.copyright")}</p>
-            </div>
+  return (
+    <footer className="border-t border-white/10 bg-[#040814] px-4 py-10 text-white sm:px-6 lg:px-10">
+      <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+        <div>
+          <img
+            src="/Images/AINongtoy/Logo.png"
+            alt="NongToy logo"
+            className="h-12 w-auto"
+          />
+          <p className="mt-5 max-w-xl text-sm leading-7 text-[#b6c2da]">
+            {t("footer.aboutDescription")}
+          </p>
         </div>
-    );
+
+        <div className="grid gap-8 sm:grid-cols-2">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#5ad7ff]">
+              Contact
+            </p>
+            <div className="mt-4 space-y-3 text-sm text-[#dbe7ff]">
+              <p>{t("footer.address")}</p>
+              <a href="tel:090-846-6758" className="block transition hover:text-[#8be4ff]">
+                {t("footer.phone")}
+              </a>
+              <a
+                href="mailto:NongToy@gmail.com"
+                className="block transition hover:text-[#8be4ff]"
+              >
+                {t("footer.email")}
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#5ad7ff]">
+              Social
+            </p>
+            <div className="mt-4 flex gap-3">
+              {[
+                { href: "#", src: "/Images/AINongtoy/Facebook.png", alt: "Facebook" },
+                { href: "#", src: "/Images/AINongtoy/Instagram.png", alt: "Instagram" },
+                { href: "#", src: "/Images/AINongtoy/Twitter.png", alt: "Twitter" },
+              ].map((item) => (
+                <a
+                  key={item.alt}
+                  href={item.href}
+                  className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 transition hover:border-[#5ad7ff]/40 hover:bg-white/10"
+                >
+                  <img src={item.src} alt={item.alt} className="h-6 w-6" />
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </footer>
+  );
 }

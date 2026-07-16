@@ -71,7 +71,14 @@
     "arttoy": {
         "headerLine1": "Create Unique Art Toys – Turn your ideas",
         "headerLine2": "ideas into 3D reality with AI",
-        "loadingImages": "Loading images..."
+        "loadingImages": "Loading image...",
+        "singleModeHint": "Single prompt mode: one prompt creates one image for faster preview and clearer iteration.",
+        "generatorTitle": "Single Prompt Generator",
+        "emptyState": "Enter one prompt and generate your art toy image.",
+        "rateLimitMessage": "The image service is rate-limited right now. Please try again.",
+        "retry": "Try again",
+        "promptLabel": "Prompt",
+        "imageReadyHint": "Click the image to continue material and production setup."
     },
     "filters": {
         "title": "Filters",
@@ -100,6 +107,7 @@
         "arttoyNameLabel": "Art toy Name",
         "arttoyNamePlaceholder": "Enter art toy name",
         "keywordsLabel": "Keywords",
+        "promptLabel": "Prompt",
         "keywordsPlaceholder": "animal, blue and unique",
         "searchButton": "Search"
     },
@@ -169,7 +177,7 @@
         "followMessage": "You have {{count}} models to follow",
         "noFollowMessage": "You have no models to follow",
         "favorite": "Favorite",
-        "artToyConfig": "Art Toy Config",
+        "artToyConfig": "Config",
         "order": "Order",
         "configMessage": "You have configured {{count}} models.",
         "noConfigMessage": "You have not configured any models yet.",
@@ -371,6 +379,14 @@
         "warningText": "Username and Password are required",
         "welcomeBack": "Welcome back",
         "enterDetails": "Please enter your details",
+        "description": "Access your account to manage orders, saved configurations, and your personal workspace without losing momentum.",
+        "highlightOne": "Use one account to continue your art toy journey, review activity, and keep everything in one place.",
+        "highlightTwo": "Quick access to saved drafts, orders, and AI-assisted workspaces right after sign in.",
+        "highlightThree": "Your account stays protected with password-based access and recovery support when needed.",
+        "helpTitle": "Need to get back in quickly?",
+        "helpDescription": "If you forgot your password, use the recovery flow to verify your email and set a new password in a few guided steps.",
+        "socialDivider": "or continue with",
+        "socialDisabled": "Social login is currently unavailable because Firebase is not configured for this environment.",
         "username": "Username",
         "password": "Password",
         "rememberMe": "Remember me",
@@ -427,6 +443,18 @@
     },
     "forgotPassword": {
         "title": "Forgot Password",
+        "description": "Recover access in a few guided steps. We will verify your email with a one-time code before allowing a new password.",
+        "stepEmail": "Verify Email",
+        "stepOtp": "Check OTP",
+        "stepPassword": "Set New Password",
+        "emailHint": "Enter the account email that should receive the recovery code.",
+        "otpHint": "Use the 6-digit code sent to your inbox to continue securely.",
+        "passwordHint": "Choose a stronger password before signing back into the account.",
+        "helpTitle": "Keep recovery fast and safe",
+        "helpDescription": "Use the same inbox registered to your account and finish the process in one session so the OTP does not get mixed up.",
+        "backToLogin": "Back to Login",
+        "resendOtpButton": "Resend OTP",
+        "otpSentTo": "OTP sent to",
         "emailEmpty": "Recipient email is empty. Please provide a valid email.",
         "otpSent": "OTP sent to your email",
         "otpSendFailed": "Failed to send OTP. Please try again later.",
@@ -548,6 +576,12 @@
         "search_user_id": "Search User ID",
         "create_user": "Create User",
         "details": "User Details",
+        "detail_description": "Review account details, role, and contact information in a single view.",
+        "account_overview": "Account Overview",
+        "account_summary": "Use this view to inspect status and key profile details before editing or changing access.",
+        "profile_section": "Profile Details",
+        "profile_section_description": "Core identity information for this account.",
+        "address_section_description": "Address records linked to this user account.",
         "address": "Address",
         "address_n": "Address {{n}}",
         "no_address": "No address available",
@@ -573,9 +607,35 @@
         "ok_button": "OK",
         "view": "View",
         "save": "Save",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "close": "Close",
+        "required": "This field is required.",
+        "validation_error": "Please review the form fields and try again.",
+        "name_rule": "Use 2-40 English letters.",
+        "email_rule": "Invalid email format.",
+        "username_rule": "Username must start with a letter and be 4-40 characters long.",
+        "phone_rule": "Phone number must be 10 digits and start with 0.",
+        "edit_title": "Edit User",
+        "edit_description": "Update account details, role, and status from one modal instead of editing directly in the table.",
+        "edit_tip_title": "Edit without disturbing the table",
+        "edit_tip_description": "Use this form to update the account and the table row will refresh immediately after save succeeds.",
+        "edit_hint": "Check role and status carefully before saving because they affect account access.",
+        "updating": "Saving..."
     },
     "mForm": {
+        "title": "Create New User",
+        "description": "Add a user account from the admin workspace with the right access level and initial profile details.",
+        "tip_title": "New accounts are available immediately",
+        "tip_description": "Fill in the profile, assign the correct role, and the new user will appear in the table as soon as creation succeeds.",
+        "password_hint": "Password must be at least 6 characters and include uppercase, lowercase, and a number.",
+        "required": "This field is required.",
+        "validation_error": "Please review the form fields and try again.",
+        "name_rule": "Use 2-40 English letters.",
+        "email_rule": "Invalid email format.",
+        "username_rule": "Username must start with a letter and be 4-40 characters long.",
+        "phone_rule": "Phone number must be 10 digits and start with 0.",
+        "password_rule": "Password must be at least 6 characters with uppercase, lowercase, and a number.",
+        "submitting": "Creating user...",
         "close": "Close",
         "first_name": "First Name",
         "last_name": "Last Name",
@@ -598,6 +658,7 @@
     },
     "orderM": {
         "title": "Order",
+        "description": "Review order status, update payments, and track fulfillment from one admin-facing table.",
         "searchPlaceholder": "Search Order ID",
         "deleteConfirmTitle": "Are you sure?",
         "deleteConfirmText": "You won't be able to revert this!",
@@ -613,6 +674,16 @@
         "saveSuccessText": "The order has been updated successfully.",
         "saveErrorTitle": "Error!",
         "saveErrorText": "Failed to update the order.",
+        "required": "This field is required.",
+        "validation_error": "Please review the form fields and try again.",
+        "quantity_rule": "Quantity must be greater than 0.",
+        "total_rule": "Total must be 0 or greater.",
+        "edit_title": "Edit Order",
+        "edit_description": "Update item name, quantity, total, and key order states from one modal.",
+        "edit_tip_title": "Edit without disturbing the table",
+        "edit_tip_description": "After saving successfully, the order row updates immediately without refreshing the page.",
+        "edit_hint": "Check order and payment status carefully before saving because they affect the next fulfillment step.",
+        "updating": "Saving...",
         "status": {
             "pending": "Pending",
             "processing": "Processing",
@@ -636,6 +707,12 @@
             "status": "Status",
             "actions": "Actions"
         },
+        "stats": {
+            "totalOrders": "Total Orders",
+            "paidOrders": "Paid Orders",
+            "shippedOrders": "Shipped",
+            "refunds": "Refunds"
+        },
         "actions": {
             "save": "Save",
             "cancel": "Cancel",
@@ -646,6 +723,11 @@
     },
     "orderModal": {
         "title": "Order Details",
+        "description": "View customer, product, payment, and shipping information in one place.",
+        "product_section": "Product Details",
+        "product_section_description": "Preview image and production selections for this order.",
+        "payment_shipping_section": "Payment & Shipping",
+        "payment_shipping_description": "Pricing, totals, address details, and payment proof.",
         "orderId": "Order ID",
         "createdAt": "Created At",
         "customer": "Customer",
@@ -658,6 +740,7 @@
         "artToy": "Art Toy",
         "price": "Price",
         "shipping": "Shipping",
+        "quantity": "Quantity",
         "total": "Total",
         "address": "Address",
         "invalidAddress": "Invalid address format",
@@ -703,6 +786,7 @@
     },
     "dashboard": {
         "title": "Dashboard",
+        "description": "A focused view of orders, payments, and production trends so the admin team can make faster decisions from one page.",
         "totalOrders": "Total Orders (Paid)",
         "totalAmount": "Total Purchase Amount",
         "avgOrderValue": "Avg. Order Value",
@@ -731,6 +815,16 @@
             "Assembly": "Assembly Orders Overview",
             "Painting": "Painting Orders Overview"
         },
+        "panels": {
+            "paymentTitle": "Payment Status",
+            "paymentDescription": "Compare paid, unpaid, and refunded orders at a glance.",
+            "ordersTitle": "Order Volume Trend",
+            "ordersDescription": "Track how many orders arrive each day.",
+            "breakdownTitle": "Production Breakdown",
+            "breakdownDescription": "Inspect which material, assembly, or painting groups are used most often.",
+            "quantityTitle": "Sold Quantity Trend",
+            "quantityDescription": "Follow how many units were sold from paid orders over time."
+        },
         "tooltip": {
             "orders": "orders"
         },
@@ -742,6 +836,8 @@
     },
     "keywordManagement": {
         "title": "Keyword",
+        "description": "Manage the keyword library for colors and characters from one admin workspace, including author and update history.",
+        "searchPlaceholder": "Search keyword ID or name",
         "confirmDeleteTitle": "Are you sure?",
         "confirmDeleteText": "You won't be able to revert this!",
         "confirmDeleteConfirm": "Yes, delete it!",
@@ -753,7 +849,23 @@
         "updateSuccessText": "The keyword has been updated successfully.",
         "updateErrorTitle": "Error!",
         "updateErrorText": "Failed to update the keyword.",
+        "required": "This field is required.",
+        "validationError": "Please review the form fields and try again.",
+        "nameRule": "Keyword name must be at least 2 characters.",
+        "close": "Close",
         "createKeyword": "Create keyword",
+        "createTitle": "Create New Keyword",
+        "createDescription": "Add a new keyword for filtering and content categorization so it becomes available immediately.",
+        "createTipTitle": "Available right after creation",
+        "createTipDescription": "Create a color or character keyword and it will appear in the table as soon as save succeeds.",
+        "createHint": "Use short, clear, non-duplicated labels so filtering stays consistent across the product.",
+        "creating": "Creating...",
+        "editTitle": "Edit Keyword",
+        "editDescription": "Update the keyword name or type from one modal instead of editing directly inside the table.",
+        "editTipTitle": "Edit without disturbing the table",
+        "editTipDescription": "After save succeeds, this keyword updates immediately in the table without refreshing the page.",
+        "editHint": "Check the keyword type carefully because it affects filtering and categorization behavior.",
+        "updating": "Saving...",
         "columns": {
             "keywordId": "Keyword ID",
             "createdAt": "Created At",
@@ -762,6 +874,11 @@
             "name": "Name",
             "type": "Type",
             "actions": "Actions"
+        },
+        "stats": {
+            "total": "Total Keywords",
+            "colors": "Color Keywords",
+            "characters": "Character Keywords"
         },
         "actions": {
             "save": "Save",
@@ -777,9 +894,10 @@
     },
     "keywordModal": {
         "title": "Keyword Details",
-        "userId": "User ID",
-        "createdAt": "Created At",
-        "email": "Email"
+        "description": "Review the key metadata for this keyword, including author, type, and the most recent update time.",
+        "keywordId": "Keyword ID",
+        "summaryTitle": "Keyword Overview",
+        "summaryDescription": "Use this view to inspect keyword metadata before editing or deciding to remove it."
     },
     "keywordForm": {
         "fields": {

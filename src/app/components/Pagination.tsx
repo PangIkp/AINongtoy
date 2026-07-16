@@ -41,11 +41,11 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, onPage
 
     return (
         // เรนเดอร์ Pagination โดยมีปุ่มสำหรับเปลี่ยนหน้าและแสดงหมายเลขหน้า
-        <section className='place-content-center place-items-center'>
-            <div className='flex gap-3'>
+        <section className='flex justify-center'>
+            <div className='flex flex-wrap items-center justify-center gap-3'>
                 {/* ปุ่มสำหรับไปหน้าก่อนหน้า */}
                 <button
-                    className='border border-background bg-background hover:bg-background hover:border hover:border-white place-content-center place-items-center p-2'
+                    className='flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-[#0A1129] hover:border-[#6fdfff] hover:bg-[#101a38] disabled:cursor-not-allowed disabled:opacity-40'
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
                 >
@@ -56,7 +56,11 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, onPage
                 {getPageNumbers().map((page) => (
                     <button
                         key={page}
-                        className={`border border-background bg-background hover:bg-background hover:border hover:border-white ${currentPage === page ? 'bg-blue-400' : ''}`}
+                        className={`h-10 min-w-10 rounded-xl border px-3 text-sm font-medium transition ${
+                            currentPage === page
+                                ? 'border-[#0AACF0] bg-[#0AACF0] text-[#06111d] hover:bg-[#29c0ff]'
+                                : 'border-white/10 bg-[#0A1129] text-white/80 hover:border-white/25 hover:bg-[#101a38]'
+                        }`}
                         onClick={() => handlePageChange(page)}
                     >
                         {page}
@@ -64,7 +68,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, onPage
                 ))}
                 {/* ปุ่มสำหรับไปหน้าถัดไป */}
                 <button
-                    className='border border-background bg-background hover:bg-background hover:border hover:border-white place-content-center place-items-center p-2'
+                    className='flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-[#0A1129] hover:border-[#6fdfff] hover:bg-[#101a38] disabled:cursor-not-allowed disabled:opacity-40'
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
                 >
