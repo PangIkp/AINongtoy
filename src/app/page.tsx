@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import Contact from "./components/Contact";
 import "../i18n";
 
 const heroGallery = [
@@ -275,11 +274,6 @@ export default function Home() {
               </div>
             </section>
 
-            <section className="px-4 pb-20 sm:px-6 lg:px-10">
-              <div className="mx-auto max-w-7xl rounded-[36px] border border-white/10 bg-white/5 p-6 backdrop-blur lg:p-10">
-                <Contact />
-              </div>
-            </section>
           </main>
 
           <div ref={contactRef}>

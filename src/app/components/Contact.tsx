@@ -4,6 +4,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import emailjs from "emailjs-com";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
+import Swal from "sweetalert2";
 
 export default function Contact() {
   const { t } = useTranslation();
@@ -104,7 +105,18 @@ export default function Contact() {
         setSuccessMessage(t("form.success"));
       })
       .catch((error) => {
-        console.error(error);
+        const message =
+          error instanceof Error
+            ? error.message
+            : typeof error === "string"
+              ? error
+              : "Failed to submit contact form.";
+        console.error("Contact form submission failed:", message);
+        Swal.fire({
+          icon: "error",
+          title: t("contact.title"),
+          text: message,
+        });
       });
   };
 
@@ -200,7 +212,9 @@ export default function Contact() {
           >
             {t("form.submit")}
           </button>
-          <span className="min-h-5 text-sm text-[#86efac]">{successMessage}</span>
+          <span className="min-h-5 text-sm text-[#86efac]">
+            {successMessage}
+          </span>
         </div>
       </form>
     </div>
